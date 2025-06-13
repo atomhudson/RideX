@@ -1,0 +1,43 @@
+<div th:fragment="details" class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 rounded-2xl shadow-2xl space-y-6 text-white">
+
+  <!-- Source -->
+  <div class="border-l-4 border-blue-400 pl-4">
+    <h3 class="text-xl font-bold text-blue-300 flex items-center gap-2">
+      <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+      </svg>
+
+      <span th:text="${#dates.format(ride.startTime, 'HH:mm')} + ' → ' + ${ride.sourceCity}">18:00 → Gajraula</span>
+    </h3>
+    <p class="text-sm text-gray-400 mt-1" th:text="${ride.sourceAddress}">Source Address</p>
+  </div>
+
+  <!-- Destination -->
+  <div class="border-l-4 border-pink-400 pl-4">
+    <h3 class="text-xl font-bold text-pink-300 flex items-center gap-2">
+      <svg class="w-5 h-5 text-pink-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M10 2C6.686 2 4 4.686 4 8c0 4.418 6 10 6 10s6-5.582 6-10c0-3.314-2.686-6-6-6zm0 8a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+      </svg>
+      <span th:text="${#dates.format(ride.endTime, 'HH:mm')} + ' → ' + ${ride.destinationCity}">19:50 → Noida</span>
+    </h3>
+    <p class="text-sm text-gray-400 mt-1" th:text="${ride.destinationAddress}">Destination Address</p>
+  </div>
+
+  <!-- Availability -->
+  <div>
+    <div th:if="${ride.rideStatus != 'COMPLETED' and ride.rideStatus != 'ONGOING' and ride.rideStatus != 'CANCELLED'}"
+         class="bg-gradient-to-r from-emerald-600 via-green-500 to-lime-400 p-4 rounded-xl shadow-md">
+      <h3 class="text-xl font-bold text-white mb-1">Available Seats</h3>
+      <p class="text-sm text-white" th:text="${ride.availableSeats} + ' seat(s) available'">3 seat(s) available</p>
+    </div>
+
+    <div th:unless="${ride.rideStatus != 'COMPLETED' and ride.rideStatus != 'ONGOING' and ride.rideStatus != 'CANCELLED'}" class="bg-gradient-to-r from-indigo-700 via-purple-600 to-fuchsia-500 p-4 rounded-xl shadow-md">
+      <h3 class="text-xl font-bold text-white mb-1">Ride Status</h3>
+      <p class="text-sm text-white"
+         th:text="'Status: ' + ${ride.rideStatus}">
+        Status: COMPLETED
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+    <title>Signup</title>
+</head>
+
+<body class="bg-white dark:bg-gray-900">
+
+<div id="content" class="dark:bg-gray-900 pb-5">
+    <div class="text-center bg-gradient-to-r from-blue-800 to-blue-400 min-h-[250px] sm:p-6 p-4">
+        <h4 class="sm:text-3xl text-2xl text-white font-medium mt-20">Create your free account</h4>
+    </div>
+    <div class="mx-4 mb-4 -mt-20">
+        <div class="max-w-4xl mx-auto bg-white shadow-[0_2px_13px_-6px_rgba(0,0,0,0.4)] sm:p-8 p-4 rounded-md">
+            <!-- message here -->
+            <div th:insert="~{fragments/message::messagebox}"></div>
+
+            <div class="grid sm:grid-cols-2 gap-6">
+                <!-- Google Button -->
+                <a th:href="@{'/oauth2/authorization/google'}"
+                        class="w-full px-4 py-2.5 flex items-center justify-center rounded-md text-slate-900 text-sm font-medium tracking-wider border-none outline-none bg-slate-100 hover:bg-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22px" fill="#fff" class="inline shrink-0 mr-4"
+                         viewBox="0 0 512 512">
+                        <path fill="#fbbd00"
+                              d="M120 256c0-25.367 6.989-49.13 19.131-69.477v-86.308H52.823C18.568 144.703 0 198.922 0 256s18.568 111.297 52.823 155.785h86.308v-86.308C126.989 305.13 120 281.367 120 256z" />
+                        <path fill="#0f9d58"
+                              d="m256 392-60 60 60 60c57.079 0 111.297-18.568 155.785-52.823v-86.216h-86.216C305.044 385.147 281.181 392 256 392z" />
+                        <path fill="#31aa52"
+                              d="m139.131 325.477-86.308 86.308a260.085 260.085 0 0 0 22.158 25.235C123.333 485.371 187.62 512 256 512V392c-49.624 0-93.117-26.72-116.869-66.523z" />
+                        <path fill="#3c79e6"
+                              d="M512 256a258.24 258.24 0 0 0-4.192-46.377l-2.251-12.299H256v120h121.452a135.385 135.385 0 0 1-51.884 55.638l86.216 86.216a260.085 260.085 0 0 0 25.235-22.158C485.371 388.667 512 324.38 512 256z" />
+                        <path fill="#cf2d48"
+                              d="m352.167 159.833 10.606 10.606 84.853-84.852-10.606-10.606C388.668 26.629 324.381 0 256 0l-60 60 60 60c36.326 0 70.479 14.146 96.167 39.833z" />
+                        <path fill="#eb4132"
+                              d="M256 120V0C187.62 0 123.333 26.629 74.98 74.98a259.849 259.849 0 0 0-22.158 25.235l86.308 86.308C162.883 146.72 206.376 120 256 120z" />
+                    </svg>
+                    Continue with Google
+                </a>
+
+                <!-- Github Button -->
+                <a th:href="@{'/oauth2/authorization/github'}"
+                        class="w-full px-4 py-2.5 flex items-center justify-center rounded-md text-white text-sm font-medium tracking-wider border-none outline-none bg-gray-900 hover:bg-gray-800">
+                    <svg width="22px" xmlns="http://www.w3.org/2000/svg" class="inline shrink-0 mr-4"
+                         viewBox="0 0 98 98">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+                              fill="#fff" />
+                    </svg>
+                    Continue with Github
+                </a>
+            </div>
+
+            <div class="my-6 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
+                <p class="mx-4 text-center text-slate-500">
+                    Or
+                </p>
+            </div>
+
+            <form th:action="@{'/do-register'}" method="post" th:object="${userForm}" class="grid sm:grid-cols-2 gap-8" novalidate onsubmit="return validatePasswords()">
+                <div>
+                    <label class="text-slate-800 text-sm font-medium mb-2 block">First Name</label>
+                    <input
+                            th:field="*{firstName}"
+                            type="text"
+                            class="bg-white focus:bg-white w-full text-sm text-slate-800 px-4 py-2.5 rounded border focus:border-blue-600 outline-none transition-all"
+                            placeholder="Enter first name" />
+                    <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-red-600 px-1 py-2">
+                        First Name is required
+                    </p>
+                </div>
+                <div>
+                    <label class="text-slate-800 text-sm font-medium mb-2 block">Last Name</label>
+                    <input
+                            th:field="*{lastName}"
+                            type="text"
+                            class="bg-white focus:bg-white w-full text-sm text-slate-800 px-4 py-2.5 rounded border focus:border-blue-600 outline-none transition-all"
+                            placeholder="Enter last name" />
+                    <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-red-600 px-1 py-2">
+                        Last Name is required
+                    </p>
+                </div>
+                <div>
+                    <label class="text-slate-800 text-sm font-medium mb-2 block">Email Id</label>
+                    <input
+                            th:field="*{email}"
+                            type="text"
+                            class="bg-white focus:bg-white w-full text-sm text-slate-800 px-4 py-2.5 rounded border focus:border-blue-600 outline-none transition-all"
+                            placeholder="Enter email" />
+                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-600 px-1 py-2">
+                        Email is required
+                    </p>
+                </div>
+                <div>
+                    <label class="text-slate-800 text-sm font-medium mb-2 block">Mobile No.</label>
+                    <input
+                            th:field="*{phone}"
+                            type="tel"
+                            pattern="[0-9]{10}"
+                            class="bg-white focus:bg-white w-full text-sm text-slate-800 px-4 py-2.5 rounded border focus:border-blue-600 outline-none transition-all"
+                            placeholder="Enter mobile number" />
+                    <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-red-600 px-1 py-2">
+                        Mobile Number is required
+                    </p>
+                </div>
+                <div>
+                    <label class="text-slate-800 text-sm font-medium mb-2 block">Password</label>
+                    <input
+                            th:field="*{password}"
+                            id="password"
+                            type="password"
+                            class="bg-white focus:bg-white w-full text-sm text-slate-800 px-4 py-2.5 rounded border focus:border-blue-600 outline-none transition-all"
+                            placeholder="Enter password" />
+                    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-red-600 px-1 py-2">
+                        Password is required
+                    </p>
+                </div>
+                <div>
+                    <label class="text-slate-800 text-sm font-medium mb-2 block">Confirm Password</label>
+                    <input
+                            th:field="*{confirmPassword}"
+                            id="confirmPassword"
+                            name="cpassword"
+                            type="password"
+                            class="bg-white focus:bg-white w-full text-sm text-slate-800 px-4 py-2.5 rounded border focus:border-blue-600 outline-none transition-all"
+                            placeholder="Enter confirm password" />
+                    <p th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-red-600 px-1 py-2">
+                        Confirm Password is required
+                    </p>
+                    <p id="confirmPasswordError" class="text-red-600 px-1 py-2 hidden">
+                        Passwords do not match
+                    </p>
+                </div>
+                <div class="mt-8">
+                    <button type="submit"
+                            class="py-2.5 px-5 text-sm font-medium tracking-wider rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                        Sign up
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function validatePasswords() {
+        var password = document.getElementById("password").value.trim();
+        var confirmPassword = document.getElementById("confirmPassword").value.trim();
+        var errorMsg = document.getElementById("confirmPasswordError");
+
+        if (password !== confirmPassword) {
+            errorMsg.classList.remove("hidden");
+            return false; // prevent form submission
+        } else {
+            errorMsg.classList.add("hidden");
+            return true;
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+    <title>Ride Detail Page</title>
+    <link rel="stylesheet" th:href="@{'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'}" />
+    <link rel="stylesheet" th:href="@{'https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css'}" />
+</head>
+
+<body>
+<div id="content" class="bg-gray-900 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Outer Card Wrapper -->
+        <div class="mt-20 bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700">
+            <!-- Top Heading -->
+            <h1 class="text-4xl font-bold text-white text-center mb-10">Ride Details</h1>
+            <div th:insert="~{fragments/message::messagebox}"></div>
+            <!-- Inner Content Grid -->
+            <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start" th:object="${ride}">
+                <div class="bg-gray-900 p-6 rounded-xl shadow-xl space-y-6">
+                    <h2 class="text-3xl font-bold text-blue-400 text-center" th:text="${#dates.format(ride.startTime, 'EEEE, d MMMM')}">Ride Date</h2>
+
+                    <!-- Time & Locations -->
+                    <div th:insert="~{fragments/locationDetails :: details}"></div>
+
+                    <!-- Driver Info -->
+                    <div class="flex items-center gap-4">
+                        <img th:src="${ride.driver.profilePic}" alt="Driver" class="w-20 h-20 rounded-full border-2 border-gray-600 shadow-md">
+                        <div>
+                            <p class="text-lg font-semibold text-gray-200" th:text="${ride.driver.fName + ' ' + ride.driver.lName}">Driver Name</p>
+                            <p class="text-sm text-yellow-400">⭐ 4.1/5 - 7 ratings</p>
+                        </div>
+                    </div>
+
+                    <!-- Car Info -->
+                    <div th:insert="~{fragments/carDetailInRideDetail :: carDetail}"></div>
+
+                    <!-- Preferences -->
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-300 mb-2">Preferences</h4>
+                        <div class="flex flex-wrap gap-2 text-sm">
+                            <span class="bg-gray-700 text-gray-200 px-3 py-1 rounded-full shadow-sm" th:if="${!ride.allowSmoking}">🚭 No Smoking</span>
+                            <span class="bg-gray-700 text-gray-200 px-3 py-1 rounded-full shadow-sm" th:if="${ride.acAvailable}">❄️ AC Available</span>
+                            <span class="bg-gray-700 text-gray-200 px-3 py-1 rounded-full shadow-sm" th:if="${ride.allowPets}">🐾 Pets Allowed</span>
+                            <span class="bg-gray-700 text-gray-200 px-3 py-1 rounded-full shadow-sm" th:if="${ride.luggageAllowed}">🧳 Luggage Allowed</span>
+                        </div>
+                    </div>
+
+                    <div th:if="${(ride.rideStatus == 'PLANNED' or ride.rideStatus == 'ONGOING' or ride.rideStatus == 'COMPLETED') and currentUser.email != ride.driver.email and !hasRated}">
+                        <a th:href="@{'/user/ratingForm/' + ${ride.driver.userId}}"
+                           class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium px-5 py-2 rounded-xl shadow-md hover:from-blue-700 hover:to-blue-600 hover:scale-105 transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l3 3m0 0l-3 3m3-3H3" />
+                            </svg>
+                            Give Your Review to Driver
+                        </a>
+                    </div>
+
+                    <div th:if="${ride.rideStatus != 'COMPLETED' and ride.rideStatus != 'ONGOING' and ride.rideStatus != 'CANCELLED'}">
+                        <form th:action="@{'/user/ride/requestRide/' + ${currentUser.userId} + '/' + ${ride.rideId}}" method="post" th:if="${currentUser.email != ride.driver.email}" class="bg-gray-800 p-6 rounded-2xl shadow-md space-y-6 border border-gray-700">
+                            <!-- Co-driving Option -->
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="coDriving" class="w-5 h-5 text-blue-500 focus:ring-blue-500 rounded border-gray-600 bg-gray-700" onchange="document.getElementById('coDriverInput').value = this.checked">
+                                <label for="coDriving" class="text-sm text-gray-300">I would like to apply for co-driving</label>
+                            </div>
+
+                            <!-- Reward Coins Section -->
+                            <div class="space-y-2" th:if="${currentUser.coins != 0}">
+                                <label class="block text-sm text-gray-300 font-medium">Use Reward Coins</label>
+                                <p class="text-xs text-gray-400" th:text="'Available Coins: ' + ${currentUser.coins}">Available Coins: 50</p>
+                                <div class="flex items-center justify-between bg-gray-700 px-4 py-2.5 rounded-xl border border-gray-600">
+                                    <button type="button" onclick="adjustCoins(-1)" class="text-white text-lg font-bold px-3 py-1.5 rounded-lg hover:bg-gray-600 transition">−</button>
+                                    <span id="coinValue" class="text-white font-semibold text-lg">0</span>
+                                    <button type="button" onclick="adjustCoins(1)" class="text-white text-lg font-bold px-3 py-1.5 rounded-lg hover:bg-gray-600 transition">+</button>
+                                </div>
+                                <input type="hidden" id="usedCoins" name="coin" value="0" />
+                            </div>
+
+
+                            <!-- Seat Selector -->
+                            <div class="space-y-2">
+                                <label class="block text-sm text-gray-300 font-medium">Select Seats</label>
+                                <div class="flex items-center justify-between bg-gray-700 px-4 py-2.5 rounded-xl border border-gray-600">
+                                    <button type="button" onclick="adjustSeat(-1)" class="text-white text-lg font-bold px-3 py-1.5 rounded-lg hover:bg-gray-600 transition">−</button>
+                                    <span id="seatValue" class="text-white font-semibold text-lg">1</span>
+                                    <button type="button" onclick="adjustSeat(1)" class="text-white text-lg font-bold px-3 py-1.5 rounded-lg hover:bg-gray-600 transition">+</button>
+                                </div>
+                                <input type="hidden" id="seat" name="seat" value="1" />
+                                <input type="hidden" id="coDriverInput" name="coDriver" value="false" />
+                            </div>
+
+                            <input type="hidden" id="finalPrice" name="finalPrice" value="0" />
+                            <!-- Submit Button -->
+                            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-blue-400/50 transform hover:scale-105 transition-all duration-300"
+                                    id="bookButton"
+                                    th:data-price="${ride.price}"
+                                    th:text="'Book - ₹' + ${ride.price}">
+                                Book - ₹200
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Edit Ride Button (only for driver) -->
+                    <div th:if="${ride.rideStatus != 'COMPLETED' and ride.rideStatus != 'ONGOING' and ride.rideStatus != 'CANCELLED'}">
+                        <div th:if="${currentUser.email == ride.driver.email}" class="mt-6">
+                            <a th:href="@{'/user/ride/edit/' + ${ride.rideId}}" class="block text-center w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition">
+                                ✏️ Edit Ride
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${ride.rideStatus != 'COMPLETED' and ride.rideStatus != 'ONGOING' and ride.rideStatus != 'CANCELLED'}">
+                        <div th:if="${currentUser.email == ride.driver.email}" class="mt-6">
+                            <a th:href="@{'/user/ride/cancelRide/' + ${ride.rideId}}" class="block text-center w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold transition">
+                                Cancel Ride
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ride Requests Section -->
+                <div th:if="${currentUser.email == ride.driver.email}" class="bg-gray-900 p-8 rounded-2xl shadow-2xl text-white space-y-6">
+                    <h2 class="text-3xl font-extrabold text-green-400">🚗 Ride Requests</h2>
+                    <div th:insert="~{fragments/message::messagebox}"></div>
+                    <div th:if="${rideRequests.size() > 0}" class="space-y-6">
+                        <div th:each="request : ${rideRequests} " class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:shadow-xl transition-shadow duration-300">
+                            <div class="flex justify-between items-start gap-6 flex-wrap">
+                                <div class="space-y-2">
+                                    <p><span class="font-semibold text-gray-300">👤 Requester:</span>
+                                        <span class="text-white" th:text="${request.user.fName + ' ' + request.user.lName}">John Doe</span>
+                                    </p>
+                                    <p><span class="font-semibold text-gray-300">🪑 Seats Requested:</span>
+                                        <span class="text-white" th:text="${request.requestedSeats}">2</span>
+                                    </p>
+                                    <p>
+                                        <span class="font-semibold text-gray-300">💰 Final Price Paid:</span>
+                                        <span class="text-white" th:text="'₹' + ${request.finalPrice}">₹2</span>
+                                    </p>
+                                    <p>
+                                        <span class="font-semibold text-gray-300">🪙 Coins Used:</span>
+                                        <span class="text-white" th:text="${request.usedCoins}">2</span>
+                                    </p>
+                                    <p><span class="font-semibold text-gray-300">🗓️ Requested On:</span>
+                                        <span class="text-white" th:text="${#dates.format(request.requestedAt, 'dd MMM yyyy HH:mm')}">01 Jan 2025 18:30</span>
+                                    </p>
+                                    <p><span class="font-semibold text-gray-300">🤝 Co-Driver:</span>
+                                        <span class="text-white" th:text="${request.coDriver ? 'Yes' : 'No'}">Yes</span>
+                                    </p>
+                                    <p><span class="font-semibold text-gray-300">📌 Status:</span>
+                                        <span th:text="${request.requestStatus} " th:classappend="${request.requestStatus == 'PENDING' ? 'bg-yellow-500' : request.requestStatus == 'ACCEPTED' ? 'bg-green-500' : 'bg-red-500'}" class="text-white text-sm font-bold px-3 py-1 rounded-full inline-block shadow">PENDING</span>
+                                    </p>
+                                </div>
+                                <div th:if="${request.requestStatus != 'APPROVED' and request.requestStatus != 'REJECTED'}" class="flex flex-col gap-3 items-end">
+                                    <form th:action="@{'/user/ride/request/accept/' + ${request.requestId}}" method="post">
+                                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-semibold shadow-md transition-all">✅ Accept</button>
+                                    </form>
+                                    <form th:action="@{'/user/ride/request/reject/' + ${request.requestId}}" method="post">
+                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg font-semibold shadow-md transition-all">❌ Reject</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${rideRequests.size() == 0}" class="text-gray-400 italic text-center">No ride requests yet 🚫</div>
+                </div>
+
+                <!-- 🗺️ Map Section -->
+                <div class="mt-10" th:classappend="${currentUser.email == ride.driver.email} ? ' w-364 h-200' : ' w-full h-150'">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Route Map</h2>
+                    <div id="map" class="rounded-xl shadow-md border border-gray-700" th:classappend="${currentUser.email == ride.driver.email} ? ' w-364 h-200' : ' w-full h-full'"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rideCoordinates = {
+        sourceLat: [[${ ride.sourceLat }]],
+        sourceLon: [[${ ride.sourceLon }]],
+        destinationLat: [[${ ride.destinationLat }]],
+        destinationLon: [[${ ride.destinationLon }]],
+    };
+</script>
+
+<script th:src="@{'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'}"></script>
+<script th:src="@{'https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js'}"></script>
+<script th:src="@{'/js/mapRoute.js'}"></script>
+</body>
+<script>
+    const maxSeats = [[${ride.availableSeats}]];
+    const pricePerSeat = [[${ride.price}]];
+    const availableCoins = [[${currentUser.coins}]];
+    let currentUsedCoins = 0;
+
+    function adjustSeat(change) {
+        const seatInput = document.getElementById("seat");
+        const seatValueElement = document.getElementById("seatValue");
+
+        let currentSeats = parseInt(seatInput.value);
+        let newSeats = currentSeats + change;
+
+        if (newSeats < 1) newSeats = 1;
+        if (newSeats > maxSeats) newSeats = maxSeats;
+
+        seatInput.value = newSeats;
+        seatValueElement.textContent = newSeats;
+
+        updateFinalPrice();
+    }
+
+    function adjustCoins(change) {
+        const coinInput = document.getElementById("usedCoins");
+        const coinValue = document.getElementById("coinValue");
+        const seatCount = parseInt(document.getElementById("seat").value);
+        const totalPrice = seatCount * pricePerSeat;
+
+        currentUsedCoins += change;
+
+        if (currentUsedCoins < 0) currentUsedCoins = 0;
+        if (currentUsedCoins > availableCoins) currentUsedCoins = availableCoins;
+        if (currentUsedCoins > totalPrice) currentUsedCoins = totalPrice;
+
+        coinInput.value = currentUsedCoins;
+        coinValue.textContent = currentUsedCoins;
+
+        updateFinalPrice();
+    }
+
+    function updateFinalPrice() {
+        const seatCount = parseInt(document.getElementById("seat").value);
+        const totalPrice = seatCount * pricePerSeat;
+        const finalPrice = currentUsedCoins > 0 ? (totalPrice - currentUsedCoins) : totalPrice;
+
+        document.getElementById("bookButton").textContent = "Book - ₹" + finalPrice;
+        document.getElementById("finalPrice").value = finalPrice;
+    }
+</script>
+</html>

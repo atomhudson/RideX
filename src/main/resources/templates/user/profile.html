@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+    <th:block th:fragment="title">
+        <title>User - Profile</title>
+    </th:block>
+</head>
+<body>
+<div id="content" class="bg-gray-900 pt-20 text-gray-100">
+    <div th:insert="~{fragments/message::messagebox}"></div>
+    <main class="pb-12 md:py-14 px-6 2xl:px-20 2xl:container 2xl:mx-auto">
+        <div class="flex flex-col lg:flex-row items-start gap-6 w-full">
+            <!-- Sidebar / Profile -->
+            <div th:insert="~{fragments/sidebarProfile :: sideBarProfile}" class="w-full sm:w-1/3 flex-shrink-0 bg-gray-900 p-6 xl:p-8 flex flex-col space-y-6"></div>
+
+            <!-- Rides Section -->
+            <div class="flex flex-col py-15 justify-start items-start gap-2 w-full sm:w-2/3">
+
+                <!-- Published Rides Section -->
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">Published Rides</h1>
+                    <a th:href="@{'/user/ride/create'}" class="text-blue-400 hover:underline">+ Add Ride</a>
+                </div>
+                <div th:insert="~{fragments/ridePublishedCards::ridePublishedCards}" th:if="${profileRidesDetails.ridesCreated.size() != 0}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
+
+                <!-- Divider -->
+                <hr th:if="${profileRidesDetails.requestMade.size() != 0}" class="border-t border-gray-600 my-6 w-full">
+
+                <!-- Requests Made Section -->
+                <div th:if="${profileRidesDetails.requestMade.size() != 0}" class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">Request Made</h1>
+                </div>
+                <div th:insert="~{fragments/rideRequestCards :: rideRequestCards}" th:if="${profileRidesDetails.requestMade.size() != 0}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
+
+                <!-- Divider -->
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <!-- Recently Joined Rides Section -->
+                <div class="flex justify-between items-center w-full mt-5">
+                    <h1 class="text-xl font-semibold text-white">Recently Joined Rides</h1>
+                    <a href="#" class="text-blue-400 hover:underline">+ Join Ride</a>
+                </div>
+                <div th:insert="~{fragments/rideJoinedCards :: rideJoinedCard}" th:if="${profileRidesDetails.ridesJoined.size() != 0}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
+
+                <!-- Divider -->
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <!-- Car Section -->
+                <div th:if="${#strings.isEmpty(carDtoDetails.carNumber)}" class="flex justify-between items-center w-full mt-5">
+                    <h1 class="text-xl font-semibold text-white">Car Details</h1>
+                    <a th:href="@{/user/car/register}" class="text-blue-400 hover:underline">+ Add Car</a>
+                </div>
+                <div th:if="${!#strings.isEmpty(carDtoDetails.carNumber)}" class="w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800">
+                    <div th:insert="~{fragments/carDetailsCard :: carDetails}"></div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+<th:block th:fragment="script">
+    <script>
+        console.log("Profile Page");
+    </script>
+</th:block>
+</html>

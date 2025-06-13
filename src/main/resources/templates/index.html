@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="light" lang="en" th:fragment="parent(content,title,script)" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="~{fragments/metadata :: metadata}"></div>
+    <link rel="stylesheet" th:href="@{'/css/output.css'}">
+    <link rel="canonical" href="https://demo.themesberg.com/landwind/" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+
+<body>
+    <div th:if="${loggedInUser}">
+        <div data-th-replace="~{user/navbar :: navbar}"></div>
+    </div>
+    <div th:unless="${loggedInUser}">
+        <div data-th-replace="~{fragments/navbar :: navbar}"></div>
+    </div>
+
+    <div>
+        <section data-th-replace="${content}"></section>
+    </div>
+
+    <div data-th-replace="~{fragments/footer :: footer}"></div>
+    <script src="https://unpkg.com/flowbite@1.4.1/dist/flowbite.js"></script>
+    <script src="https://kit.fontawesome.com/ed25fb8f70.js" crossorigin="anonymous"></script>
+    <th:block th:replace="${script}"></th:block>
+</body>
+</html>

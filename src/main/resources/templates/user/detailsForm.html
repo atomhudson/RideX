@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+    <title>Update - User Details</title>
+</head>
+
+<body>
+
+<div id="content" class="bg-gray-900 min-h-screen py-12 px-4">
+
+    <div class="bg-gray-800 mx-auto max-w-6xl py-12 px-6 lg:px-24 shadow-xl rounded-lg mt-6">
+        <h1 class="text-3xl text-white text-center mb-6 font-semibold">Update Your Details...</h1>
+        <div th:insert="~{fragments/message::messagebox}"></div>
+        <form method="post" th:action="@{'/user/process-details'}" th:object="${userDetails}" enctype="multipart/form-data">
+            <div class="bg-gray-800 rounded px-8 pt-6 pb-8 mb-4">
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="fname">First Name</label>
+                        <input id="fname" th:field="*{fname}" type="text" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                    </div>
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="lname">Last Name</label>
+                        <input id="lname" th:field="*{lname}" type="text" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-white text-sm font-bold mb-2" for="bio">Bio</label>
+                    <textarea id="bio" th:field="*{bio}" placeholder="Write a short bio..." class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4"></textarea>
+                </div>
+
+                <!-- Age & Gender -->
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="dateOfBirth">Date of Birth</label>
+                        <input id="dateOfBirth" th:field="*{dateOfBirth}" type="date" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4" onchange="calculateAge()">
+
+                        <p th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}" class="text-red-600 px-1 py-2">
+                            Date of Birth is required
+                        </p>
+                    </div>
+
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="age">Age</label>
+                        <input id="age" th:field="*{age}" type="number" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4" readonly>
+                    </div>
+
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="gender">Gender</label>
+                        <select id="gender" th:field="*{gender}" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                            <option value="">-- Select Gender --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="text-red-600 px-1 py-2">
+                            Gender is required
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Occupation & Spoken Languages -->
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="occupation">Occupation</label>
+                        <input id="occupation" th:field="*{occupation}" type="text" placeholder="Engineer, Designer..." class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                    </div>
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="spokenLanguages">Spoken Languages</label>
+                        <input id="spokenLanguages" th:field="*{spokenLanguages}" type="text" placeholder="English, Spanish..." class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-white text-sm font-bold mb-2" for="image_file_input">Profile Image</label>
+                    <div class="w-full max-w-[400px]">
+                        <div class="relative">
+                            <input type="file" id="image_file_input" th:field="*{userImage}" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-600" />
+                        </div>
+                        <p th:if="${#fields.hasErrors('userImage')}" th:errors="*{userImage}" class="text-red-600 px-1 py-2">Invalid image</p>
+                        <img class="max-h-52 rounded-lg shadow-lg mt-4" src="" id="upload_image_preview" alt="Profile preview" />
+                    </div>
+                </div>
+
+                <!-- City -->
+                <div class="mb-6">
+                    <label class="block text-white text-sm font-bold mb-2" for="city">City</label>
+                    <input id="city" th:field="*{city}" type="text" placeholder="New York" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                    <p th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="text-red-600 px-1 py-2"> City is required </p>
+                </div>
+
+                <!-- Preferences (checkboxes) -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" th:field="*{musicPreference}" id="musicPreference" class="form-checkbox h-5 w-5 text-gray-400 bg-gray-700 border-gray-600">
+                            <span class="ml-2 text-sm text-white">Likes Music</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" th:field="*{petsAllowed}" id="petsAllowed" class="form-checkbox h-5 w-5 text-gray-400 bg-gray-700 border-gray-600">
+                            <span class="ml-2 text-sm text-white">Pets Allowed</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" th:field="*{smokingAllowed}" id="smokingAllowed" class="form-checkbox h-5 w-5 text-gray-400 bg-gray-700 border-gray-600">
+                            <span class="ml-2 text-sm text-white">Smoking Allowed</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" th:field="*{talkative}" id="talkative" class="form-checkbox h-5 w-5 text-gray-400 bg-gray-700 border-gray-600">
+                            <span class="ml-2 text-sm text-white">Talkative</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mt-4">
+                    <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+<script>
+    console.log("admin user");
+
+    document.querySelector("#image_file_input").addEventListener("change", function (event) {
+            let file = event.target.files[0];
+            let reader = new FileReader();
+            reader.onload = function () {
+                document
+                    .querySelector("#upload_image_preview")
+                    .setAttribute("src", reader.result);
+            };
+            reader.readAsDataURL(file);
+    });
+
+    function calculateAge() {
+    const dob = document.getElementById("dateOfBirth").value;
+    if (dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const dayDiff = today.getDate() - birthDate.getDate();
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            age--;
+        }
+        document.getElementById("age").value = age;
+    }
+}
+</script>
+<script th:src="@{'/js/details.js'}" type="module"></script>
+</html>

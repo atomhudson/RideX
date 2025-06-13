@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content}, ~{::title}, ~{::#pageScript})}">
+<head>
+    <title>Verify Your Government ID</title>
+</head>
+<body>
+<!-- BEGIN CONTENT -->
+<div id="content" class="h-screen bg-gray-900" x-data="app()" x-cloak>
+    <div class="max-w-3xl mx-auto px-4 py-10">
+        <!-- Step-by-step form -->
+        <template x-if="step !== 'complete'">
+            <div>
+                <!-- Progress Navigation -->
+                <div class="border-b-2 py-4 mb-6">
+                    <div class="uppercase tracking-wide text-xs font-bold text-gray-500 mb-1 leading-tight"
+                         x-text="`Step: ${step} of 3`"></div>
+
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div class="flex-1">
+                            <div x-show="step === 1" class="text-lg font-bold text-white">Select ID Type</div>
+                            <div x-show="step === 2" class="text-lg font-bold text-white">Enter Unique ID</div>
+                            <div x-show="step === 3" class="text-lg font-bold text-white">Upload Your Photo</div>
+                        </div>
+
+                        <div class="flex items-center md:w-64 mt-3 md:mt-0">
+                            <div class="w-full bg-white rounded-full mr-2 h-2">
+                                <div class="rounded-full bg-green-500 h-2" :style="'width: ' + (step / 3 * 100) + '%'"></div>
+                            </div>
+                            <div class="text-xs w-10 text-gray-600" x-text="parseInt(step / 3 * 100) + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form th:action="@{/user/govtId/submit}" method="post" enctype="multipart/form-data" x-ref="govtForm">
+                    <input type="hidden" name="govtIdType" :value="idType">
+                    <input type="hidden" name="govtIdNumber" :value="uniqueId">
+                    <input type="hidden" name="imageData" :value="image">
+
+                    <!-- Step 1 -->
+                    <div x-show.transition.in="step === 1" class="space-y-5">
+                        <label for="idType" class="font-bold text-white">Choose ID Type</label>
+                        <select id="idType" x-model="idType"
+                                class="w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none text-gray-600 font-medium">
+                            <option value="">-- Select --</option>
+                            <option value="Aadhar">Aadhar Card</option>
+                            <option value="PAN">PAN Card</option>
+                            <option value="DrivingLicense">Driving License</option>
+                            <option value="Passport">Passport</option>
+                        </select>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div x-show.transition.in="step === 2" class="space-y-5">
+                        <label for="uniqueId" class="font-bold text-white">Enter Unique ID</label>
+                        <input id="uniqueId" x-model="uniqueId" type="text"
+                               placeholder="Enter unique identification number..."
+                               class="w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none text-gray-600 font-medium"/>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div x-show.transition.in="step === 3" class="text-center space-y-6">
+                        <div class="mx-auto w-96 h-56 mb-4 border-4 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center">
+                            <template x-if="image">
+                                <img :src="image" alt="Uploaded ID Photo" class="object-contain w-full h-full rounded-lg"/>
+                            </template>
+                            <template x-if="!image">
+                                <div class="text-gray-400 font-semibold text-xl">No image selected</div>
+                            </template>
+                        </div>
+
+                        <label for="fileInput"
+                               class="cursor-pointer inline-flex items-center px-6 py-3 border-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 font-semibold text-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-3" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24" stroke-width="2">
+                                <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2"/>
+                                <circle cx="12" cy="13" r="3"/>
+                            </svg>
+                            Browse Photo
+                        </label>
+                        <input name="govtIdPhotoFile" id="fileInput" type="file" class="hidden" accept="image/*"
+                               @change="
+                                    const file = $event.target.files[0];
+                                    if (file) {
+                                        if (file.size > 2 * 1024 * 1024) {
+                                            alert('File size exceeds 2MB. Please select a smaller file.');
+                                            $event.target.value = null;
+                                            image = '';
+                                            return;
+                                        }
+                                        const reader = new FileReader();
+                                        reader.onload = e => image = e.target.result;
+                                        reader.readAsDataURL(file);
+                                    }
+                        ">
+                        <div class="text-gray-600 text-sm">Upload the image of your selected ID type.</div>
+                    </div>
+                </form>
+            </div>
+        </template>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 py-5 bg-gray-900 shadow-md" x-show="step !== 'complete'">
+        <div class="flex justify-between max-w-3xl mx-auto px-4">
+            <button x-show="step > 1" @click="step--"
+                    class="w-32 py-2 px-5 rounded-lg bg-white text-gray-600 hover:bg-gray-100 font-medium">
+                Previous
+            </button>
+            <div>
+                <button x-show="step < 3" @click="nextStep()"
+                        class="w-32 py-2 px-5 rounded-lg bg-blue-500 text-white hover:bg-blue-600 font-medium">
+                    Next
+                </button>
+                <button x-show="step === 3" @click="complete()"
+                        class="w-32 py-2 px-5 rounded-lg bg-blue-500 text-white hover:bg-blue-600 font-medium">
+                    Complete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END CONTENT -->
+
+<!-- PAGE-SPECIFIC SCRIPT -->
+<div id="pageScript">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
+    <style>[x-cloak] { display: none; }</style>
+    <script>
+        function app() {
+            return {
+                step: 1,
+                idType: '',
+                uniqueId: '',
+                image: '',
+                nextStep() {
+                    if (this.step === 1 && !this.idType) {
+                        alert('Please select an ID type.');
+                        return;
+                    }
+                    if (this.step === 2 && !this.uniqueId.trim()) {
+                        alert('Please enter your unique ID.');
+                        return;
+                    }
+                    this.step++;
+                },
+                complete() {
+                    if (!this.image) {
+                        alert('Please upload an image.');
+                        return;
+                    }
+                    this.$refs.govtForm.submit();
+                }
+            }
+        }
+    </script>
+</div>
+</body>
+</html>

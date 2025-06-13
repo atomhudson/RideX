@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+    <title>Admin - Profile</title>
+</head>
+<body>
+<div id="content" class="bg-gray-900 pt-20 text-gray-100">
+    <main class="pb-12 md:py-14 px-6 2xl:px-20 2xl:container 2xl:mx-auto">
+        <div class="flex flex-col lg:flex-row items-start gap-6 w-full">
+            <!-- Sidebar / Profile -->
+            <div th:insert="~{fragments/sidebarProfile :: sideBarProfile}" class="w-full sm:w-1/3 flex-shrink-0 bg-gray-900 p-6 xl:p-8 flex flex-col space-y-6"></div>
+            <!-- Details Section -->
+            <div class="flex flex-col py-15 justify-start items-start gap-2 w-full sm:w-2/3">
+                <!-- Government ID Verify Requests -->
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">Government ID Verify Requests</h1>
+                </div>
+                <div th:insert="~{admin/adminFragements/verify_request_table :: verify_Table}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
+
+                <!-- Divider -->
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">View | Update - Users</h1>
+                    <a th:href="@{'/admin/getUsers'}" class="inline-flex items-center justify-center rounded-full border border-primary px-7 py-3 text-center text-base font-medium text-primary hover:bg-[#1B44C8]">
+                        Get Users
+                    </a>
+                </div>
+
+                <!-- Divider -->
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">View - Rides</h1>
+                    <a th:href="@{'/admin/getRides'}" class="inline-flex items-center justify-center rounded-full border border-primary px-7 py-3 text-center text-base font-medium text-primary hover:bg-[#1B44C8]">
+                        Get Rides
+                    </a>
+                </div>
+
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">Grafana Dashboard - JVM SpringBoot3 dashboard (for Prometheus Operator)</h1>
+                    <a th:href="@{'http://'+${host}+':3000/d/hou469910799/jvm-springboot3-dashboard-for-prometheus-operator'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
+                        Get Monitoring
+                    </a>
+                </div>
+
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">Grafana Dashboard - Spring Boot 2.1 System Monitor</h1>
+                    <a th:href="@{'http://'+${host}+':3000/d/spring_boot_21/spring-boot-2-1-system-monitor'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
+                        Get Monitoring
+                    </a>
+                </div>
+
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">Grafana Dashboard - Spring Boot 3.x Statistics</h1>
+                    <a th:href="@{'http://'+${host}+':3000/d/spring_boot_17/spring-boot-3-x-statistics'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
+                        Get Monitoring
+                    </a>
+                </div>
+
+                <hr class="border-t border-gray-600 my-6 w-full">
+
+                <div class="flex justify-between items-center w-full">
+                    <h1 class="text-xl font-semibold text-white">Prometheus Operator</h1>
+                    <a th:href="@{'http://'+${host}+':9090/query?query=up'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
+                        Get Prometheus
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+<th:block th:fragment="script">
+    <script>
+        console.log("Admin Profile Page");
+    </script>
+</th:block>
+</html>

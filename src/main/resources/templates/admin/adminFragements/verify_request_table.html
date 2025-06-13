@@ -1,0 +1,37 @@
+<div th:fragment="verify_Table">
+    <div class="overflow-x-auto bg-gray-900 rounded-xl shadow-md p-4">
+        <table class="min-w-full table-auto text-left text-sm text-gray-200">
+            <thead class="bg-gray-800 text-gray-300 uppercase text-xs">
+            <tr>
+                <th class="px-6 py-3">Request ID</th>
+                <th class="px-6 py-3">User ID</th>
+                <th class="px-6 py-3">Govt ID Number</th>
+                <th class="px-6 py-3">Type</th>
+                <th class="px-6 py-3">Verified</th>
+                <th class="px-6 py-3">Image</th>
+                <th class="px-6 py-3 text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="request : ${govtIdRequests}" class="border-b border-gray-700 hover:bg-gray-800 transition duration-150">
+                <td class="px-6 py-4 font-mono text-xs" th:text="${request.requestId}">REQ001</td>
+                <td class="px-6 py-4 font-mono text-xs" th:text="${request.userId}">USR123</td>
+                <td class="px-6 py-4" th:text="${request.govtIdUniqueNumber}">371989562398</td>
+                <td class="px-6 py-4" th:text="${request.govtIdType}">Aadhar</td>
+                <td class="px-6 py-4" th:text="${request.verified ? 'Yes' : 'No'}">No</td>
+                <td class="px-6 py-4">
+                    <a th:href="@{${request.govtIdImageUrl}}" target="_blank" class="text-blue-400 hover:underline">View</a>
+                </td>
+                <td class="px-6 py-4 text-center space-x-2">
+                    <form th:action="@{'/admin/action/verifyGovtId/approve/' + ${request.requestId}}" method="post" class="inline">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-md text-sm shadow">Approve</button>
+                    </form>
+                    <form th:action="@{'/admin/action/verifyGovtId/deny/' + ${request.requestId}}" method="post" class="inline">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-sm shadow">Deny</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

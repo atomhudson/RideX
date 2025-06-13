@@ -1,0 +1,38 @@
+<div th:fragment="carDetails">
+    <div class="md:w-[50rem] md:h-[20.5rem] w-[20.5rem] h-[40rem] p-4 rounded-2xl bg-white dark:bg-slate-800 shadow-lg dark:shadow-slate-700 flex flex-col md:flex-row-reverse">
+        <!-- Car Image Section -->
+        <div class="h-full w-full shadow-md rounded-2xl basis-2/3 ">
+            <div class="h-full w-full border-2 border-white rounded-2xl overflow-hidden">
+                <img th:src="@{${carDtoDetails.car_Image_Url}}" alt="Car Image"
+                     class="h-full w-full object-cover rounded-2xl">
+            </div>
+        </div>
+
+        <!-- Car Details Section -->
+        <div class="h-full w-full mr-2 rounded-2xl">
+            <h1 class="m-2 text-3xl font-bold dark:text-white" th:text="${carDtoDetails.carMake} + ' ' + ${carDtoDetails.carModel} + ' ' + ${carDtoDetails.year}">Toyota Corolla 2022</h1>
+            <div class="pt-12 pr-2 pl-2 flex flex-row justify-around flex-wrap">
+                <div class="flex flex-row items-center m-2">
+                    <span class="text-white bg-[#5865F2] px-2 py-1 rounded text-xs">Type</span>
+                    <h1 class="pl-2 dark:text-white" th:text="${carDtoDetails.carType}">Sedan</h1>
+                </div>
+                <div class="flex flex-row items-center m-2">
+                    <span class="text-white bg-[#5865F2] px-2 py-1 rounded text-xs">Fuel</span>
+                    <h1 class="pl-2 dark:text-white" th:text="${carDtoDetails.fuelType}">Petrol</h1>
+                </div>
+                <div class="flex flex-row items-center m-2">
+                    <span class="text-white bg-[#5865F2] px-2 py-1 rounded text-xs">Color</span>
+                    <h1 class="pl-2 dark:text-white" th:text="${carDtoDetails.color}">White</h1>
+                </div>
+                <div class="flex flex-row items-center m-2">
+                    <span class="text-white bg-[#5865F2] px-2 py-1 rounded text-xs">Seats</span>
+                    <h1 class="pl-2 dark:text-white" th:text="${carDtoDetails.seat_available}">4</h1>
+                </div>
+            </div>
+            <div class="pt-4 pl-3">
+                <h1 class="text-md text-gray-500 dark:text-gray-300">Car Number: <span class="font-semibold text-black dark:text-white" th:text="${carDtoDetails.carNumber}">AB12CD3456</span></h1>
+                <h1 class="text-md text-gray-500 dark:text-gray-300">AC Available: <span class="font-semibold text-black dark:text-white" th:text="${carDtoDetails.ac_available ? 'Yes' : 'No'}">Yes</span></h1>
+            </div>
+        </div>
+    </div>
+</div>

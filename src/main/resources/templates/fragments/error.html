@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+    <title>Error</title>
+</head>
+<body>
+<div id="content" class="bg-gray-900 text-center mt-5 md:w-1/2 mx-auto">
+    <div th:insert="~{fragments/message::messagebox}"></div>
+    <button class="bg-blue-600 mt-2 text-white px-3 py-2 rounded">
+        Login
+    </button>
+</div>
+</body>
+<script>
+    console.log("Error Page");
+</script>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+    <title>Offer a Seat</title>
+</head>
+
+<body>
+<div id="content" class="bg-gray-900 text-gray-100">
+    <section>
+        <h1 class="text-3xl text-center p-5 font-bold">
+            <span class="text-blue-400">Publish</span> a <span class="text-blue-400">Ride</span> in Just <span class="text-blue-400">Minutes</span>
+        </h1>
+
+        <div class="container max-w-screen-xl mx-auto flex flex-col md:flex-row items-center lg:items-start pt-6 pb-16 px-4 md:px-0">
+
+            <!-- PublishCard -->
+            <div class="md:w-fit w-full justify-center mb-10 lg:mb-0">
+                <div class="w-[500px] bg-gray-800 rounded-xl shadow p-6 mx-auto md:mx-0">
+                    <div class="mb-4">
+                        <h2 class="text-lg font-semibold">Create a Ride</h2>
+                        <p class="text-sm text-gray-400">Publish your ride with just one click.</p>
+                    </div>
+                    <div th:insert="~{fragments/message::messagebox}"></div>
+
+                    <form class="space-y-6" id="publishRideForm" th:action="@{'/user/ride/process'}" th:object="${rideForm}" method="post">
+                        <input type="hidden" th:field="*{rideId}" id="rideId"/>
+
+                        <!-- From/To Addresses -->
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- From -->
+                            <div class="w-full md:w-1/2">
+                                <label for="fromAddress" class="block text-sm font-medium text-white mb-1">From (Address)</label>
+                                <input type="text" th:field="*{fromAddress}" id="fromAddress" name="fromAddress" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter full address" required />
+                                <label for="from" class="block text-sm font-medium text-white mt-4 mb-1">From (City)</label>
+                                <input type="text" id="from" th:field="*{fromCity}" name="from" list="from-list" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Select city" required />
+                                <datalist id="from-list"></datalist>
+                                <input type="hidden" th:field="*{fromLat}" id="fromLat" name="fromLat" />
+                                <input type="hidden" th:field="*{fromLng}" id="fromLon" name="fromLon" />
+                            </div>
+
+                            <!-- To -->
+                            <div class="w-full md:w-1/2">
+                                <label for="toAddress" class="block text-sm font-medium text-white mb-1">To (Address)</label>
+                                <input type="text" th:field="*{toAddress}" id="toAddress" name="toAddress" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter full address" required />
+
+                                <label for="to" class="block text-sm font-medium text-white mt-4 mb-1">To (City)</label>
+                                <input type="text" id="to" th:field="*{toCity}" name="to" list="to-list" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Select city" required />
+                                <datalist id="to-list"></datalist>
+                                <input type="hidden" th:field="*{toLat}" id="toLat" name="toLat" />
+                                <input type="hidden" th:field="*{toLng}" id="toLon" name="toLon" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="car" class="block text-sm font-medium text-white mb-1">Select a Car</label>
+                            <div th:if="${#lists.isEmpty(rideForm.available_car)}">
+                                <p class="text-sm text-red-400 mb-2">No car found. Please <a th:href="@{'/user/car/register'}" class="text-blue-400 underline">add your car</a> first.</p>
+                            </div>
+                            <div th:unless="${#lists.isEmpty(rideForm.available_car)}">
+                                <select id="car" name="car" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    <option value="">-- Choose a car --</option>
+                                    <option th:value="${rideForm.available_car.getLast()}" th:text="${rideForm.available_car.get(0)+' '+rideForm.available_car.get(1)}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Seats and Price -->
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <!-- Seats -->
+                            <div class="w-full md:w-1/2">
+                                <label class="block text-sm font-medium text-white mb-1">Available Seats</label>
+                                <div class="flex items-center space-x-4 bg-gray-700 px-4 py-2 rounded-xl">
+                                    <button type="button" onclick="adjustSeat(-1)" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold px-3 py-1 rounded">-</button>
+                                    <span id="seatValue" class="text-lg font-semibold text-white">1</span>
+                                    <button type="button" onclick="adjustSeat(1)" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold px-3 py-1 rounded">+</button>
+                                </div>
+                                <input type="hidden" id="seat" th:field="*{seat}" name="seat" value="1">
+                            </div>
+
+                            <!-- Price -->
+                            <div class="w-full md:w-1/2">
+                                <label for="price" class="block text-sm font-medium text-white mb-1">Price</label>
+                                <input type="number" th:field="*{price}" id="price" name="price" min="0" placeholder="Price" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                        </div>
+
+                        <!-- Departure Time -->
+                        <div>
+                            <label for="startTime" class="block text-sm font-medium text-white mb-1">Departure Time</label>
+                            <input type="datetime-local" th:field="*{departure_time}" id="startTime" name="startTime" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </div>
+
+                        <div class="w-full">
+                            <h3 class="text-white text-lg font-semibold mb-4">Preferences</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                <!-- Preference Card Template -->
+                                <label for="petsAllowed"
+                                       class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
+                                    <input type="checkbox" th:field="*{petsAllowed}" id="petsAllowed" name="petsAllowed" class="hidden peer" />
+                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
+                                        🐾
+                                    </div>
+                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
+                                        Pets Allowed
+                                    </div>
+                                </label>
+
+                                <label for="smokingAllowed" class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
+                                    <input type="checkbox" th:field="*{smokingAllowed}" id="smokingAllowed" name="smokingAllowed" class="hidden peer" />
+                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
+                                        🚬
+                                    </div>
+                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
+                                        Smoking Allowed
+                                    </div>
+                                </label>
+
+                                <label for="ac_available" class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
+                                    <input type="checkbox" th:field="*{ac_available}" id="ac_available" name="ac_available" class="hidden peer" />
+                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
+                                        ❄️
+                                    </div>
+                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
+                                        AC Available
+                                    </div>
+                                </label>
+
+                                <label for="luggage_allowed" class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
+                                    <input type="checkbox" th:field="*{luggage_allowed}" id="luggage_allowed" name="luggage_allowed" class="hidden peer" />
+                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
+                                        🧳
+                                    </div>
+                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
+                                        Luggage Allowed
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Submit -->
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition duration-200">
+                            Publish Ride
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div th:replace="~{/fragments/createRideStep :: steps}"></div>
+        </div>
+    </section>
+</div>
+<script th:src="@{'/js/coordinates.js'}"></script>
+<script th:src="@{'/js/createRide.js'}"></script>
+<script th:src="@{'/js/main.js'}" type="module"></script>
+</body>
+</html>

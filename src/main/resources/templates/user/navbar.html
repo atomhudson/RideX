@@ -1,0 +1,65 @@
+<header
+        th:fragment="navbar"
+        class="fixed w-full"
+>
+    <nav class="bg-white border-gray-200 py-2.5 dark:bg-gray-900">
+        <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto">
+            <a th:href="@{'/'}" class="flex items-center">
+                <img th:src="@{'/images/logo.svg'}" class="h-6 mr-3 sm:h-9" alt="RideX Logo" />
+                <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">RideX</span>
+            </a>
+
+            <div class="flex items-center gap- 4 lg:order-2">
+                <a th:href="@{'/searchRide'}" class="mr-4">
+                    <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #ffffff;"></i>
+                </a>
+                <a  th:if="${loggedInUser.roleList.get(0) == 'ROLE_USER'}" th:href="@{'/user/profile'}"
+                   class="hidden md:flex items-center gap-2 text-sm font-medium text-gray-800 dark:text-white hover:underline transition mr-4">
+                    <img th:src="@{${loggedInUser.profilePic}}"
+                         class="w-9 h-9 rounded-full border border-gray-300 shadow-md object-cover"
+                         alt="Profile picture"/>
+<!--                    <span th:text="${loggedInUser.fname.concat(' ').concat(loggedInUser.lname)}"></span>-->
+                </a>
+                <a  th:if="${loggedInUser.roleList.get(0) == 'ROLE_ADMIN'}" th:href="@{'/admin/dashboard'}"
+                    class="hidden md:flex items-center gap-2 text-sm font-medium text-gray-800 dark:text-white hover:underline transition mr-4">
+                    <img th:src="@{${loggedInUser.profilePic}}"
+                         class="w-9 h-9 rounded-full border border-gray-300 shadow-md object-cover"
+                         alt="Profile picture"/>
+                    <!--                    <span th:text="${loggedInUser.fname.concat(' ').concat(loggedInUser.lname)}"></span>-->
+                </a>
+                <a th:href="@{'/do-logout'}"
+                   class="hidden md:flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg text-sm px-4 py-2 transition dark:bg-red-700 dark:hover:bg-red-800 dark:focus:ring-red-500">
+                    Logout
+                </a>
+
+                <button data-collapse-toggle="mobile-menu-2" type="button"
+                        class="inline-flex items-center p-2 text-sm text-gray-600 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        aria-controls="mobile-menu-2" aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
+                <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                    <li>
+                        <a  href="#"  class="block py-2 pl-3 pr-4 text-white bg-purple-700 rounded lg:bg-transparent lg:text-purple-700 lg:p-0 dark:text-white"  aria-current="page" >Home</a>
+                    </li>
+                    <li>
+                        <a  th:href="@{'/company'}"  class="block py-2 pl-3 pr-4 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-purple-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700" >Company</a>
+                    </li>
+                    <li>
+                        <a  th:href="@{'/features'}"  class="block py-2 pl-3 pr-4 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-purple-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700" >Features</a>
+                    </li>
+                    <li>
+                        <a  th:href="@{'/team'}"  class="block py-2 pl-3 pr-4 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-purple-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700" >Team</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

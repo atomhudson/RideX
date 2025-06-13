@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+
+<head>
+    <title>Car Registration</title>
+</head>
+
+<body>
+<div id="content" class="bg-gray-900 min-h-screen py-12 px-4">
+    <div class="bg-gray-800 mx-auto max-w-4xl py-10 px-6 lg:px-12 shadow-xl rounded-lg mt-6">
+        <h1 class="text-3xl text-white text-center mb-6 font-semibold">Register Your Car</h1>
+        <div th:insert="~{fragments/message::messagebox}"></div>
+        <form method="post" th:action="@{'/user/car/register-process'}" th:object="${car}" enctype="multipart/form-data">
+            <div class="bg-gray-800 rounded px-8 pt-6 pb-8 mb-4">
+
+                <!-- Make and Model -->
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="carMake">Car Make</label>
+                        <select id="carMake" name="carMake" th:field="*{carMake}"
+                                class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                            <option value="" disabled selected>Select Make</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('carMake')}" th:errors="*{carMake}" class="text-red-600 px-1 py-2">
+                            Please select the car manufacturer.
+                        </p>
+
+                    </div>
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="carModel">Car Model</label>
+                        <select id="carModel" name="carModel" th:field="*{carModel}"
+                                class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                            <option value="" disabled selected>Select Model</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('carModel')}" th:errors="*{carModel}" class="text-red-600 px-1 py-2">
+                            Please choose the car model.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Year & Type -->
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="year">Year</label>
+                        <select id="year" name="year" th:field="*{year}"
+                                class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                            <option value="" disabled selected>Select Year</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('year')}" th:errors="*{year}" class="text-red-600 px-1 py-2">
+                            Year of registration is required. Please select a valid year.
+                        </p>
+                    </div>
+                    <div class="md:w-full px-3 mb-6">
+                        <label class="block text-white text-sm font-bold mb-2" for="carType">Car Type</label>
+                        <select id="carType" name="carType" th:field="*{carType}"
+                                class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                            <option value="" disabled selected>Select Car Type</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('carType')}" th:errors="*{carType}" class="text-red-600 px-1 py-2">
+                            Please specify the type of your car (e.g., Sedan, SUV).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Color & Fuel -->
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="color">Color</label>
+                        <input id="color" th:field="*{color}" type="text"
+                               class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                        <p th:if="${#fields.hasErrors('color')}" th:errors="*{color}" class="text-red-600 px-1 py-2">
+                            Please enter the color of your car.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="fuelType">Fuel Type</label>
+                        <select id="fuelType" name="fuelType" th:field="*{fuelType}"
+                                class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                            <option value="" disabled selected>Select Fuel Type</option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('fuelType')}" th:errors="*{fuelType}" class="text-red-600 px-1 py-2">
+                            Please select the fuel type (e.g., Petrol, Diesel, Electric).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Car Number & Seats -->
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="carNumber">Car Number</label>
+                        <input id="carNumber" th:field="*{carNumber}" type="text"
+                               class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                        <p th:if="${#fields.hasErrors('carNumber')}" th:errors="*{carNumber}" class="text-red-600 px-1 py-2">
+                            Please enter your car's registration number.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 px-3">
+                        <label class="block text-white text-sm font-bold mb-2" for="seat_available">Seats
+                            Available</label>
+                        <input id="seat_available" th:field="*{seat_available}" type="number" min="1" max="15"
+                               class="w-full bg-gray-700 text-white border border-gray-600 rounded py-3 px-4">
+                    </div>
+                </div>
+
+                <!-- AC Available -->
+                <div class="mb-6">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" th:field="*{ac_available}" id="ac_available"
+                               class="form-checkbox h-5 w-5 text-gray-400 bg-gray-700 border-gray-600">
+                        <span class="ml-2 text-sm text-white">AC Available</span>
+                    </label>
+                </div>
+
+                <!-- Car Images Upload -->
+                <div class="mb-6">
+                    <label class="block mb-2 text-sm font-medium text-white">Upload Car Images (Max 3)</label>
+                    <input id="car_image_url" th:field="*{carImages}" name="carImages" type="file" multiple accept="image/*"
+                           class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
+                    <p th:if="${#fields.hasErrors('carImages')}" th:errors="*{carImages}" class="text-red-600 px-1 py-2">
+                        Please upload at least one clear image of your car.
+                    </p>
+                    <div id="preview_container" class="flex flex-wrap gap-4 mt-4"></div>
+                </div>
+
+
+                <!-- Submit -->
+                <div class="mt-4">
+                    <button type="submit"
+                            class="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
+                        Register Car
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{'/js/car.js'}"></script>
+<script th:src="@{'/js/carType.js'}"></script>
+<script th:src="@{'/js/fuelType.js'}"></script>
+<script th:src="@{'/js/carForm.js'}"></script>
+</body>
+
+</html>

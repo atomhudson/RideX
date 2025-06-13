@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::content}, ~{::title}, ~{::script})}">
+<title th:fragment="title">Request Submitted</title>
+<div th:fragment="content" class="h-screen bg-gray-900">
+    <div class="max-w-3xl mx-auto px-4 py-10">
+        <div class="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-10 shadow-2xl text-center space-y-8 max-w-xl mx-auto mt-24 overflow-hidden ring-1 ring-gray-700/50">
+            <div class="absolute -top-16 -left-16 w-72 h-72 bg-green-500 opacity-20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-16 -right-16 w-72 h-72 bg-blue-500 opacity-20 rounded-full blur-3xl"></div>
+            <div class="flex justify-center">
+                <div class="bg-green-100 rounded-full p-6 shadow-inner animate-pulse">
+                    <svg class="h-12 w-12 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="text-4xl font-extrabold text-white drop-shadow-lg">Request Submitted</h2>
+            <p class="text-gray-200 text-lg leading-relaxed">
+                Thank you for submitting your details. We’ve successfully received your information and uploaded your Government ID.
+            </p>
+            <p class="text-gray-300 text-base leading-relaxed">
+                Our team will now review your ID. Once verified, you’ll receive a confirmation email at
+                <span class="text-blue-400 font-semibold underline underline-offset-2 decoration-dotted" th:text="${userEmail}">demo@demo.test</span>.
+            </p>
+            <div class="pt-6">
+                <button onclick="window.location.href='/user/profile'" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-base rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    ⬅ Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<script th:fragment="script">
+    console.log("Request Submitted page loaded");
+</script>
+</html>
