@@ -1,94 +1,95 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
-<head>
-    <title>Share Your Ride - RideX</title>
-</head>
+<head><title>Share Your Ride — RideX</title></head>
 <body>
-    <div id="content" class="pt-20 bg-gray-900">
-        <!-- Main Content -->
-        <main class="container mx-auto px-4 py-8 max-w-4xl">
-            <h1 class="text-3xl font-bold text-white mb-8">Share Your Ride</h1>
-            
-            <div class="prose dark:prose-invert max-w-none">
-                <section class="mb-8">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Why Share Your Ride?</h2>
-                    <ul class="list-disc pl-6 text-white mb-4">
-                        <li>Split your travel costs with fellow commuters</li>
-                        <li>Reduce your carbon footprint</li>
-                        <li>Make your daily commute more enjoyable</li>
-                        <li>Help reduce traffic congestion</li>
-                        <li>Meet new people in your community</li>
-                    </ul>
-                </section>
-
-                <section class="mb-8">
-                    <h2 class="text-2xl font-semibold text-white mb-4">How It Works</h2>
-                    <div class="space-y-4 text-white">
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">1. Plan Your Trip</h3>
-                            <p>Enter your regular route or one-time trip details</p>
-                        </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">2. Set Your Preferences</h3>
-                            <p>Choose your preferred pickup points and number of passengers</p>
-                        </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">3. Share Your Ride</h3>
-                            <p>Post your trip and wait for passengers to join</p>
-                        </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">4. Connect with Passengers</h3>
-                            <p>Review and accept passenger requests</p>
-                        </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">5. Enjoy the Ride</h3>
-                            <p>Share your journey and split the costs</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="mb-8">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Cost Sharing</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-white">
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">Fair Pricing</h3>
-                            <p>Split costs based on distance and number of passengers</p>
-                        </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">Secure Payments</h3>
-                            <p>Easy in-app payments between riders</p>
-                        </div>
-                        <div class="p-4 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-2">Transparent</h3>
-                            <p>Clear cost breakdown before the trip</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="mb-8">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Ready to Share?</h2>
-                    <div class="text-center">
-                        <a href="/share-ride" class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                            Start Sharing
-                        </a>
-                    </div>
-                </section>
-
-                <section class="mb-8">
-                    <h2 class="text-2xl font-semibold text-white mb-4">Need Help?</h2>
-                    <p class="text-white mb-4">
-                        Our support team is here to help you get started. Contact us at:
-                    </p>
-                    <ul class="list-disc pl-6 text-white mb-4">
-                        <li>Email: ridexspringapp@gmail.com</li>
-                        <li>Address: NIET campus, plot no. 19, Knowledge Park, Greater Noida, Uttar Pradesh, India</li>
-                    </ul>
-                </section>
+<div id="content" style="background: var(--rx-bg-primary);">
+    <section class="rx-section" style="padding-top: 120px;">
+        <div class="rx-container" style="max-width: 860px;">
+            <div class="rx-section-header rx-reveal" style="margin-bottom: 40px;">
+                <h2>Share Your <span class="rx-text-accent">Ride</span></h2>
             </div>
-        </main>
-    </div>
-    <script>
-        console.log("Share Your Ride");
-    </script>
+
+            <!-- Why Share -->
+            <div class="rx-card rx-reveal" style="margin-bottom: 24px;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 12px;">Why Share Your Ride?</h3>
+                <ul style="padding-left: 20px; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; color: var(--rx-text-secondary);">
+                    <li>Split your travel costs with fellow commuters</li>
+                    <li>Reduce your carbon footprint</li>
+                    <li>Make your daily commute more enjoyable</li>
+                    <li>Help reduce traffic congestion</li>
+                    <li>Meet new people in your community</li>
+                </ul>
+            </div>
+
+            <!-- How It Works -->
+            <div class="rx-reveal rx-reveal-delay-1" style="margin-bottom: 40px;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 16px;">How It Works</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="rx-card" style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: var(--rx-radius-sm); background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">1</div>
+                        <div><h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 4px;">Plan Your Trip</h4><p style="font-size: 0.84rem; color: var(--rx-text-muted); margin: 0;">Enter your regular route or one-time trip details</p></div>
+                    </div>
+                    <div class="rx-card" style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: var(--rx-radius-sm); background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">2</div>
+                        <div><h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 4px;">Set Your Preferences</h4><p style="font-size: 0.84rem; color: var(--rx-text-muted); margin: 0;">Choose your preferred pickup points and number of passengers</p></div>
+                    </div>
+                    <div class="rx-card" style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: var(--rx-radius-sm); background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">3</div>
+                        <div><h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 4px;">Share Your Ride</h4><p style="font-size: 0.84rem; color: var(--rx-text-muted); margin: 0;">Post your trip and wait for passengers to join</p></div>
+                    </div>
+                    <div class="rx-card" style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: var(--rx-radius-sm); background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">4</div>
+                        <div><h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 4px;">Connect with Passengers</h4><p style="font-size: 0.84rem; color: var(--rx-text-muted); margin: 0;">Review and accept passenger requests</p></div>
+                    </div>
+                    <div class="rx-card" style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: var(--rx-radius-sm); background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">5</div>
+                        <div><h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 4px;">Enjoy the Ride</h4><p style="font-size: 0.84rem; color: var(--rx-text-muted); margin: 0;">Share your journey and split the costs</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Sharing -->
+            <div class="rx-reveal rx-reveal-delay-2" style="margin-bottom: 40px;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 16px;">Cost Sharing</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                    <div class="rx-card" style="text-align: center;">
+                        <div class="rx-feature-icon"><i class="fa-solid fa-coins"></i></div>
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 12px 0 6px;">Fair Pricing</h4>
+                        <p style="font-size: 0.8rem; color: var(--rx-text-muted); margin: 0;">Split costs based on distance and passengers</p>
+                    </div>
+                    <div class="rx-card" style="text-align: center;">
+                        <div class="rx-feature-icon"><i class="fa-solid fa-lock"></i></div>
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 12px 0 6px;">Secure Payments</h4>
+                        <p style="font-size: 0.8rem; color: var(--rx-text-muted); margin: 0;">Easy in-app payments between riders</p>
+                    </div>
+                    <div class="rx-card" style="text-align: center;">
+                        <div class="rx-feature-icon"><i class="fa-solid fa-eye"></i></div>
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--rx-text-primary); margin: 12px 0 6px;">Transparent</h4>
+                        <p style="font-size: 0.8rem; color: var(--rx-text-muted); margin: 0;">Clear cost breakdown before the trip</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="rx-reveal" style="text-align: center; margin-bottom: 40px;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 16px;">Ready to Share?</h3>
+                <a th:href="@{'/user/ride/create'}" class="rx-btn rx-btn-primary" style="padding: 14px 40px;">
+                    Start Sharing <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
+                </a>
+            </div>
+
+            <!-- Help -->
+            <div class="rx-card rx-reveal" style="margin-bottom: 24px;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 12px;">Need Help?</h3>
+                <p style="font-size: 0.84rem; color: var(--rx-text-secondary); margin: 0 0 8px;">Our support team is here to help you get started:</p>
+                <ul style="padding-left: 20px; margin: 0; font-size: 0.84rem; color: var(--rx-text-muted);">
+                    <li>Email: ridexspringapp@gmail.com</li>
+                    <li>Address: NIET campus, plot no. 19, Knowledge Park, Greater Noida, Uttar Pradesh, India</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+<script>console.log("Share Your Ride");</script>
 </body>
-</html> 
+</html>

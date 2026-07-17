@@ -1,34 +1,23 @@
 <!DOCTYPE html>
-<html lang="en"
-      th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
-<head>
-    <title>Success</title>
-</head>
-<body class="bg-gray-900">
-<div id="content" class="bg-gray-900 text-center mx-auto">
-    <div class="flex items-center justify-center h-screen">
-        <div class="shadow-lg bg-gradient-to-r from-purple-500 via-green-500 to-blue-500 p-2 rounded-xl">
-            <div class="flex flex-col items-center p-10 space-y-6 bg-gray-900 rounded-xl w-[30rem] max-w-full">
-                <svg xmlns="http://www.w3.org/2000/svg" class="text-green-600 w-32 h-32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Thank You!</h1>
-
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
+<head><title>Success — RideX</title></head>
+<body>
+<div id="content" style="background: var(--rx-bg-primary);">
+    <section class="rx-section" style="padding-top: 140px;">
+        <div class="rx-container">
+            <div class="rx-form-card rx-reveal" style="max-width: 520px; text-align: center;">
+                <div style="margin-bottom: 24px;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: var(--rx-accent);"></i>
+                </div>
+                <h1 style="font-size: 2rem;">Thank You!</h1>
                 <div th:insert="~{fragments/message::messagebox}"></div>
-
-                <a th:href="@{'/login'}" class="inline-flex items-center px-6 py-3 text-lg text-white bg-indigo-600 border border-indigo-600 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-3" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-                    </svg>
-                    <span class="font-semibold">Login</span>
+                <a th:href="@{'/login'}" class="rx-btn rx-btn-primary" style="margin-top: 20px; padding: 12px 32px;">
+                    <i class="fa-solid fa-arrow-left" style="margin-right: 6px;"></i> Login
                 </a>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 </body>
-<script>
-    console.log("Success Page");
-</script>
+<script>console.log("Success Page");</script>
 </html>

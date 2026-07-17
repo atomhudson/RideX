@@ -1,6 +1,5 @@
 package com.RideX.carpooling.scheduler;
 
-import com.RideX.carpooling.controller.RideController;
 import com.RideX.carpooling.helpers.AppConstants;
 import com.RideX.carpooling.model.Rides;
 import com.RideX.carpooling.model.User;

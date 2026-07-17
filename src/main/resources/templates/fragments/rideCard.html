@@ -1,109 +1,117 @@
 <!-- Page Container -->
-<div th:fragment="rideCardsWithFilter" class="max-w-7xl mx-auto px-4 mt-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+<div th:fragment="rideCardsWithFilter" style="display: grid; grid-template-columns: 280px 1fr; gap: 24px;">
 
     <!-- Filters Sidebar -->
-    <aside class="md:col-span-1 from-gray-900 via-gray-800 to-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-700/40 bg-gray-900">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-extrabold text-blue-400 tracking-wide flex items-center gap-2">
-                <i class="fa-solid fa-sliders text-blue-400"></i> Filters
-            </h2>
-            <button id="clearFilters" class="text-sm text-red-400 hover:underline hover:text-red-300 transition">Clear all</button>
+    <aside class="rx-filter-sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h2><i class="fa-solid fa-sliders" style="margin-right: 8px;"></i> Filters</h2>
+            <button id="clearFilters" style="font-size: 0.8rem; color: #ef4444; background: none; border: none; cursor: pointer;">Clear all</button>
         </div>
 
         <!-- Sort By -->
-        <div class="mb-6">
-            <h3 class="text-lg font-semibold text-white mb-3">Sort by</h3>
-            <ul class="space-y-3 text-sm text-gray-300">
-                <li class="flex items-center">
-                    <input type="radio" name="sort" id="earliest" value="earliest" class="accent-blue-500 mr-3" data-filter="sort">
-                    <label for="earliest" class="cursor-pointer hover:text-blue-400 transition">Earliest departure</label>
+        <div style="margin-bottom: 24px;">
+            <h3>Sort by</h3>
+            <ul>
+                <li>
+                    <label>
+                        <input type="radio" name="sort" id="earliest" value="earliest" data-filter="sort">
+                        Earliest departure
+                    </label>
                 </li>
-                <li class="flex items-center">
-                    <input type="radio" name="sort" id="lowest" value="lowest" class="accent-blue-500 mr-3" data-filter="sort">
-                    <label for="lowest" class="cursor-pointer hover:text-blue-400 transition">Lowest price</label>
+                <li>
+                    <label>
+                        <input type="radio" name="sort" id="lowest" value="lowest" data-filter="sort">
+                        Lowest price
+                    </label>
                 </li>
-                <li class="flex items-center">
-                    <input type="radio" name="sort" id="close-departure" value="close-departure" class="accent-blue-500 mr-3" data-filter="sort">
-                    <label for="close-departure" class="cursor-pointer hover:text-blue-400 transition">Close to departure point</label>
+                <li>
+                    <label>
+                        <input type="radio" name="sort" id="close-departure" value="close-departure" data-filter="sort">
+                        Close to departure
+                    </label>
                 </li>
-                <li class="flex items-center">
-                    <input type="radio" name="sort" id="close-arrival" value="close-arrival" class="accent-blue-500 mr-3" data-filter="sort">
-                    <label for="close-arrival" class="cursor-pointer hover:text-blue-400 transition">Close to arrival point</label>
+                <li>
+                    <label>
+                        <input type="radio" name="sort" id="close-arrival" value="close-arrival" data-filter="sort">
+                        Close to arrival
+                    </label>
                 </li>
-                <li class="flex items-center">
-                    <input type="radio" name="sort" id="shortest" value="shortest" class="accent-blue-500 mr-3" data-filter="sort">
-                    <label for="shortest" class="cursor-pointer hover:text-blue-400 transition">Shortest ride</label>
+                <li>
+                    <label>
+                        <input type="radio" name="sort" id="shortest" value="shortest" data-filter="sort">
+                        Shortest ride
+                    </label>
                 </li>
             </ul>
         </div>
 
         <!-- Departure Time -->
-        <div class="mb-6">
-            <h3 class="text-lg font-semibold text-white mb-3">Departure time</h3>
-            <ul class="space-y-3 text-sm text-gray-300">
-                <li class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="accent-blue-500 mr-3" data-filter="time" value="06:00-12:00">
+        <div style="margin-bottom: 24px;">
+            <h3>Departure time</h3>
+            <ul>
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>
+                        <input type="checkbox" data-filter="time" value="06:00-12:00">
                         06:00 - 12:00
                     </label>
-                    <span class="text-gray-500" th:text="'(' + ${morningCount} + ')'">(0)</span>
+                    <span style="font-size: 0.75rem; color: var(--rx-text-muted);" th:text="'(' + ${morningCount} + ')'">(0)</span>
                 </li>
-                <li class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="accent-blue-500 mr-3" data-filter="time" value="12:01-18:00">
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>
+                        <input type="checkbox" data-filter="time" value="12:01-18:00">
                         12:01 - 18:00
                     </label>
-                    <span class="text-gray-500" th:text="'(' + ${afternoonCount} + ')'">(0)</span>
+                    <span style="font-size: 0.75rem; color: var(--rx-text-muted);" th:text="'(' + ${afternoonCount} + ')'">(0)</span>
                 </li>
-                <li class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="accent-blue-500 mr-3" data-filter="time" value="18:01-23:59">
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>
+                        <input type="checkbox" data-filter="time" value="18:01-23:59">
                         After 18:00
                     </label>
-                    <span class="text-gray-500" th:text="'(' + ${eveningCount} + ')'">(0)</span>
+                    <span style="font-size: 0.75rem; color: var(--rx-text-muted);" th:text="'(' + ${eveningCount} + ')'">(0)</span>
                 </li>
             </ul>
         </div>
 
         <!-- Amenities -->
         <div>
-            <h3 class="text-lg font-semibold text-white mb-3">Amenities</h3>
-            <ul class="space-y-3 text-sm text-gray-300">
-                <li class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="accent-blue-500 mr-3" data-filter="amenity" value="ac">
+            <h3>Amenities</h3>
+            <ul>
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>
+                        <input type="checkbox" data-filter="amenity" value="ac">
                         AC Available
                     </label>
-                    <span class="text-gray-500" th:text="'(' + ${acCount} + ')'">(0)</span>
+                    <span style="font-size: 0.75rem; color: var(--rx-text-muted);" th:text="'(' + ${acCount} + ')'">(0)</span>
                 </li>
-                <li class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="accent-blue-500 mr-3" data-filter="amenity" value="luggage">
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>
+                        <input type="checkbox" data-filter="amenity" value="luggage">
                         Luggage Allowed
                     </label>
-                    <span class="text-gray-500" th:text="'(' + ${luggageCount} + ')'">(0)</span>
+                    <span style="font-size: 0.75rem; color: var(--rx-text-muted);" th:text="'(' + ${luggageCount} + ')'">(0)</span>
                 </li>
-                <li class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="accent-blue-500 mr-3" data-filter="amenity" value="smoking">
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>
+                        <input type="checkbox" data-filter="amenity" value="smoking">
                         Smoking Allowed
                     </label>
-                    <span class="text-gray-500" th:text="'(' + ${smokingCount} + ')'">(0)</span>
+                    <span style="font-size: 0.75rem; color: var(--rx-text-muted);" th:text="'(' + ${smokingCount} + ')'">(0)</span>
                 </li>
-                <li class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="accent-blue-500 mr-3" data-filter="amenity" value="pets">
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>
+                        <input type="checkbox" data-filter="amenity" value="pets">
                         Pets Allowed
                     </label>
-                    <span class="text-gray-500" th:text="'(' + ${petsCount} + ')'">(0)</span>
+                    <span style="font-size: 0.75rem; color: var(--rx-text-muted);" th:text="'(' + ${petsCount} + ')'">(0)</span>
                 </li>
             </ul>
         </div>
     </aside>
 
-    <!-- Main Content: Search + Ride Cards -->
-    <main class="md:col-span-3 space-y-6">
-        <ul id="rideList" class="space-y-6">
+    <!-- Main Content: Ride Cards -->
+    <main>
+        <ul id="rideList" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px;">
             <li th:each="ride : ${matchedRides}" th:if="${ride.rideStatus == 'PLANNED' or ride.rideStatus == 'ONGOING'}"
                 th:data-amenities="${#strings.concat(
                     #strings.concat(
@@ -117,42 +125,33 @@
                         ride.allowPets ? 'pets' : ''
                     )
                 )}">
-                <div class="bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col md:flex-row justify-between items-center gap-6 hover:bg-gray-700">
-                    <!-- Ride Card Content -->
-                    <div class="flex items-center gap-6 p-4 bg-gray-800 rounded-xl shadow-lg border border-gray-800 max-w-xl hover:shadow-xl transition-shadow duration-300">
-                        <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center shadow-sm">
-                            <i class="fa-solid fa-car fa-2xl" style="color: #ffffff;"></i>
+                <div class="rx-card" style="display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;">
+                    <!-- Route Info -->
+                    <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                        <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--rx-accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-car" style="color: var(--rx-accent); font-size: 1.1rem;"></i>
                         </div>
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-2 text-blue-600 text-lg font-bold">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 700; color: var(--rx-text-primary);">
                                 <span th:text="${ride.sourceCity}">Delhi</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                </svg>
+                                <i class="fa-solid fa-arrow-right" style="font-size: 0.7rem; color: var(--rx-accent);"></i>
                                 <span th:text="${ride.destinationCity}">Chandigarh</span>
                             </div>
-                            <div class="flex flex-wrap items-center gap-2 mt-2 text-sm font-medium text-gray-600">
-                                <div class="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
-                                    📅 <span th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">10 May 2025</span>
-                                </div>
-                                <div class="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
-                                    🕘 <span th:text="${#dates.format(ride.startTime, 'HH:mm')}">09:00</span>
-                                </div>
-                                <div class="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
-                                    👤 <span th:text="${ride.driver.fName}+' '+${ride.driver.lName}">Rahul Sharma</span>
-                                </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                                <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">10 May 2025</span>
+                                <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'HH:mm')}">09:00</span>
+                                <span class="rx-badge" th:text="${ride.driver.fName + ' ' + ride.driver.lName}">Driver Name</span>
                             </div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-3xl font-extrabold text-green-400" th:text="'₹' + ${ride.price}">
-                            ₹150 <span class="text-base font-medium text-gray-400">/seat</span>
+
+                    <!-- Price & Action -->
+                    <div style="text-align: right; flex-shrink: 0;">
+                        <p style="font-size: 1.5rem; font-weight: 800; color: var(--rx-accent); margin: 0;" th:text="'₹' + ${ride.price}">
+                            ₹150
                         </p>
-                        <a th:href="@{'/user/ride/detail/' + ${ride.rideId}}" class="mt-3 inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-2.5 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
-                            Check Ride Details
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
+                        <a th:href="@{'/user/ride/detail/' + ${ride.rideId}}" class="rx-btn rx-btn-outline" style="margin-top: 8px; font-size: 0.84rem; padding: 8px 20px;">
+                            View Details <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem; margin-left: 4px;"></i>
                         </a>
                     </div>
                 </div>

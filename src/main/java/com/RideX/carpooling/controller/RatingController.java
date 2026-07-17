@@ -3,7 +3,6 @@ package com.RideX.carpooling.controller;
 import com.RideX.carpooling.helpers.GetCurrentLoggedInUser;
 import com.RideX.carpooling.model.Rating;
 import com.RideX.carpooling.model.User;
-import com.RideX.carpooling.repositories.UserRepository;
 import com.RideX.carpooling.services.RatingService;
 import com.RideX.carpooling.services.UserServices;
 import jakarta.servlet.http.HttpSession;
@@ -24,9 +23,6 @@ public class RatingController {
 
     @Autowired
     private UserServices userServices;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private GetCurrentLoggedInUser getCurrentLoggedInUser;

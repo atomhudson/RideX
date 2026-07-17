@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler{

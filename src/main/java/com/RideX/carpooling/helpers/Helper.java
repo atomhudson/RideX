@@ -1,7 +1,5 @@
 package com.RideX.carpooling.helpers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -13,8 +11,6 @@ import java.util.regex.Pattern;
 
 @Component
 public class Helper {
-
-    private static Logger logger = LoggerFactory.getLogger(Helper.class);
 
     @Value("${server.baseUrl}")
     private String baseUrl;

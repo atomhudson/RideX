@@ -110,8 +110,21 @@ public class PageController {
     public String processRegister(@Valid @ModelAttribute UserForm userForm, BindingResult rBindingResult, RedirectAttributes redirectAttributes, HttpSession session) {
         if (rBindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("userForm", userForm);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userForm", rBindingResult);
             return "redirect:/signup";
         }
+
+        // Check for duplicate email
+        User existingUser = userServices.getUserByEmail(userForm.getEmail());
+        if (existingUser != null) {
+            Message message = new Message();
+            message.setContent("An account with this email already exists. Please use a different email or login.");
+            message.setType(MessageType.red);
+            session.setAttribute("message", message);
+            redirectAttributes.addFlashAttribute("userForm", userForm);
+            return "redirect:/signup";
+        }
+
         User user = new User();
         user.setfName(userForm.getFirstName());
         user.setlName(userForm.getLastName());
@@ -122,12 +135,23 @@ public class PageController {
         user.setProfilePic("https://res.cloudinary.com/dgv8awzpn/image/upload/v1732823751/samples/man-portrait.jpg");
         user.setDateCreate(new Date());
         user.setDateUpdate(new Date());
-        User savedUser = userServices.saveUser(user);
-        System.out.println("user saved :"+savedUser);
-        Message message = new Message();
-        message.setContent("Registration Successful");
-        message.setType(MessageType.green);
-        session.setAttribute("message", message);
-        return "redirect:/signup";
+
+        try {
+            User savedUser = userServices.saveUser(user);
+            logger.info("User saved: {}", savedUser.getUserId());
+            Message message = new Message();
+            message.setContent("Registration successful! Please check your email to verify your account, then log in.");
+            message.setType(MessageType.green);
+            session.setAttribute("message", message);
+            return "redirect:/login";
+        } catch (Exception e) {
+            logger.error("Error saving user: {}", e.getMessage());
+            Message message = new Message();
+            message.setContent("Registration failed. Please try again.");
+            message.setType(MessageType.red);
+            session.setAttribute("message", message);
+            redirectAttributes.addFlashAttribute("userForm", userForm);
+            return "redirect:/signup";
+        }
     }
 }

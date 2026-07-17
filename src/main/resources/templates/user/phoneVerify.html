@@ -1,173 +1,105 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{index :: parent(~{::#content}, ~{::title}, ~{::#pageScript})}">
-<head>
-    <title>Phone Verification</title>
-</head>
+<head><title>Phone Verification — RideX</title></head>
 <body>
-<!-- BEGIN CONTENT -->
-<div id="content" class="h-screen bg-gray-900"
+<div id="content" style="background: var(--rx-bg-primary);"
      x-data="app()"
      th:attr="x-init=|initialize('__${phone}__', '__${step}__', '__${errorMessage}__')|"
      x-cloak>
-    <div class="max-w-xl mx-auto px-4 py-10 text-white">
-        <template x-if="step !== 'complete'">
-            <div>
-                <!-- Progress Header -->
-                <div class="mb-6 border-b pb-4">
-                    <div class="uppercase text-sm font-semibold text-gray-400 mb-2" x-text="`Step ${step} of 2`"></div>
-                    <div class="text-xl font-bold" x-show="step === 1">Enter Your Phone Number</div>
-                    <div class="text-xl font-bold" x-show="step === 2">Enter OTP Sent to Your Phone</div>
-                </div>
-
-                <!-- Form -->
-                <form th:action="@{/user/phoneVerify}" method="post" x-ref="form">
-                    <!-- Hidden Field -->
-                    <input type="hidden" name="phone" :value="phone">
-
-                    <!-- Step 1 -->
-                    <div x-show="step === 1" class="space-y-5">
-                        <input type="text" name="phone_display" x-model="phone" placeholder="Enter phone number"
-                               class="w-full px-4 py-3 rounded-lg bg-white text-gray-800 shadow-sm focus:outline-none"
-                               required>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div x-show="step === 2" class="space-y-5">
-                        <input type="text" name="otp" x-model="otp" placeholder="Enter OTP"
-                               class="w-full px-4 py-3 rounded-lg bg-white text-gray-800 shadow-sm focus:outline-none"
-                               required>
-
-                        <!-- Resend OTP Button -->
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-400">Didn’t receive the code?</span>
-                            <button @click="resendOtp"
-                                    class="text-sm text-blue-400 hover:text-blue-600 underline font-medium"
-                                    :disabled="resendDisabled">
-                                <span x-text="resendDisabled ? `Resend in ${resendTimer}s` : 'Resend OTP'"></span>
-                            </button>
+    <section class="rx-section" style="padding-top: 140px;">
+        <div class="rx-container" style="max-width: 520px;">
+            <template x-if="step !== 'complete'">
+                <div>
+                    <div style="margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--rx-border);">
+                        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rx-text-muted); margin-bottom: 8px;" x-text="`Step ${step} of 2`"></div>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--rx-text-primary);">
+                            <span x-show="step === 1">Enter Your Phone Number</span>
+                            <span x-show="step === 2">Enter OTP Sent to Your Phone</span>
                         </div>
                     </div>
 
-                </form>
-            </div>
-        </template>
+                    <form th:action="@{/user/phoneVerify}" method="post" x-ref="form">
+                        <input type="hidden" name="phone" :value="phone">
 
-        <!-- Success Message -->
-        <template x-if="step === 'complete'">
-            <div class="bg-green-100 text-green-800 text-center p-6 rounded-lg">
-                ✅ Phone number verified successfully!
-            </div>
-        </template>
+                        <div x-show="step === 1">
+                            <div class="rx-form-group">
+                                <input type="text" name="phone_display" x-model="phone" placeholder="Enter phone number" class="rx-form-input" required />
+                            </div>
+                        </div>
 
-        <!-- Error Message -->
-        <template x-if="errorMessage">
-            <div class="bg-red-100 text-red-700 text-center p-4 mt-4 rounded-lg" x-text="errorMessage"></div>
-        </template>
-    </div>
+                        <div x-show="step === 2" style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="rx-form-group">
+                                <input type="text" name="otp" x-model="otp" placeholder="Enter OTP" class="rx-form-input" required />
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.8rem; color: var(--rx-text-muted);">Didn't receive the code?</span>
+                                <button @click="resendOtp" class="rx-link" style="font-size: 0.8rem; background: none; border: none; cursor: pointer;" :disabled="resendDisabled">
+                                    <span x-text="resendDisabled ? `Resend in ${resendTimer}s` : 'Resend OTP'"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </template>
 
-    <!-- Navigation Buttons -->
-    <div class="sticky bottom-0 left-0 right-0 py-5 bg-gray-900" x-show="step !== 'complete'">
-        <div class="flex justify-between max-w-xl mx-auto px-4">
-            <button x-show="step > 1" @click="step--"
-                    class="w-32 py-2 px-4 rounded-lg bg-white text-gray-700 hover:bg-gray-100 font-medium">
-                Previous
-            </button>
-            <div>
-                <button x-show="step === 1" @click="nextStep()"
-                        class="w-32 py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 font-medium">
-                    Send OTP
-                </button>
-                <button x-show="step === 2" @click="verifyOtp()"
-                        class="w-32 py-2 px-4 rounded-lg bg-green-500 text-white hover:bg-green-600 font-medium">
-                    Verify
-                </button>
+            <template x-if="step === 'complete'">
+                <div style="background: rgba(16,185,129,0.1); padding: 24px; border-radius: var(--rx-radius-md); text-align: center; color: var(--rx-accent); font-weight: 600;">
+                    ✅ Phone number verified successfully!
+                </div>
+            </template>
+
+            <template x-if="errorMessage">
+                <div style="background: rgba(239,68,68,0.1); padding: 16px; border-radius: var(--rx-radius-sm); text-align: center; color: #ef4444; margin-top: 16px; font-size: 0.84rem;" x-text="errorMessage"></div>
+            </template>
+        </div>
+
+        <div style="position: sticky; bottom: 0; left: 0; right: 0; padding: 20px 0; background: var(--rx-bg-primary);" x-show="step !== 'complete'">
+            <div style="display: flex; justify-content: space-between; max-width: 520px; margin: 0 auto; padding: 0 16px;">
+                <button x-show="step > 1" @click="step--" class="rx-btn rx-btn-outline" style="padding: 10px 24px;">Previous</button>
+                <div>
+                    <button x-show="step === 1" @click="nextStep()" class="rx-btn rx-btn-primary" style="padding: 10px 24px;">Send OTP</button>
+                    <button x-show="step === 2" @click="verifyOtp()" class="rx-btn rx-btn-primary" style="padding: 10px 24px;">Verify</button>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
-<!-- PAGE-SPECIFIC SCRIPT -->
 <div id="pageScript">
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
     <style>[x-cloak] { display: none; }</style>
     <script>
         function app() {
             return {
-                step: 1,
-                phone: '',
-                otp: '',
-                errorMessage: '',
-                resendDisabled: false,
-                resendTimer: 30,
-                resendInterval: null,
-
+                step: 1, phone: '', otp: '', errorMessage: '',
+                resendDisabled: false, resendTimer: 30, resendInterval: null,
                 initialize(serverPhone, serverStep, serverError) {
                     if (serverPhone && serverPhone !== 'null') this.phone = serverPhone;
                     if (serverStep === '2') this.step = 2;
                     if (serverError && serverError !== 'null') this.errorMessage = serverError;
                 },
-
                 nextStep() {
-                    if (!this.phone || !this.phone.match(/^\d{10}$/)) {
-                        this.errorMessage = 'Please enter a valid 10-digit phone number.';
-                        return;
-                    }
+                    if (!this.phone || !this.phone.match(/^\d{10}$/)) { this.errorMessage = 'Please enter a valid 10-digit phone number.'; return; }
                     this.errorMessage = '';
-                    fetch('/user/sendOtp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ phone: this.phone })
-                    })
-                        .then(res => res.text())
-                        .then(data => {
-                            console.log(data);
-                            this.step = 2;
-                            this.startResendCooldown();
-                        })
-                        .catch(() => {
-                            this.errorMessage = 'Failed to send OTP. Try again.';
-                        });
+                    fetch('/user/sendOtp', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ phone: this.phone }) })
+                        .then(res => res.text()).then(data => { this.step = 2; this.startResendCooldown(); })
+                        .catch(() => { this.errorMessage = 'Failed to send OTP. Try again.'; });
                 },
-
                 resendOtp() {
                     if (this.resendDisabled) return;
-
-                    fetch('/user/sendOtp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ phone: this.phone })
-                    })
-                        .then(res => res.text())
-                        .then(data => {
-                            console.log("Resent:", data);
-                            this.startResendCooldown();
-                        })
-                        .catch(() => {
-                            this.errorMessage = 'Failed to resend OTP. Try again.';
-                        });
+                    fetch('/user/sendOtp', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ phone: this.phone }) })
+                        .then(res => res.text()).then(data => { this.startResendCooldown(); })
+                        .catch(() => { this.errorMessage = 'Failed to resend OTP. Try again.'; });
                 },
-
                 startResendCooldown() {
-                    this.resendDisabled = true;
-                    this.resendTimer = 30;
+                    this.resendDisabled = true; this.resendTimer = 30;
                     if (this.resendInterval) clearInterval(this.resendInterval);
-
-                    this.resendInterval = setInterval(() => {
-                        this.resendTimer--;
-                        if (this.resendTimer <= 0) {
-                            this.resendDisabled = false;
-                            clearInterval(this.resendInterval);
-                        }
-                    }, 1000);
+                    this.resendInterval = setInterval(() => { this.resendTimer--; if (this.resendTimer <= 0) { this.resendDisabled = false; clearInterval(this.resendInterval); } }, 1000);
                 },
-
                 verifyOtp() {
-                    if (!this.otp || this.otp.length < 4) {
-                        this.errorMessage = 'Please enter a valid OTP.';
-                        return;
-                    }
+                    if (!this.otp || this.otp.length < 4) { this.errorMessage = 'Please enter a valid OTP.'; return; }
                     this.errorMessage = '';
-                    this.$refs.form.submit(); // Submit to Spring controller
+                    this.$refs.form.submit();
                 }
             }
         }

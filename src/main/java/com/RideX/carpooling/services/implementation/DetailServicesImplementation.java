@@ -2,10 +2,8 @@ package com.RideX.carpooling.services.implementation;
 
 import com.RideX.carpooling.dto.User_Details;
 import com.RideX.carpooling.model.Details;
-import com.RideX.carpooling.model.Rating;
 import com.RideX.carpooling.model.User;
 import com.RideX.carpooling.repositories.DetailsRepository;
-import com.RideX.carpooling.repositories.RatingRepository;
 import com.RideX.carpooling.services.DetailServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +18,6 @@ public class DetailServicesImplementation implements DetailServices {
 
     @Autowired
     private DetailsRepository detailsRepository;
-
-    @Autowired
-    private RatingRepository ratingRepository;
 
     @Override
     public User_Details getUserDetails(User user) {

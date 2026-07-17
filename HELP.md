@@ -68,13 +68,13 @@ spring.datasource.password=your_password
 
 1. **Prometheus**
 
-   * Add Micrometer Prometheus registry dependency
-   * Expose metrics at `/actuator/prometheus`
+    * Add Micrometer Prometheus registry dependency
+    * Expose metrics at `/actuator/prometheus`
 
 2. **Grafana**
 
-   * Connect to Prometheus data source
-   * Import dashboards for JVM, HTTP metrics, DB metrics
+    * Connect to Prometheus data source
+    * Import dashboards for JVM, HTTP metrics, DB metrics
 
 > Sample Dashboard: [JVM & Spring Boot Metrics](https://grafana.com/grafana/dashboards/4701)
 

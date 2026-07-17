@@ -11,7 +11,4 @@ import java.util.Optional;
 public interface CarDetailsRepository extends JpaRepository<CarDetails, String> {
     Optional<CarDetails> findByCarNumber(String carNumber);
     Optional<CarDetails> findByUser(User user);
-
-
-
 }

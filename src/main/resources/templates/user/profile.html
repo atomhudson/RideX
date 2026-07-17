@@ -6,55 +6,65 @@
     </th:block>
 </head>
 <body>
-<div id="content" class="bg-gray-900 pt-20 text-gray-100">
+<div id="content" style="background: var(--rx-bg-primary); padding-top: 68px;">
     <div th:insert="~{fragments/message::messagebox}"></div>
-    <main class="pb-12 md:py-14 px-6 2xl:px-20 2xl:container 2xl:mx-auto">
-        <div class="flex flex-col lg:flex-row items-start gap-6 w-full">
-            <!-- Sidebar / Profile -->
-            <div th:insert="~{fragments/sidebarProfile :: sideBarProfile}" class="w-full sm:w-1/3 flex-shrink-0 bg-gray-900 p-6 xl:p-8 flex flex-col space-y-6"></div>
+    <main class="rx-section" style="padding-top: 40px;">
+        <div class="rx-container">
+            <div class="flex flex-col lg:flex-row items-start gap-8 w-full">
 
-            <!-- Rides Section -->
-            <div class="flex flex-col py-15 justify-start items-start gap-2 w-full sm:w-2/3">
+                <!-- Sidebar / Profile -->
+                <div th:insert="~{fragments/sidebarProfile :: sideBarProfile}" class="w-full lg:w-[360px] flex-shrink-0 flex flex-col gap-6"></div>
 
-                <!-- Published Rides Section -->
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">Published Rides</h1>
-                    <a th:href="@{'/user/ride/create'}" class="text-blue-400 hover:underline">+ Add Ride</a>
+                <!-- Rides Section -->
+                <div class="flex flex-col gap-6 w-full lg:flex-1">
+
+                    <!-- Published Rides Section -->
+                    <div class="rx-profile-section rx-reveal">
+                        <div class="rx-profile-section-header">
+                            <h2>Published Rides</h2>
+                            <a th:href="@{'/user/ride/create'}" class="rx-btn rx-btn-outline rx-btn-sm">
+                                <i class="fa-solid fa-plus" style="font-size: 0.7rem;"></i> Add Ride
+                            </a>
+                        </div>
+                        <div th:insert="~{fragments/ridePublishedCards::ridePublishedCards}" th:if="${profileRidesDetails.ridesCreated.size() != 0}" class="rx-profile-scroll"></div>
+                        <p th:if="${profileRidesDetails.ridesCreated.size() == 0}" style="font-size: 0.875rem; color: var(--rx-text-muted);">No published rides yet. Create your first ride to get started.</p>
+                    </div>
+
+                    <!-- Requests Made Section -->
+                    <div th:if="${profileRidesDetails.requestMade.size() != 0}" class="rx-profile-section rx-reveal rx-reveal-delay-1">
+                        <div class="rx-profile-section-header">
+                            <h2>Requests Made</h2>
+                        </div>
+                        <div th:insert="~{fragments/rideRequestCards :: rideRequestCards}" class="rx-profile-scroll"></div>
+                    </div>
+
+                    <!-- Recently Joined Rides Section -->
+                    <div class="rx-profile-section rx-reveal rx-reveal-delay-2">
+                        <div class="rx-profile-section-header">
+                            <h2>Recently Joined Rides</h2>
+                            <a th:href="@{'/searchRide'}" class="rx-btn rx-btn-outline rx-btn-sm">
+                                <i class="fa-solid fa-plus" style="font-size: 0.7rem;"></i> Join Ride
+                            </a>
+                        </div>
+                        <div th:insert="~{fragments/rideJoinedCards :: rideJoinedCard}" th:if="${profileRidesDetails.ridesJoined.size() != 0}" class="rx-profile-scroll"></div>
+                        <p th:if="${profileRidesDetails.ridesJoined.size() == 0}" style="font-size: 0.875rem; color: var(--rx-text-muted);">No joined rides yet. Search for available rides to join one.</p>
+                    </div>
+
+                    <!-- Car Section -->
+                    <div class="rx-profile-section rx-reveal rx-reveal-delay-3">
+                        <div class="rx-profile-section-header">
+                            <h2>Car Details</h2>
+                            <a th:if="${#strings.isEmpty(carDtoDetails.carNumber)}" th:href="@{/user/car/register}" class="rx-btn rx-btn-outline rx-btn-sm">
+                                <i class="fa-solid fa-plus" style="font-size: 0.7rem;"></i> Add Car
+                            </a>
+                        </div>
+                        <div th:if="${!#strings.isEmpty(carDtoDetails.carNumber)}">
+                            <div th:insert="~{fragments/carDetailsCard :: carDetails}"></div>
+                        </div>
+                        <p th:if="${#strings.isEmpty(carDtoDetails.carNumber)}" style="font-size: 0.875rem; color: var(--rx-text-muted);">No car registered. Add your vehicle to start publishing rides.</p>
+                    </div>
+
                 </div>
-                <div th:insert="~{fragments/ridePublishedCards::ridePublishedCards}" th:if="${profileRidesDetails.ridesCreated.size() != 0}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
-
-                <!-- Divider -->
-                <hr th:if="${profileRidesDetails.requestMade.size() != 0}" class="border-t border-gray-600 my-6 w-full">
-
-                <!-- Requests Made Section -->
-                <div th:if="${profileRidesDetails.requestMade.size() != 0}" class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">Request Made</h1>
-                </div>
-                <div th:insert="~{fragments/rideRequestCards :: rideRequestCards}" th:if="${profileRidesDetails.requestMade.size() != 0}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
-
-                <!-- Divider -->
-                <hr class="border-t border-gray-600 my-6 w-full">
-
-                <!-- Recently Joined Rides Section -->
-                <div class="flex justify-between items-center w-full mt-5">
-                    <h1 class="text-xl font-semibold text-white">Recently Joined Rides</h1>
-                    <a href="#" class="text-blue-400 hover:underline">+ Join Ride</a>
-                </div>
-                <div th:insert="~{fragments/rideJoinedCards :: rideJoinedCard}" th:if="${profileRidesDetails.ridesJoined.size() != 0}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
-
-                <!-- Divider -->
-                <hr class="border-t border-gray-600 my-6 w-full">
-
-                <!-- Car Section -->
-                <div th:if="${#strings.isEmpty(carDtoDetails.carNumber)}" class="flex justify-between items-center w-full mt-5">
-                    <h1 class="text-xl font-semibold text-white">Car Details</h1>
-                    <a th:href="@{/user/car/register}" class="text-blue-400 hover:underline">+ Add Car</a>
-                </div>
-                <div th:if="${!#strings.isEmpty(carDtoDetails.carNumber)}" class="w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800">
-                    <div th:insert="~{fragments/carDetailsCard :: carDetails}"></div>
-                </div>
-
-
             </div>
         </div>
     </main>

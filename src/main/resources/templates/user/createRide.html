@@ -2,149 +2,136 @@
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 
 <head>
-    <title>Offer a Seat</title>
+    <title>Publish a Ride — RideX</title>
 </head>
 
 <body>
-<div id="content" class="bg-gray-900 text-gray-100">
-    <section>
-        <h1 class="text-3xl text-center p-5 font-bold">
-            <span class="text-blue-400">Publish</span> a <span class="text-blue-400">Ride</span> in Just <span class="text-blue-400">Minutes</span>
-        </h1>
+<div id="content" style="background: var(--rx-bg-primary);">
+    <section class="rx-section" style="padding-top: 140px;">
+        <div class="rx-container">
+            <div class="rx-section-header rx-reveal" style="margin-bottom: 40px;">
+                <h2>Publish a <span class="rx-text-accent">Ride</span> in Just Minutes</h2>
+            </div>
 
-        <div class="container max-w-screen-xl mx-auto flex flex-col md:flex-row items-center lg:items-start pt-6 pb-16 px-4 md:px-0">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
 
-            <!-- PublishCard -->
-            <div class="md:w-fit w-full justify-center mb-10 lg:mb-0">
-                <div class="w-[500px] bg-gray-800 rounded-xl shadow p-6 mx-auto md:mx-0">
-                    <div class="mb-4">
-                        <h2 class="text-lg font-semibold">Create a Ride</h2>
-                        <p class="text-sm text-gray-400">Publish your ride with just one click.</p>
-                    </div>
+                <!-- Form Card -->
+                <div class="rx-form-card rx-reveal" style="max-width: none;">
+                    <h1 style="font-size: 1.25rem;">Create a Ride</h1>
+                    <p style="text-align: center; font-size: 0.84rem; color: var(--rx-text-muted); margin: -20px 0 28px;">
+                        Publish your ride with just one click.
+                    </p>
                     <div th:insert="~{fragments/message::messagebox}"></div>
 
-                    <form class="space-y-6" id="publishRideForm" th:action="@{'/user/ride/process'}" th:object="${rideForm}" method="post">
+                    <form id="publishRideForm" th:action="@{'/user/ride/process'}" th:object="${rideForm}" method="post">
                         <input type="hidden" th:field="*{rideId}" id="rideId"/>
 
-                        <!-- From/To Addresses -->
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <!-- From -->
-                            <div class="w-full md:w-1/2">
-                                <label for="fromAddress" class="block text-sm font-medium text-white mb-1">From (Address)</label>
-                                <input type="text" th:field="*{fromAddress}" id="fromAddress" name="fromAddress" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter full address" required />
-                                <label for="from" class="block text-sm font-medium text-white mt-4 mb-1">From (City)</label>
-                                <input type="text" id="from" th:field="*{fromCity}" name="from" list="from-list" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Select city" required />
-                                <datalist id="from-list"></datalist>
+                        <!-- From / To -->
+                        <div class="rx-form-row">
+                            <div>
+                                <div class="rx-form-group">
+                                    <label for="fromAddress">From (Address)</label>
+                                    <input type="text" th:field="*{fromAddress}" id="fromAddress" name="fromAddress" class="rx-form-input" placeholder="Enter full address" required />
+                                </div>
+                                <div class="rx-form-group" style="margin-top: 12px;">
+                                    <label for="from">From (City)</label>
+                                    <input type="text" id="from" th:field="*{fromCity}" name="from" list="from-list" class="rx-form-input" placeholder="Select city" required />
+                                    <datalist id="from-list"></datalist>
+                                </div>
                                 <input type="hidden" th:field="*{fromLat}" id="fromLat" name="fromLat" />
                                 <input type="hidden" th:field="*{fromLng}" id="fromLon" name="fromLon" />
                             </div>
-
-                            <!-- To -->
-                            <div class="w-full md:w-1/2">
-                                <label for="toAddress" class="block text-sm font-medium text-white mb-1">To (Address)</label>
-                                <input type="text" th:field="*{toAddress}" id="toAddress" name="toAddress" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter full address" required />
-
-                                <label for="to" class="block text-sm font-medium text-white mt-4 mb-1">To (City)</label>
-                                <input type="text" id="to" th:field="*{toCity}" name="to" list="to-list" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Select city" required />
-                                <datalist id="to-list"></datalist>
+                            <div>
+                                <div class="rx-form-group">
+                                    <label for="toAddress">To (Address)</label>
+                                    <input type="text" th:field="*{toAddress}" id="toAddress" name="toAddress" class="rx-form-input" placeholder="Enter full address" required />
+                                </div>
+                                <div class="rx-form-group" style="margin-top: 12px;">
+                                    <label for="to">To (City)</label>
+                                    <input type="text" id="to" th:field="*{toCity}" name="to" list="to-list" class="rx-form-input" placeholder="Select city" required />
+                                    <datalist id="to-list"></datalist>
+                                </div>
                                 <input type="hidden" th:field="*{toLat}" id="toLat" name="toLat" />
                                 <input type="hidden" th:field="*{toLng}" id="toLon" name="toLon" />
                             </div>
                         </div>
 
-                        <div>
-                            <label for="car" class="block text-sm font-medium text-white mb-1">Select a Car</label>
+                        <!-- Car -->
+                        <div class="rx-form-group" style="margin-bottom: 20px;">
+                            <label for="car">Select a Car</label>
                             <div th:if="${#lists.isEmpty(rideForm.available_car)}">
-                                <p class="text-sm text-red-400 mb-2">No car found. Please <a th:href="@{'/user/car/register'}" class="text-blue-400 underline">add your car</a> first.</p>
+                                <p style="font-size: 0.84rem; color: #ef4444; margin-bottom: 8px;">
+                                    No car found. Please <a th:href="@{'/user/car/register'}" class="rx-link">add your car</a> first.
+                                </p>
                             </div>
                             <div th:unless="${#lists.isEmpty(rideForm.available_car)}">
-                                <select id="car" name="car" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <select id="car" name="car" class="rx-form-input" required>
                                     <option value="">-- Choose a car --</option>
                                     <option th:value="${rideForm.available_car.getLast()}" th:text="${rideForm.available_car.get(0)+' '+rideForm.available_car.get(1)}"></option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Seats and Price -->
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <!-- Seats -->
-                            <div class="w-full md:w-1/2">
-                                <label class="block text-sm font-medium text-white mb-1">Available Seats</label>
-                                <div class="flex items-center space-x-4 bg-gray-700 px-4 py-2 rounded-xl">
-                                    <button type="button" onclick="adjustSeat(-1)" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold px-3 py-1 rounded">-</button>
-                                    <span id="seatValue" class="text-lg font-semibold text-white">1</span>
-                                    <button type="button" onclick="adjustSeat(1)" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold px-3 py-1 rounded">+</button>
+                        <!-- Seats & Price -->
+                        <div class="rx-form-row">
+                            <div class="rx-form-group">
+                                <label>Available Seats</label>
+                                <div style="display: flex; align-items: center; gap: 16px; background: var(--rx-bg-tertiary); padding: 10px 16px; border-radius: var(--rx-radius-sm); border: 1px solid var(--rx-border);">
+                                    <button type="button" onclick="adjustSeat(-1)" class="rx-btn rx-btn-ghost" style="padding: 4px 12px; font-size: 1rem;">-</button>
+                                    <span id="seatValue" style="font-size: 1.1rem; font-weight: 700; color: var(--rx-text-primary);">1</span>
+                                    <button type="button" onclick="adjustSeat(1)" class="rx-btn rx-btn-ghost" style="padding: 4px 12px; font-size: 1rem;">+</button>
                                 </div>
                                 <input type="hidden" id="seat" th:field="*{seat}" name="seat" value="1">
                             </div>
-
-                            <!-- Price -->
-                            <div class="w-full md:w-1/2">
-                                <label for="price" class="block text-sm font-medium text-white mb-1">Price</label>
-                                <input type="number" th:field="*{price}" id="price" name="price" min="0" placeholder="Price" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <div class="rx-form-group">
+                                <label for="price">Price</label>
+                                <input type="number" th:field="*{price}" id="price" name="price" min="0" placeholder="Price" class="rx-form-input" />
                             </div>
                         </div>
 
                         <!-- Departure Time -->
-                        <div>
-                            <label for="startTime" class="block text-sm font-medium text-white mb-1">Departure Time</label>
-                            <input type="datetime-local" th:field="*{departure_time}" id="startTime" name="startTime" class="w-full border rounded-xl px-4 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <div class="rx-form-group" style="margin-bottom: 24px;">
+                            <label for="startTime">Departure Time</label>
+                            <input type="datetime-local" th:field="*{departure_time}" id="startTime" name="startTime" class="rx-form-input" />
                         </div>
 
-                        <div class="w-full">
-                            <h3 class="text-white text-lg font-semibold mb-4">Preferences</h3>
-                            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                                <!-- Preference Card Template -->
-                                <label for="petsAllowed"
-                                       class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
-                                    <input type="checkbox" th:field="*{petsAllowed}" id="petsAllowed" name="petsAllowed" class="hidden peer" />
-                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
-                                        🐾
-                                    </div>
-                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
-                                        Pets Allowed
-                                    </div>
+                        <!-- Preferences -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 0.9rem; font-weight: 600; color: var(--rx-text-primary); margin-bottom: 12px;">Preferences</h3>
+                            <div class="rx-pref-grid">
+                                <label for="petsAllowed" class="rx-pref-card">
+                                    <input type="checkbox" th:field="*{petsAllowed}" id="petsAllowed" name="petsAllowed" style="display: none;" />
+                                    <span class="rx-pref-emoji">🐾</span>
+                                    <span class="rx-pref-label">Pets Allowed</span>
                                 </label>
-
-                                <label for="smokingAllowed" class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
-                                    <input type="checkbox" th:field="*{smokingAllowed}" id="smokingAllowed" name="smokingAllowed" class="hidden peer" />
-                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
-                                        🚬
-                                    </div>
-                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
-                                        Smoking Allowed
-                                    </div>
+                                <label for="smokingAllowed" class="rx-pref-card">
+                                    <input type="checkbox" th:field="*{smokingAllowed}" id="smokingAllowed" name="smokingAllowed" style="display: none;" />
+                                    <span class="rx-pref-emoji">🚬</span>
+                                    <span class="rx-pref-label">Smoking</span>
                                 </label>
-
-                                <label for="ac_available" class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
-                                    <input type="checkbox" th:field="*{ac_available}" id="ac_available" name="ac_available" class="hidden peer" />
-                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
-                                        ❄️
-                                    </div>
-                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
-                                        AC Available
-                                    </div>
+                                <label for="ac_available" class="rx-pref-card">
+                                    <input type="checkbox" th:field="*{ac_available}" id="ac_available" name="ac_available" style="display: none;" />
+                                    <span class="rx-pref-emoji">❄️</span>
+                                    <span class="rx-pref-label">AC Available</span>
                                 </label>
-
-                                <label for="luggage_allowed" class="group flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-gray-700 bg-gray-800 hover:border-blue-500 transition duration-200 cursor-pointer">
-                                    <input type="checkbox" th:field="*{luggage_allowed}" id="luggage_allowed" name="luggage_allowed" class="hidden peer" />
-                                    <div class="text-3xl mb-2 peer-checked:scale-110 transition-transform duration-200">
-                                        🧳
-                                    </div>
-                                    <div class="text-white text-sm font-medium peer-checked:text-blue-400">
-                                        Luggage Allowed
-                                    </div>
+                                <label for="luggage_allowed" class="rx-pref-card">
+                                    <input type="checkbox" th:field="*{luggage_allowed}" id="luggage_allowed" name="luggage_allowed" style="display: none;" />
+                                    <span class="rx-pref-emoji">🧳</span>
+                                    <span class="rx-pref-label">Luggage</span>
                                 </label>
                             </div>
                         </div>
+
                         <!-- Submit -->
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition duration-200">
-                            Publish Ride
+                        <button type="submit" class="rx-btn rx-btn-primary" style="width: 100%; padding: 14px;">
+                            Publish Ride <i class="fa-solid fa-arrow-right" style="margin-left: 6px; font-size: 0.8rem;"></i>
                         </button>
                     </form>
                 </div>
+
+                <!-- Steps Sidebar -->
+                <div class="rx-reveal rx-reveal-delay-1" th:replace="~{/fragments/createRideStep :: steps}"></div>
             </div>
-            <div th:replace="~{/fragments/createRideStep :: steps}"></div>
         </div>
     </section>
 </div>

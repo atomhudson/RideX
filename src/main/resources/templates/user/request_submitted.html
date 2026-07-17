@@ -1,36 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{index :: parent(~{::content}, ~{::title}, ~{::script})}">
-<title th:fragment="title">Request Submitted</title>
-<div th:fragment="content" class="h-screen bg-gray-900">
-    <div class="max-w-3xl mx-auto px-4 py-10">
-        <div class="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-10 shadow-2xl text-center space-y-8 max-w-xl mx-auto mt-24 overflow-hidden ring-1 ring-gray-700/50">
-            <div class="absolute -top-16 -left-16 w-72 h-72 bg-green-500 opacity-20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-16 -right-16 w-72 h-72 bg-blue-500 opacity-20 rounded-full blur-3xl"></div>
-            <div class="flex justify-center">
-                <div class="bg-green-100 rounded-full p-6 shadow-inner animate-pulse">
-                    <svg class="h-12 w-12 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
+<title th:fragment="title">Request Submitted — RideX</title>
+<div th:fragment="content" style="background: var(--rx-bg-primary);">
+    <section class="rx-section" style="padding-top: 140px;">
+        <div class="rx-container">
+            <div class="rx-form-card rx-reveal" style="max-width: 560px; text-align: center;">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(16,185,129,0.1);">
+                        <i class="fa-solid fa-circle-check" style="font-size: 2rem; color: var(--rx-accent);"></i>
+                    </div>
+                </div>
+                <h1 style="font-size: 1.6rem;">Request Submitted</h1>
+                <p style="font-size: 0.9rem; color: var(--rx-text-secondary); line-height: 1.6; margin-bottom: 8px;">
+                    Thank you for submitting your details. We've successfully received your information and uploaded your Government ID.
+                </p>
+                <p style="font-size: 0.84rem; color: var(--rx-text-muted); line-height: 1.6;">
+                    Our team will now review your ID. Once verified, you'll receive a confirmation email at
+                    <span style="color: var(--rx-accent); font-weight: 600;" th:text="${userEmail}">demo@demo.test</span>.
+                </p>
+                <div style="margin-top: 24px;">
+                    <button onclick="window.location.href='/user/profile'" class="rx-btn rx-btn-primary" style="padding: 12px 32px;">
+                        ⬅ Back to Home
+                    </button>
                 </div>
             </div>
-            <h2 class="text-4xl font-extrabold text-white drop-shadow-lg">Request Submitted</h2>
-            <p class="text-gray-200 text-lg leading-relaxed">
-                Thank you for submitting your details. We’ve successfully received your information and uploaded your Government ID.
-            </p>
-            <p class="text-gray-300 text-base leading-relaxed">
-                Our team will now review your ID. Once verified, you’ll receive a confirmation email at
-                <span class="text-blue-400 font-semibold underline underline-offset-2 decoration-dotted" th:text="${userEmail}">demo@demo.test</span>.
-            </p>
-            <div class="pt-6">
-                <button onclick="window.location.href='/user/profile'" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-base rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-                    ⬅ Back to Home
-                </button>
-            </div>
         </div>
-    </div>
-    </div>
+    </section>
 </div>
-<script th:fragment="script">
-    console.log("Request Submitted page loaded");
-</script>
+<script th:fragment="script">console.log("Request Submitted page loaded");</script>
 </html>

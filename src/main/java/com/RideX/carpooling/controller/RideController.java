@@ -145,7 +145,11 @@ public class RideController {
         // Save the ride (this handles both insert and update correctly)
 
         rideRepository.save(rides);
-        emailServices.sendEmail(rides.getDriver().getEmail(),"Ride successFully Created","You and Created a Ride from"+rides.getSourceCity()+" to"+ rides.getDestinationCity());
+        try {
+            emailServices.sendEmail(rides.getDriver().getEmail(),"Ride successFully Created","You and Created a Ride from"+rides.getSourceCity()+" to "+ rides.getDestinationCity());
+        } catch (Exception e) {
+            logger.warn("Failed to send ride confirmation email: {}", e.getMessage());
+        }
 
 
         // Set a message for user session
@@ -209,7 +213,11 @@ public class RideController {
 
         rides.setRideStatus(AppConstants.RIDE_CANCELLED);
         rides.setUpdatedAt(new Date());
-        emailServices.sendEmail(rides.getDriver().getEmail(),"Ride Canceled","You cancelled the ride");
+        try {
+            emailServices.sendEmail(rides.getDriver().getEmail(),"Ride Canceled","You cancelled the ride");
+        } catch (Exception e) {
+            logger.warn("Failed to send cancel email: {}", e.getMessage());
+        }
         rideRepository.save(rides);
         session.setAttribute("message", new Message("Your ride from " + rides.getSourceCity() + " to " + rides.getDestinationCity() + " has been successfully cancelled.", MessageType.red));
         return "redirect:/user/profile";
@@ -234,6 +242,7 @@ public class RideController {
         boolean hasRated = ratingRepository.existsByRaterAndRated(user, rides.getDriver());
         model.addAttribute("currentUser", user);
         model.addAttribute("ride", rides);
+        model.addAttribute("rideRequests", java.util.Collections.emptyList());
         model.addAttribute("hasRated", hasRated);
         return "user/rideDetails";
     }
@@ -273,8 +282,12 @@ public class RideController {
         ridesRequestsRepository.save(rideRequest);
         ride.setAvailableSeats(ride.getAvailableSeats());
         rideRepository.save(ride);
-        emailServices.sendEmail(ride.getDriver().getEmail(),"Get a Ride Request","You get a Ride Request on RideID: "+rideId);
-        emailServices.sendEmail(requester.getEmail(),"Successfully Created Ride Request","You have created a ride Request for ride: "+rideId);
+        try {
+            emailServices.sendEmail(ride.getDriver().getEmail(),"Get a Ride Request","You get a Ride Request on RideID: "+rideId);
+            emailServices.sendEmail(requester.getEmail(),"Successfully Created Ride Request","You have created a ride Request for ride: "+rideId);
+        } catch (Exception e) {
+            logger.warn("Failed to send ride request email: {}", e.getMessage());
+        }
         session.setAttribute("message",new Message("Your ride request has been submitted.", MessageType.green));
         return "fragments/rideRequestResult";
     }
@@ -306,7 +319,11 @@ public class RideController {
             userRepository.save(driver);
             rideRepository.save(ride);
             ridesRequestsRepository.save(rideRequest);
-            emailServices.sendEmail(rideRequest.getUser().getEmail(),"Ride Request - Updated","Your Ride Request Accepted for rideID: "+ride.getRideId());
+            try {
+                emailServices.sendEmail(rideRequest.getUser().getEmail(),"Ride Request - Updated","Your Ride Request Accepted for rideID: "+ride.getRideId());
+            } catch (Exception e) {
+                logger.warn("Failed to send accept email: {}", e.getMessage());
+            }
             session.setAttribute("message",new Message("Your ride request has been approved.", MessageType.green));
         } else {
             session.setAttribute("message",new Message("This request has already been processed.", MessageType.red));
@@ -321,7 +338,11 @@ public class RideController {
         if (rideRequest.getRequestStatus().equals("PENDING")) {
             rideRequest.setRequestStatus("REJECTED");
             ridesRequestsRepository.save(rideRequest);
-            emailServices.sendEmail(rideRequest.getUser().getEmail(),"Ride Request - Updated","Your Ride Request Rejected for rideID: "+ride.getRideId());
+            try {
+                emailServices.sendEmail(rideRequest.getUser().getEmail(),"Ride Request - Updated","Your Ride Request Rejected for rideID: "+ride.getRideId());
+            } catch (Exception e) {
+                logger.warn("Failed to send reject email: {}", e.getMessage());
+            }
             session.setAttribute("message",new Message("Your ride request has been rejected.", MessageType.red));
         } else {
             session.setAttribute("message",new Message("This request has already been processed.", MessageType.red));
