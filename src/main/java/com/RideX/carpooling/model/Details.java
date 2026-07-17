@@ -23,7 +23,7 @@ public class Details {
     private int completedRides;
     private int cancelledRides;
     private Date lastRideDate;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false, unique = true)
     private User user;
 

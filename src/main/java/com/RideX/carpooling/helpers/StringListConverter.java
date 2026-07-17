@@ -17,7 +17,7 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
 
     @Override
     public String convertToDatabaseColumn(List<String> list) {
-        logger.info("StringListConverter :: convertToDatabaseColumn(List<String> list :[{}])",list);
+        logger.debug("StringListConverter :: convertToDatabaseColumn(List<String> list :[{}])",list);
         try {
             return objectMapper.writeValueAsString(list);
         } catch (Exception e) {
@@ -27,7 +27,7 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
 
     @Override
     public List<String> convertToEntityAttribute(String json) {
-        logger.info("StringListConverter :: convertToEntityAttribute(json :[{}])",json);
+        logger.debug("StringListConverter :: convertToEntityAttribute(json :[{}])",json);
         try {
             return objectMapper.readValue(json, new TypeReference<List<String>>() {});
         } catch (Exception e) {

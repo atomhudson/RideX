@@ -35,7 +35,7 @@ public class CarDetails {
     @Convert(converter = StringListConverter.class)
     @Column(columnDefinition = "TEXT")
     private List<String> cloudinaryImagePublicId;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false, unique = true)
     private User user;
 

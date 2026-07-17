@@ -4,12 +4,9 @@ import com.RideX.carpooling.dto.Car_DTO_Details;
 import com.RideX.carpooling.model.CarDetails;
 import com.RideX.carpooling.model.User;
 import com.RideX.carpooling.repositories.CarDetailsRepository;
-import com.RideX.carpooling.repositories.UserRepository;
 import com.RideX.carpooling.services.CarDetailsServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CarDetailImplementation implements CarDetailsServices {
@@ -17,24 +14,23 @@ public class CarDetailImplementation implements CarDetailsServices {
     @Autowired
     private CarDetailsRepository carDetailsRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
+    @Override
+    public Car_DTO_Details findCarDetails(User user) {
+        return toDto(user.getCarDetails());
+    }
 
     @Override
     public Car_DTO_Details findCarDetails(String userId) {
-        Car_DTO_Details carDetailDTO = new Car_DTO_Details();
-        Optional<User> userOpt = userRepository.findByUserId(userId);
-        if (userOpt.isEmpty()) {
-            return new Car_DTO_Details();
-        }
-        User user = userOpt.get();
-        Optional<CarDetails> carDetailsOpt = carDetailsRepository.findByUser(user);
+        return carDetailsRepository.findByUser_UserId(userId)
+                .map(this::toDto)
+                .orElseGet(Car_DTO_Details::new);
+    }
 
-        if (carDetailsOpt.isEmpty()){
+    private Car_DTO_Details toDto(CarDetails carDetail) {
+        if (carDetail == null) {
             return new Car_DTO_Details();
         }
-        CarDetails carDetail = carDetailsOpt.get();
+        Car_DTO_Details carDetailDTO = new Car_DTO_Details();
         carDetailDTO.setCarMake(carDetail.getCarMake());
         carDetailDTO.setCarModel(carDetail.getCarModel());
         carDetailDTO.setYear(carDetail.getYear());
@@ -45,7 +41,6 @@ public class CarDetailImplementation implements CarDetailsServices {
         carDetailDTO.setCarNumber(carDetail.getCarNumber());
         carDetailDTO.setAc_available(carDetail.isAc_available());
         carDetailDTO.setCar_Image_Url(carDetail.getCar_image_url().get(0));
-
         return carDetailDTO;
     }
 }

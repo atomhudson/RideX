@@ -10,10 +10,10 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User rater;  // The person giving the rating
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User rated;  // The person receiving the rating
 
     private int stars;

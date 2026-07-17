@@ -4,6 +4,7 @@ import com.RideX.carpooling.model.Rides;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +17,28 @@ import java.util.List;
 public interface RideRepository extends JpaRepository<Rides, String> {
     List<Rides> findByDriverUserId(String driverUserId);
 
+    @Query(value = "SELECT * FROM rides WHERE driver_id = :userId", nativeQuery = true)
+    List<Rides> findByDriverIdOnly(@Param("userId") String userId);
+
+    @Query(value = """
+            SELECT DISTINCT r.* FROM rides r
+            INNER JOIN ride_passengers rp ON r.ride_id = rp.ride_id
+            WHERE rp.user_id = :userId
+            """, nativeQuery = true)
+    List<Rides> findByPassengerUserIdOnly(@Param("userId") String userId);
+
+    @Query("SELECT r FROM Rides r JOIN r.passengers p WHERE p.userId = :userId")
+    List<Rides> findByPassengerUserId(@Param("userId") String userId);
+
     Rides findByRideId(String rideId);
+
+    @Query("SELECT DISTINCT r FROM Rides r " +
+           "JOIN FETCH r.driver " +
+           "JOIN FETCH r.car " +
+           "LEFT JOIN FETCH r.rideRequests rr " +
+           "LEFT JOIN FETCH rr.user " +
+           "WHERE r.rideId = :rideId")
+    Rides findWithDetailsByRideId(@Param("rideId") String rideId);
 
     @Query("SELECT r FROM Rides r " +
             "WHERE r.sourceCity LIKE CONCAT('%', :from, '%') " +

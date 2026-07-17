@@ -12,6 +12,8 @@ import com.RideX.carpooling.repositories.RidesRequestsRepository;
 import com.RideX.carpooling.repositories.UserRepository;
 import com.RideX.carpooling.services.CustomUUIDService;
 import com.RideX.carpooling.services.EmailServices;
+import com.RideX.carpooling.services.ProfileCacheService;
+import com.RideX.carpooling.services.RideCacheService;
 import com.RideX.carpooling.services.RouteService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -57,6 +59,12 @@ public class RideController {
 
     @Autowired
     private CustomUUIDService customUUIDService;
+
+    @Autowired
+    private ProfileCacheService profileCacheService;
+
+    @Autowired
+    private RideCacheService rideCacheService;
 
     @GetMapping("/create")
     public String createRide(Model model){
@@ -145,6 +153,8 @@ public class RideController {
         // Save the ride (this handles both insert and update correctly)
 
         rideRepository.save(rides);
+        rideCacheService.evictRideDetail(rides.getRideId());
+        profileCacheService.evictForUser(user.getUserId(), user.getEmail());
         try {
             emailServices.sendEmail(rides.getDriver().getEmail(),"Ride successFully Created","You and Created a Ride from"+rides.getSourceCity()+" to "+ rides.getDestinationCity());
         } catch (Exception e) {
@@ -219,13 +229,15 @@ public class RideController {
             logger.warn("Failed to send cancel email: {}", e.getMessage());
         }
         rideRepository.save(rides);
+        rideCacheService.evictRideDetail(rides.getRideId());
+        profileCacheService.evictForUser(rides.getDriver().getUserId(), rides.getDriver().getEmail());
         session.setAttribute("message", new Message("Your ride from " + rides.getSourceCity() + " to " + rides.getDestinationCity() + " has been successfully cancelled.", MessageType.red));
         return "redirect:/user/profile";
     }
 
     @GetMapping("/detail/{rideID}")
     public String detailsRide(@PathVariable("rideID") String rideId, Model model){
-        Rides rides = rideRepository.findByRideId(rideId);
+        Rides rides = rideCacheService.getRideWithDetails(rideId);
         User user = getCurrentLoggedInUser.getCurrentUser();
         List<RideRequest> rideRequests = rides.getRideRequests();
         model.addAttribute("currentUser", user);
@@ -237,7 +249,7 @@ public class RideController {
 
     @GetMapping("/rideJoined/detail/{rideID}")
     public String rideJoinedDetails(@PathVariable("rideID") String rideId, Model model){
-        Rides rides = rideRepository.findByRideId(rideId);
+        Rides rides = rideCacheService.getRideWithDetails(rideId);
         User user = getCurrentLoggedInUser.getCurrentUser();
         boolean hasRated = ratingRepository.existsByRaterAndRated(user, rides.getDriver());
         model.addAttribute("currentUser", user);
@@ -282,6 +294,9 @@ public class RideController {
         ridesRequestsRepository.save(rideRequest);
         ride.setAvailableSeats(ride.getAvailableSeats());
         rideRepository.save(ride);
+        rideCacheService.evictRideDetail(ride.getRideId());
+        profileCacheService.evictForUser(requester.getUserId(), requester.getEmail());
+        profileCacheService.evictForUser(ride.getDriver().getUserId(), ride.getDriver().getEmail());
         try {
             emailServices.sendEmail(ride.getDriver().getEmail(),"Get a Ride Request","You get a Ride Request on RideID: "+rideId);
             emailServices.sendEmail(requester.getEmail(),"Successfully Created Ride Request","You have created a ride Request for ride: "+rideId);
@@ -319,6 +334,9 @@ public class RideController {
             userRepository.save(driver);
             rideRepository.save(ride);
             ridesRequestsRepository.save(rideRequest);
+            rideCacheService.evictRideDetail(ride.getRideId());
+            profileCacheService.evictForUser(passenger.getUserId(), passenger.getEmail());
+            profileCacheService.evictForUser(driver.getUserId(), driver.getEmail());
             try {
                 emailServices.sendEmail(rideRequest.getUser().getEmail(),"Ride Request - Updated","Your Ride Request Accepted for rideID: "+ride.getRideId());
             } catch (Exception e) {
@@ -338,6 +356,7 @@ public class RideController {
         if (rideRequest.getRequestStatus().equals("PENDING")) {
             rideRequest.setRequestStatus("REJECTED");
             ridesRequestsRepository.save(rideRequest);
+            rideCacheService.evictRideDetail(ride.getRideId());
             try {
                 emailServices.sendEmail(rideRequest.getUser().getEmail(),"Ride Request - Updated","Your Ride Request Rejected for rideID: "+ride.getRideId());
             } catch (Exception e) {

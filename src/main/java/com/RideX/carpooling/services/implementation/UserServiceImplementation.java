@@ -4,6 +4,7 @@ import com.RideX.carpooling.helpers.AppConstants;
 import com.RideX.carpooling.helpers.Helper;
 import com.RideX.carpooling.model.Rides;
 import com.RideX.carpooling.model.User;
+import com.RideX.carpooling.repositories.RideRepository;
 import com.RideX.carpooling.repositories.UserRepository;
 import com.RideX.carpooling.services.CustomUUIDService;
 import com.RideX.carpooling.services.EmailServices;
@@ -13,6 +14,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,9 @@ public class UserServiceImplementation implements UserServices {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RideRepository rideRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -63,6 +68,13 @@ public class UserServiceImplementation implements UserServices {
     }
 
     @Override
+    @Cacheable(value = "navbarUser", key = "#email", unless = "#result == null")
+    public User getNavbarUserByEmail(String email) {
+        return userRepository.findNavbarByEmail(email).orElse(null);
+    }
+
+    @Override
+    @Cacheable(value = "profileUser", key = "#email", unless = "#result == null")
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
@@ -74,9 +86,7 @@ public class UserServiceImplementation implements UserServices {
 
     @Override
     public List<Rides> getRidesJoinedByUser(String userId) {
-        return userRepository.findByUserId(userId)
-                .map(User::getRidesJoined)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return rideRepository.findByPassengerUserId(userId);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +31,15 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @EntityGraph(value = "User.carDetailsAndUserDetails")
     Optional<User> findByEmail(String email);
+
+    @EntityGraph(value = "User.navbar")
+    Optional<User> findNavbarByEmail(String email);
+
     Optional<User> findByEmailToken(String id);
     Optional<User> findByUserId(String userId);
+
+    @Query("SELECT u.userId, u.fName, u.lName, u.profilePic FROM user u WHERE u.userId IN :userIds")
+    List<Object[]> findPublicProfilesByUserIds(@Param("userIds") Collection<String> userIds);
 
     List<User> findAll();
     List<User> findAllByEmailVerified(boolean emailVerified);

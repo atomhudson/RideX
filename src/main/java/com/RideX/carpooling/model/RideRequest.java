@@ -11,12 +11,12 @@ public class RideRequest {
     @Id
     private String requestId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference("rideRequestUserRef") // Back-reference to break the circular reference to User
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ride_id", nullable = false)
     @JsonBackReference("rideRequestRideRef") // Back-reference to break circular reference to Rides
     private Rides ride;

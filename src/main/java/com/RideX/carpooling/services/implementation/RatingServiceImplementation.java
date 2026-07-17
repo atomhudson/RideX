@@ -5,6 +5,7 @@ import com.RideX.carpooling.model.User;
 import com.RideX.carpooling.repositories.RatingRepository;
 import com.RideX.carpooling.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,16 +39,23 @@ public class RatingServiceImplementation implements RatingService {
     }
 
     @Override
+    @Cacheable(value = "ratingStats", key = "#ratedUser.userId")
+    public RatingStats getRatingStats(User ratedUser) {
+        return ratingRepository.findSummaryByRated(ratedUser)
+                .map(summary -> new RatingStats(
+                        summary.getAverage() != null ? summary.getAverage() : 0.0,
+                        summary.getTotal() != null ? summary.getTotal() : 0L
+                ))
+                .orElseGet(() -> new RatingStats(0.0, 0L));
+    }
+
+    @Override
     public double getAverageRating(User ratedUser) {
-        List<Rating> ratings = ratingRepository.findByRated(ratedUser);
-        return ratings.stream()
-                .mapToInt(Rating::getStars)
-                .average()
-                .orElse(0.0);
+        return getRatingStats(ratedUser).average();
     }
 
     @Override
     public long getTotalRatings(User ratedUser) {
-        return ratingRepository.countByRated(ratedUser);
+        return getRatingStats(ratedUser).total();
     }
 }

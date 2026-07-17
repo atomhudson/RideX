@@ -1,15 +1,19 @@
 package com.RideX.carpooling.services.implementation;
 
 import com.RideX.carpooling.dto.Profile_Rides_Details;
+import com.RideX.carpooling.helpers.ProfileDriverSupport;
 import com.RideX.carpooling.model.RideRequest;
 import com.RideX.carpooling.model.Rides;
+import com.RideX.carpooling.model.User;
 import com.RideX.carpooling.repositories.RideRepository;
+import com.RideX.carpooling.repositories.RidesRequestsRepository;
 import com.RideX.carpooling.services.RideRequestServices;
 import com.RideX.carpooling.services.RidesServices;
 import com.RideX.carpooling.services.UserServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,10 +30,16 @@ public class RidesServicesImplementation implements RidesServices {
     private RideRepository rideRepository;
 
     @Autowired
+    private RidesRequestsRepository ridesRequestsRepository;
+
+    @Autowired
     private UserServices userServices;
 
     @Autowired
     private RideRequestServices rideRequestServices;
+
+    @Autowired
+    private ProfileDriverSupport profileDriverSupport;
 
     @Override
     public List<Rides> ridesCreated(String userId) {
@@ -53,6 +63,29 @@ public class RidesServicesImplementation implements RidesServices {
         ridesDetails.setRidesJoined(rides_joined);
         ridesDetails.setRequestMade(ride_request);
 
+        return ridesDetails;
+    }
+
+    @Override
+    @Cacheable(value = "profileRides", key = "#user.userId")
+    public Profile_Rides_Details ridesDetails(User user) {
+        String userId = user.getUserId();
+
+        List<Rides> ridesCreated = rideRepository.findByDriverIdOnly(userId);
+
+        List<Rides> ridesJoined = rideRepository.findByPassengerUserIdOnly(userId);
+        profileDriverSupport.attachPublicDriverProfiles(ridesJoined);
+
+        List<RideRequest> requestsMade = ridesRequestsRepository.findAllByUserWithRide(user);
+        profileDriverSupport.attachPublicDriverProfilesToRequests(requestsMade);
+
+        logger.info("User [{}] - Created: {}, Joined: {}, Requests Made: {}",
+                userId, ridesCreated.size(), ridesJoined.size(), requestsMade.size());
+
+        Profile_Rides_Details ridesDetails = new Profile_Rides_Details();
+        ridesDetails.setRidesCreated(ridesCreated);
+        ridesDetails.setRidesJoined(ridesJoined);
+        ridesDetails.setRequestMade(requestsMade);
         return ridesDetails;
     }
 

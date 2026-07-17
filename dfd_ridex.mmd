@@ -1,0 +1,52 @@
+graph TD
+    %% ─── External Actors ───
+    U((User / Driver))
+
+    %% ─── API Layer ───
+    subgraph Controllers
+        AUTH[Auth Controller]
+        USER[User Controller]
+        RIDE[Ride Controller]
+    end
+
+    %% ─── Service Layer ───
+    subgraph Services
+        US[User Service]
+        RS[Ride Service]
+        DS[Detail Service]
+        IS[Image Service]
+        CS[Cache Service]
+    end
+
+    %% ─── Infrastructure ───
+    subgraph Infrastructure
+        ES[Email Service]
+        IMG[Cloudinary]
+    end
+
+    %% ─── Data Layer ───
+    DB[(Database)]
+
+    %% ─── User interacts with Controllers ───
+    U -->|Login / Register| AUTH
+    U -->|Profile & ID Verify| USER
+    U -->|Rides & Bookings| RIDE
+
+    %% ─── Auth Flow ───
+    AUTH --> US
+    US --> DB
+    US -->|Verification Email| ES
+
+    %% ─── Profile Flow ───
+    USER --> DS
+    USER --> IS
+    DS --> DB
+    IS --> IMG
+    USER --> CS
+
+    %% ─── Ride Flow ───
+    RIDE --> RS
+    RS --> DB
+    RS -->|Notifications| ES
+    RS -->|Coin Updates| US
+    RS --> CS

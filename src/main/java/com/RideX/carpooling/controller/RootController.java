@@ -23,7 +23,7 @@ public class RootController {
         }
         String username = Helper.getEmailOfLoggedInUser(authentication);
         logger.info("Fetching information for user: {}", username);
-        User user = userService.getUserByEmail(username);
+        User user = userService.getNavbarUserByEmail(username);
         if (user == null) {
             logger.error("User not found with email: {}", username);
             return;

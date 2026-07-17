@@ -45,12 +45,12 @@ public class Rides {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", referencedColumnName = "userId", nullable = false)
     @JsonBackReference // Back reference to break circular dependency with RideRequest
     private User driver;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_id", nullable = false) // no unique = true
     private CarDetails car;
 
@@ -58,7 +58,7 @@ public class Rides {
     @JsonManagedReference // Forward reference to serialize the list of RideRequest
     private List<RideRequest> rideRequests;
     
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "ride_passengers",
             joinColumns = @JoinColumn(name = "ride_id"),

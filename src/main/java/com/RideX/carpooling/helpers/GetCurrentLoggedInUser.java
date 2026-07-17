@@ -26,7 +26,12 @@ public class GetCurrentLoggedInUser {
         logger.info("Currently logged-in user: {}", username);
         return username;
     }
+
     public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User user) {
+            return user;
+        }
         String username = getLoggedInUser();
         return userServices.getUserByEmail(username);
     }

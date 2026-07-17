@@ -15,10 +15,17 @@ import java.util.stream.Collectors;
 @Entity(name = "user")
 @Table(name = "users")
 @NamedEntityGraph(
+        name = "User.navbar",
+        attributeNodes = {
+                @NamedAttributeNode("roleList")
+        }
+)
+@NamedEntityGraph(
         name = "User.carDetailsAndUserDetails",
         attributeNodes = {
                 @NamedAttributeNode("carDetails"),
-                @NamedAttributeNode("user_details")
+                @NamedAttributeNode("user_details"),
+                @NamedAttributeNode("roleList")
         }
 )
 public class User implements UserDetails{
@@ -51,7 +58,7 @@ public class User implements UserDetails{
 
     private String providerUserId;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> roleList = new ArrayList<>();
 
     private String emailToken;
@@ -86,10 +93,10 @@ public class User implements UserDetails{
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Details user_details;
 
-    @ManyToMany(mappedBy = "passengers")
+    @ManyToMany(mappedBy = "passengers", fetch = FetchType.LAZY)
     private List<Rides> ridesJoined = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<RideRequest> rideRequests;
 

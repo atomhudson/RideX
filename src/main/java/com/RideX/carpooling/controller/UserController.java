@@ -12,7 +12,16 @@ import com.RideX.carpooling.model.GovtIDVerifyRequest;
 import com.RideX.carpooling.model.User;
 import com.RideX.carpooling.repositories.DetailsRepository;
 import com.RideX.carpooling.repositories.UserRepository;
-import com.RideX.carpooling.services.*;
+import com.RideX.carpooling.services.DetailServices;
+import com.RideX.carpooling.services.RatingService;
+import com.RideX.carpooling.services.RidesServices;
+import com.RideX.carpooling.services.CarDetailsServices;
+import com.RideX.carpooling.services.ImageService;
+import com.RideX.carpooling.services.GovtIdRequestService;
+import com.RideX.carpooling.services.EmailServices;
+import com.RideX.carpooling.services.CustomUUIDService;
+import com.RideX.carpooling.services.ProfileCacheService;
+import com.RideX.carpooling.services.UserServices;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -63,6 +72,12 @@ public class UserController {
     private CustomUUIDService customUUIDService;
 
     @Autowired
+    private UserServices userService;
+
+    @Autowired
+    private ProfileCacheService profileCacheService;
+
+    @Autowired
     private GetCurrentLoggedInUser getCurrentLoggedInUser;
 
     private User getCurrentUser() {
@@ -70,8 +85,12 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String profile(Model model) {
-        User user = getCurrentUser();
+    public String profile(Model model, @ModelAttribute("loggedInUser") User navbarUser) {
+        User user = userService.getUserByEmail(navbarUser.getEmail());
+        if (user == null) {
+            user = navbarUser;
+        }
+
         User_Details userDetails = detailServices.getUserDetails(user);
 
         userDetails.setUserId(user.getUserId());
@@ -88,11 +107,12 @@ public class UserController {
         userDetails.setCoins(user.getCoins());
         userDetails.setJoined_Date(user.getDateCreate());
 
-        Profile_Rides_Details profileRidesDetails = ridesServices.ridesDetails(user.getUserId());
-        Car_DTO_Details carDtoDetails = carDetailsServices.findCarDetails(user.getUserId());
+        Profile_Rides_Details profileRidesDetails = ridesServices.ridesDetails(user);
+        Car_DTO_Details carDtoDetails = carDetailsServices.findCarDetails(user);
 
-        double averageRating = ratingService.getAverageRating(user);
-        long totalRatings = ratingService.getTotalRatings(user);
+        RatingService.RatingStats ratingStats = ratingService.getRatingStats(user);
+        double averageRating = ratingStats.average();
+        long totalRatings = ratingStats.total();
 
         model.addAttribute("userDetails", userDetails);
         model.addAttribute("profileRidesDetails", profileRidesDetails);
@@ -169,6 +189,7 @@ public class UserController {
             user.setDateUpdate(new Date());
         }
         userRepository.save(user);
+        profileCacheService.evictForUser(user.getUserId(), user.getEmail());
         session.setAttribute("message", new Message(isNew ? "User Details Created!" : "User Details Updated!", MessageType.green));
         logger.info("User - process-details-saved");
         return "redirect:/user/details";
@@ -209,6 +230,7 @@ public class UserController {
         govtIdRequestService.save(govtIDVerifyRequest);
         user.setDateUpdate(new Date());
         userRepository.save(user);
+        profileCacheService.evictForUser(user.getUserId(), user.getEmail());
         return "redirect:/user/profile";
     }
 
@@ -232,6 +254,7 @@ public class UserController {
                 user.setPhone(phone);
                 user.setDateUpdate(new Date());
                 userRepository.save(user);
+                profileCacheService.evictForUser(user.getUserId(), user.getEmail());
 
                 String successMessage = """
                     Your phone number <strong>%s</strong> has been successfully verified.<br><br>

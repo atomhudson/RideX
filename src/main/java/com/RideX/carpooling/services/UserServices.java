@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface UserServices {
     User saveUser(User user);
+    User getNavbarUserByEmail(String email);
     User getUserByEmail(String email);
     User getUserById(String id);
 

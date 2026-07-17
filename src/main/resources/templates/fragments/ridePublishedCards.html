@@ -13,8 +13,8 @@
                         <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">01 Jan</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <img th:src="${ride.driver.profilePic}" alt="Driver" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" />
-                        <span style="font-size: 0.84rem; color: var(--rx-text-secondary);" th:text="${ride.driver.fName + ' ' + ride.driver.lName}">Driver</span>
+                        <img th:src="${loggedInUser.profilePic}" alt="Driver" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" />
+                        <span style="font-size: 0.84rem; color: var(--rx-text-secondary);" th:text="${loggedInUser.fName + ' ' + loggedInUser.lName}">Driver</span>
                     </div>
                 </div>
                 <div style="text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">

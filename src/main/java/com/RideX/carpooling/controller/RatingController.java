@@ -3,6 +3,8 @@ package com.RideX.carpooling.controller;
 import com.RideX.carpooling.helpers.GetCurrentLoggedInUser;
 import com.RideX.carpooling.model.Rating;
 import com.RideX.carpooling.model.User;
+import com.RideX.carpooling.services.ProfileCacheService;
+import com.RideX.carpooling.services.ProfileCacheService;
 import com.RideX.carpooling.services.RatingService;
 import com.RideX.carpooling.services.UserServices;
 import jakarta.servlet.http.HttpSession;
@@ -26,6 +28,9 @@ public class RatingController {
 
     @Autowired
     private GetCurrentLoggedInUser getCurrentLoggedInUser;
+
+    @Autowired
+    private ProfileCacheService profileCacheService;
 
     private User getCurrentUser() {
         return getCurrentLoggedInUser.getCurrentUser();
@@ -56,6 +61,7 @@ public class RatingController {
         rating.setStars(stars);
         rating.setMessage(message);
         ratingService.saveRating(rating);
+        profileCacheService.evictForUser(ratedId, rated.getEmail());
 
         System.out.println("rating submitted successfully");
 

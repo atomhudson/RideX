@@ -42,3 +42,6 @@ management.endpoints.web.exposure.include=prometheus,health,info
 
 # Optional: customize Prometheus endpoint path (default is /actuator/prometheus)
 management.endpoints.web.base-path=/actuator
+
+spring.cache.type=caffeine
+spring.cache.cache-names=profileRides,ratingStats
