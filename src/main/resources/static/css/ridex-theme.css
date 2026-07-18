@@ -761,6 +761,48 @@ body {
     margin-top: 6px;
 }
 
+/* ---------- Autocomplete Suggestion Dropdown ---------- */
+.rx-autocomplete-wrap {
+    position: relative;
+}
+
+.rx-suggestion-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 4px 0 0;
+    padding: 4px 0;
+    list-style: none;
+    background: var(--rx-bg-secondary);
+    border: 1px solid var(--rx-border-hover);
+    border-radius: var(--rx-radius-sm);
+    box-shadow: var(--rx-shadow-lg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--rx-border-hover) transparent;
+}
+
+.rx-suggestion-list li {
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    color: var(--rx-text-secondary);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rx-suggestion-list li:hover,
+.rx-suggestion-list li.rx-suggestion-active {
+    background: var(--rx-accent-light);
+    color: var(--rx-text-primary);
+}
+
+
 .rx-form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;

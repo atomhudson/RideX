@@ -10,6 +10,7 @@ import com.RideX.carpooling.repositories.CarDetailsRepository;
 import com.RideX.carpooling.repositories.UserRepository;
 import com.RideX.carpooling.services.CustomUUIDService;
 import com.RideX.carpooling.services.ImageService;
+import com.RideX.carpooling.services.ProfileCacheService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -45,6 +46,9 @@ public class CarDetailController {
 
     @Autowired
     private GetCurrentLoggedInUser getCurrentLoggedInUser;
+
+    @Autowired
+    private ProfileCacheService profileCacheService;
 
     private User getCurrentUser() {
         return getCurrentLoggedInUser.getCurrentUser();
@@ -117,6 +121,7 @@ public class CarDetailController {
         }
         carRepository.save(details);
         userRepository.save(user);
+        profileCacheService.evictForUser(user.getUserId(), user.getEmail());
         session.setAttribute("message", new Message(isNew ? "Car Details Created!" : "Car Details Updated", MessageType.green));
         return "redirect:/user/car/register";
     }
