@@ -29,27 +29,29 @@
                         <!-- From / To -->
                         <div class="rx-form-row">
                             <div>
-                                <div class="rx-form-group">
+                                <div class="rx-form-group rx-autocomplete-wrap">
                                     <label for="fromAddress">From (Address)</label>
-                                    <input type="text" th:field="*{fromAddress}" id="fromAddress" name="fromAddress" class="rx-form-input" placeholder="Enter full address" required />
+                                    <input type="text" th:field="*{fromAddress}" id="fromAddress" name="fromAddress" class="rx-form-input" placeholder="Enter full address" autocomplete="off" required />
+                                    <ul id="fromAddress-suggestions" class="rx-suggestion-list hidden"></ul>
                                 </div>
-                                <div class="rx-form-group" style="margin-top: 12px;">
+                                <div class="rx-form-group rx-autocomplete-wrap" style="margin-top: 12px;">
                                     <label for="from">From (City)</label>
-                                    <input type="text" id="from" th:field="*{fromCity}" name="from" list="from-list" class="rx-form-input" placeholder="Select city" required />
-                                    <datalist id="from-list"></datalist>
+                                    <input type="text" id="from" th:field="*{fromCity}" name="from" class="rx-form-input" placeholder="Select city" autocomplete="off" required />
+                                    <ul id="from-suggestions" class="rx-suggestion-list hidden"></ul>
                                 </div>
                                 <input type="hidden" th:field="*{fromLat}" id="fromLat" name="fromLat" />
                                 <input type="hidden" th:field="*{fromLng}" id="fromLon" name="fromLon" />
                             </div>
                             <div>
-                                <div class="rx-form-group">
+                                <div class="rx-form-group rx-autocomplete-wrap">
                                     <label for="toAddress">To (Address)</label>
-                                    <input type="text" th:field="*{toAddress}" id="toAddress" name="toAddress" class="rx-form-input" placeholder="Enter full address" required />
+                                    <input type="text" th:field="*{toAddress}" id="toAddress" name="toAddress" class="rx-form-input" placeholder="Enter full address" autocomplete="off" required />
+                                    <ul id="toAddress-suggestions" class="rx-suggestion-list hidden"></ul>
                                 </div>
-                                <div class="rx-form-group" style="margin-top: 12px;">
+                                <div class="rx-form-group rx-autocomplete-wrap" style="margin-top: 12px;">
                                     <label for="to">To (City)</label>
-                                    <input type="text" id="to" th:field="*{toCity}" name="to" list="to-list" class="rx-form-input" placeholder="Select city" required />
-                                    <datalist id="to-list"></datalist>
+                                    <input type="text" id="to" th:field="*{toCity}" name="to" class="rx-form-input" placeholder="Select city" autocomplete="off" required />
+                                    <ul id="to-suggestions" class="rx-suggestion-list hidden"></ul>
                                 </div>
                                 <input type="hidden" th:field="*{toLat}" id="toLat" name="toLat" />
                                 <input type="hidden" th:field="*{toLng}" id="toLon" name="toLon" />
@@ -137,6 +139,6 @@
 </div>
 <script th:src="@{'/js/coordinates.js'}"></script>
 <script th:src="@{'/js/createRide.js'}"></script>
-<script th:src="@{'/js/main.js'}" type="module"></script>
+<script th:src="@{'/js/createRideAutocomplete.js'}" type="module"></script>
 </body>
 </html>
