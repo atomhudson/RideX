@@ -18,7 +18,7 @@
                     <div class="rx-form-row">
                         <div class="rx-form-group">
                             <label for="carMake">Car Make</label>
-                            <select id="carMake" name="carMake" th:field="*{carMake}" class="rx-form-input">
+                            <select id="carMake" name="carMake" th:field="*{carMake}" th:data-selected-value="${car.carMake}" class="rx-form-input">
                                 <option value="" disabled selected>Select Make</option>
                             </select>
                             <p th:if="${#fields.hasErrors('carMake')}" th:errors="*{carMake}" style="color: #ef4444; font-size: 0.8rem; margin-top: 4px;">
@@ -27,7 +27,7 @@
                         </div>
                         <div class="rx-form-group">
                             <label for="carModel">Car Model</label>
-                            <select id="carModel" name="carModel" th:field="*{carModel}" class="rx-form-input">
+                            <select id="carModel" name="carModel" th:field="*{carModel}" th:data-selected-value="${car.carModel}" class="rx-form-input">
                                 <option value="" disabled selected>Select Model</option>
                             </select>
                             <p th:if="${#fields.hasErrors('carModel')}" th:errors="*{carModel}" style="color: #ef4444; font-size: 0.8rem; margin-top: 4px;">

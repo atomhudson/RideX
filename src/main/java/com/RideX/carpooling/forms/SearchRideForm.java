@@ -34,7 +34,6 @@ public class SearchRideForm {
         return date;
     }
 
-
     @Override
     public String toString() {
         return "SearchRideForm{" +

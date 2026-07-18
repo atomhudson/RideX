@@ -6,9 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.boot.web.servlet.error.ErrorController;
 
 @Controller
-public class CustomErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
+public class CustomErrorController implements ErrorController {
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
@@ -32,7 +33,6 @@ public class CustomErrorController implements org.springframework.boot.web.servl
                 return "error/403";
             }
         }
-        
         return "error/error";
     }
 } 

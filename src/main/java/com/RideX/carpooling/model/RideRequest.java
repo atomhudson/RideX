@@ -32,7 +32,6 @@ public class RideRequest {
         requestedAt = new Date();
     }
 
-
     public User getUser() {
         return user;
     }

@@ -63,8 +63,6 @@ public class RatingController {
         ratingService.saveRating(rating);
         profileCacheService.evictForUser(ratedId, rated.getEmail());
 
-        System.out.println("rating submitted successfully");
-
         return "redirect:/user/profile";
     }
     @GetMapping("/profile/ratings/{id}")

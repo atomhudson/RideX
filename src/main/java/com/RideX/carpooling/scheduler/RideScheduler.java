@@ -28,21 +28,16 @@ public class RideScheduler {
     }
 
     // Runs every 1 minute
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 1200000)
     @Transactional
     public void updateRideStatuses() {
         Date now = new Date();
 
         List<Rides> ridesToUpdate = ridesRepository.findByRideStatusAndStartTimeBefore("PLANNED", now);
 
-        logger.info("Updating rides statuses");
-        logger.info("Rides to update: {}",ridesToUpdate.size());
-
-
         for (Rides ride : ridesToUpdate) {
             ride.setRideStatus(AppConstants.RIDE_ONGOING);
             ride.setUpdatedAt(now);
-            logger.info("Ride Id from PLANNED TO ONGOING: {}", ride.getRideId());
         }
 
         List<Rides> ongoingRides = ridesRepository.findByRideStatusAndEndTimeBefore("ONGOING", now);
@@ -68,12 +63,9 @@ public class RideScheduler {
                             userRepository.save(coDriver);
                         });
             }
-
-            logger.info("Ride Id from ONGOING TO COMPLETED: {}", ride.getRideId());
         }
         ridesRepository.saveAll(ridesToUpdate);
         ridesRepository.saveAll(ongoingRides);
-        logger.info("Ride statuses updated");
     }
 }
 

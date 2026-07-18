@@ -29,8 +29,6 @@ public class RatingServiceImplementation implements RatingService {
     @Override
     public Map<Integer, Long> getStarCounts(User ratedUser) {
         List<Rating> ratings = ratingRepository.findByRated(ratedUser);
-
-        // Count how many times each star value (1–5) appears
         return ratings.stream()
                 .collect(Collectors.groupingBy(
                         Rating::getStars,

@@ -38,11 +38,7 @@ public class EmailServicesImplementation implements EmailServices {
                                *{ margin:0; padding:0; box-sizing:border-box;}
                                body{ background:#0a0a0a; font-family:Arial,Helvetica,sans-serif; color:#f5f5f5;padding:40px 20px;}
                                .wrapper{ max-width:640px; margin:auto; }
-                               .card{ background:#111111; border:1px solid rgba(255,255,255,.08); border-radius:20px; overflow:hidden;
-                                   box-shadow:
-                                       0 10px 40px rgba(0,0,0,.55),
-                                       0 0 80px rgba(16,185,129,.08);
-                               }
+                               .card{ background:#111111; border:1px solid rgba(255,255,255,.08); border-radius:20px; overflow:hidden; box-shadow: 0 10px 40px rgba(0,0,0,.55), 0 0 80px rgba(16,185,129,.08); }
                                .header{ background:linear-gradient(135deg,#0f0f0f,#151515); text-align:center; padding:45px 30px; border-bottom:1px solid rgba(255,255,255,.08); }
                                .logo{ width:68px; height:68px; line-height:68px; margin:auto; background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.35); border-radius:50%%; font-size:30px; }
                                .header h1{ margin-top:18px; font-size:34px; color:#ffffff; letter-spacing:1px; }
@@ -60,14 +56,7 @@ public class EmailServicesImplementation implements EmailServices {
                                .footer a{ color:#10B981; text-decoration:none; }
                                .social{ margin:18px 0; }
                                .badge{ display:inline-block; padding:7px 16px; background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.3); border-radius:999px; color:#10B981; font-size:12px; letter-spacing:1px; text-transform:uppercase; font-weight:bold; }
-                               @media only screen and (max-width:600px){
-                                   .content{ padding:28px; }
-                                   .header{ padding:35px 20px; }
-                                   .header h1{ font-size:28px; }
-                                   .greeting{ font-size:21px; }
-                                   .text{ font-size:15px; }
-                                   .button{ width:100%%; padding:15px; }
-                               }
+                               @media only screen and (max-width:600px){ .content{ padding:28px; } .header{ padding:35px 20px; } .header h1{ font-size:28px; } .greeting{ font-size:21px; } .text{ font-size:15px; } .button{ width:100%%; padding:15px; } }
                            </style>
                        </head>
                        <body>
@@ -76,27 +65,16 @@ public class EmailServicesImplementation implements EmailServices {
                                <div class="header">
                                    <h1 class="logo">RideX</h1>
                                    <p>Premium Ride Sharing Platform</p>
-                                   <div style="margin-top:20px;">
-                                       <span class="badge">Important Notification</span>
-                                   </div>
+                                   <div style="margin-top:20px;"><span class="badge">Important Notification</span></div>
                                </div>
                                <div class="content">
-                                   <div class="greeting">
-                                       Hello %s 👋
-                                   </div>
+                                   <div class="greeting">Hello %s 👋</div>
                                    <div class="text">
                                        Thank you for being a valued member of <strong>RideX</strong>.
                                        We're reaching out regarding an important update for your account.
                                    </div>
-                                   <div class="message-box">
-                                       <h3>Your Message</h3>
-                                       <p>%s</p>
-                                   </div>
-                                   <div class="button-container">
-                                       <a href="%s" class="button">
-                                           Open RideX
-                                       </a>
-                                   </div>
+                                   <div class="message-box"><h3>Your Message</h3><p>%s</p></div>
+                                   <div class="button-container"><a href="%s" class="button">Open RideX</a></div>
                                    <div class="note">
                                        <b>Security Tip</b><br><br>
                                        If you weren't expecting this email, you can safely ignore it.
@@ -104,17 +82,10 @@ public class EmailServicesImplementation implements EmailServices {
                                    </div>
                                </div>
                                <div class="footer">
-                                   <div class="social">
-                                       Ride Smart • Ride Safe • Ride Together
-                                   </div>
-                                   <p>
-                                       Need help?
-                                       <a href="mailto:support@ridex.com">support@ridex.com</a>
-                                   </p>
+                                   <div class="social"> Ride Smart • Ride Safe • Ride Together </div>
+                                   <p>Need help? <a href="mailto:support@ridex.com">support@ridex.com</a></p>
                                    <br>
-                                   <p>
-                                       © 2026 RideX. All Rights Reserved.
-                                   </p>
+                                   <p>© 2026 RideX. All Rights Reserved.</p>
                                </div>
                            </div>
                        </div>

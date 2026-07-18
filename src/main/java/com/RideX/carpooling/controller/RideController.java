@@ -84,7 +84,6 @@ public class RideController {
 
     @PostMapping("/process")
     public String processRide(@ModelAttribute("rideForm") RideForm rideForm, HttpSession session){
-        logger.info(rideForm.toString());
         User user = getCurrentLoggedInUser.getCurrentUser();
         Rides rides;
 
@@ -266,12 +265,6 @@ public class RideController {
                               @RequestParam(name = "finalPrice") double finalPrice,
                               @RequestParam(name = "coDriver") boolean coDriver,
                               HttpSession session) {
-        System.out.println("RequesterId :"+requesterId);
-        System.out.println("RideId :"+rideId);
-        System.out.println("Seat :"+seat);
-        System.out.println("CoDriver :"+coDriver);
-        System.out.println("Used Coins: "+coins);
-        System.out.println("FinalPrice :"+finalPrice);
 
         User requester = userRepository.findById(requesterId).orElseThrow(() -> new RuntimeException("User not found"));
         Rides ride = rideRepository.findById(rideId).orElseThrow(() -> new RuntimeException("Ride not found"));

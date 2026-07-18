@@ -31,7 +31,6 @@ public class SearchController {
     public String searchRide(Model model) {
         SearchRideForm form = new SearchRideForm();
         model.addAttribute("searchForm", form);
-//        model.addAttribute("matchedRides", new ArrayList<>());
         return "fragments/searchRide";
     }
 
@@ -43,14 +42,12 @@ public class SearchController {
             Model model) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         List<Rides> matchedRides = rideRepository.findUpcomingRides(form.getFrom(), form.getTo(), form.getDate(), sort);
-        // Filter only PLANNED or ONGOING rides
         List<Rides> filteredRides = matchedRides.stream()
                 .filter(r -> r.getRideStatus().equals("PLANNED") || r.getRideStatus().equals("ONGOING"))
                 .collect(Collectors.toList());
 
         logger.info("filteredRides: {}", filteredRides);
 
-        // Now compute counts from filteredRides only
         long acCount = filteredRides.stream().filter(Rides::isAcAvailable).count();
         long luggageCount = filteredRides.stream().filter(Rides::isLuggageAllowed).count();
         long smokingCount = filteredRides.stream().filter(Rides::isAllowSmoking).count();
@@ -85,10 +82,6 @@ public class SearchController {
 
         model.addAttribute("searchForm", form);
         model.addAttribute("matchedRides", filteredRides);
-
-
-//        model.addAttribute("searchForm", form);
-//        model.addAttribute("matchedRides", matchedRides);
 
         return "fragments/searchRide";
     }

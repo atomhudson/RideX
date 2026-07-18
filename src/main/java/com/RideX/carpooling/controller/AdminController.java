@@ -60,7 +60,6 @@ public class AdminController {
 
     @RequestMapping(value = "/dashboard")
     public String adminDashboard(Model model) {
-        System.out.println("Admin Dashboard");
         User user = getCurrentUser();
         User_Details userDetails = detailServices.getUserDetails(user);
 
@@ -75,8 +74,6 @@ public class AdminController {
         userDetails.setVerify_Request(user.getGovtIdVerifyRequest());
         userDetails.setRole(user.getRoleList().get(0));
         List<GovtIDVerifyRequest> govtIdRequests = govtIdRequestService.getAllPendingRequest(false,false);
-        logger.info("{}", govtIdRequests);
-        logger.info("{}", govtIdRequests.size());
 
         model.addAttribute("userDetails", userDetails);
         model.addAttribute("govtIdRequests", govtIdRequests);
@@ -109,7 +106,6 @@ public class AdminController {
                                    @RequestParam(value = "sortBy", defaultValue = "dateCreate") String sortBy,
                                    @RequestParam(value = "direction", defaultValue = "desc") String direction) {
 
-        // If no search is being performed (initial page load or form reset), redirect to default view
         if (userSearchForm == null || (userSearchForm.getField() == null && userSearchForm.getValue() == null)) {
             return "redirect:/admin/getUsers";
         }
@@ -159,7 +155,6 @@ public class AdminController {
             model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
             return "admin/users";
         }
-
         model.addAttribute("isFieldEmpty", false);
         model.addAttribute("userSearchForm", userSearchForm);
         model.addAttribute("userPage", pageContact);

@@ -25,17 +25,12 @@ public class Helper {
             String username = "";
 
             if (clientId.equalsIgnoreCase("google")) {
-                // sign with google
-                System.out.println("Getting email from google");
                 username = oauth2User.getAttribute("email").toString();
 
             } else if (clientId.equalsIgnoreCase("github")) {
-                // sign with github
-                System.out.println("Getting email from github");
                 username = oauth2User.getAttribute("email") != null ? oauth2User.getAttribute("email").toString()
                         : oauth2User.getAttribute("login").toString() + "@github.com";
             }
-            // sign with facebook
             return username;
 
         } else {

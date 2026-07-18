@@ -95,7 +95,6 @@ public class PageController {
         return "driver-resources";
     }
 
-
     @RequestMapping("/signup")
     public String doRegister(Model model){
         logger.info("PageController :: signup :: url[/signup]");

@@ -84,7 +84,6 @@ public class ForgotPasswordController {
             session.setAttribute("message", message);
             return "redirect:/reset-password";
         }
-
         if (!otpService.verifyOTP(email, otp)) {
             Message message = new Message();
             message.setContent("Invalid OTP.");
@@ -92,7 +91,6 @@ public class ForgotPasswordController {
             session.setAttribute("message", message);
             return "redirect:/reset-password";
         }
-
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
             User userToUpdate = user.get();
@@ -100,14 +98,12 @@ public class ForgotPasswordController {
             userRepository.save(userToUpdate);
             otpService.clearOTP(email);
             session.removeAttribute("resetEmail");
-
             Message message = new Message();
             message.setContent("Password has been reset successfully.");
             message.setType(MessageType.green);
             session.setAttribute("message", message);
             return "redirect:/login";
         }
-
         return "redirect:/forgot-password";
     }
 } 

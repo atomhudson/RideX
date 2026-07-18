@@ -52,17 +52,10 @@ public class UserServiceImplementation implements UserServices {
         user.setUserId(userId);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoleList(List.of(AppConstants.ROLE_USER));
-        logger.info("Saving user: {}",user);
-        logger.info("User created using: {}",user.getUserId());
-
         String emailToken = UUID.randomUUID().toString();
         user.setEmailToken(emailToken);
-        logger.info("email token created using: {} for user: {}",emailToken,user.getUserId());
-
         User savedUser = userRepository.save(user);
-
         String emailLink = helper.getLinkForEmailVerification(emailToken);
-
         emailService.sendEmail(savedUser.getEmail(), "Verify Your Account : RideX", emailLink);
         return savedUser;
     }
@@ -115,7 +108,6 @@ public class UserServiceImplementation implements UserServices {
         int validSize = size < 1 ? AppConstants.PAGE_SIZE : size;
         return PageRequest.of(Math.max(page, 0), validSize, sort);
     }
-
 
     @Override
     public Page<User> searchByUserId(String userId, int page, int size, String sortField, String sortDirection) {

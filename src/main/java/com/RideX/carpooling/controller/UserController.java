@@ -191,7 +191,6 @@ public class UserController {
         userRepository.save(user);
         profileCacheService.evictForUser(user.getUserId(), user.getEmail());
         session.setAttribute("message", new Message(isNew ? "User Details Created!" : "User Details Updated!", MessageType.green));
-        logger.info("User - process-details-saved");
         return "redirect:/user/details";
     }
     @RequestMapping("/verifyGovtId")
@@ -206,11 +205,6 @@ public class UserController {
     @PostMapping("/govtId/submit")
     public String handleGovtIdForm(@RequestParam("govtIdType") String idType, @RequestParam("govtIdNumber") String idNumber, @RequestParam("imageData") String imageBase64, @RequestPart("govtIdPhotoFile") MultipartFile govtIdPhotoFile)
     {
-        System.out.println("ID Type: " + idType);
-        System.out.println("ID Number: " + idNumber);
-        System.out.println("Image Base64 Size: " + imageBase64.length());
-        System.out.println("File Name: " + govtIdPhotoFile.getOriginalFilename());
-
         GovtIDVerifyRequest govtIDVerifyRequest = new GovtIDVerifyRequest();
         User user = getCurrentUser();
 
@@ -225,7 +219,6 @@ public class UserController {
         govtIDVerifyRequest.setGovtIdUniqueNumber(idNumber);
         govtIDVerifyRequest.setVerified(false);
         govtIDVerifyRequest.setGovtIdType(idType);
-        logger.info("Request: {}", govtIDVerifyRequest);
         user.setGovtIdVerifyRequest(govtIDVerifyRequest.getRequestId());
         govtIdRequestService.save(govtIDVerifyRequest);
         user.setDateUpdate(new Date());
@@ -245,7 +238,6 @@ public class UserController {
                             Model model) {
         String sessionOtp = (String) session.getAttribute("otp:" + phone);
         if (sessionOtp != null && sessionOtp.equals(otp)) {
-            System.out.println("OTP verified successfully for " + phone);
             session.removeAttribute("otp:" + phone);
 
             User user = getCurrentUser();
@@ -268,7 +260,6 @@ public class UserController {
             }
             return "redirect:/user/profile";
         } else {
-            System.out.println("OTP mismatch for " + phone);
             model.addAttribute("phone", phone);
             model.addAttribute("step", 2);
             model.addAttribute("errorMessage", "Invalid OTP. Please try again.");
@@ -280,7 +271,6 @@ public class UserController {
     public String sendOtp(@RequestParam("phone") String phone, HttpSession session, Model model) {
         String otp = generateOtp();
         session.setAttribute("otp:" + phone, otp);
-        System.out.println("Sending OTP to " + phone + ": " + otp);
         User user = getCurrentUser();
         if (user != null){
             String otpMessage = """

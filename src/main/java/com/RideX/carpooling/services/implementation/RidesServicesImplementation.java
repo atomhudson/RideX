@@ -57,7 +57,6 @@ public class RidesServicesImplementation implements RidesServices {
         List<Rides> rides_created = ridesCreated(userId);
         List<Rides> rides_joined = ridesJoined(userId);
         List<RideRequest> ride_request = rideRequestServices.requestsCreated(userId);
-        logger.info("User [{}] - Created: {}, Joined: {}, Requests Made: {}", userId, rides_created.size(), rides_joined.size(), ride_request.size());
 
         ridesDetails.setRidesCreated(rides_created);
         ridesDetails.setRidesJoined(rides_joined);

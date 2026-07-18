@@ -11,7 +11,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class SessionHelper {
     private static Logger logger = LoggerFactory.getLogger(SessionHelper.class);
     public static void removeMessage() {
-        logger.info("SessionHelper :: removeMessage[]");
         try {
             System.out.println("removing message from session");
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

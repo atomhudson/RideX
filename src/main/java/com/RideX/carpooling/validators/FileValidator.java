@@ -13,13 +13,11 @@ public class FileValidator implements ConstraintValidator<ValidFile, Object> {
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         if (value == null) {
-            return true; // Let @NotNull/@NotEmpty handle if needed
+            return true;
         }
-
         if (value instanceof MultipartFile file) {
             return validateFile(file, context);
         }
-
         if (value instanceof List<?> files) {
             for (Object f : files) {
                 if (f instanceof MultipartFile file && !validateFile(file, context)) {
@@ -28,8 +26,7 @@ public class FileValidator implements ConstraintValidator<ValidFile, Object> {
             }
             return true;
         }
-
-        return false; // Invalid type
+        return false;
     }
 
     private boolean validateFile(MultipartFile file, ConstraintValidatorContext context) {

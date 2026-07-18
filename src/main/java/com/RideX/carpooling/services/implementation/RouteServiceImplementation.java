@@ -23,7 +23,6 @@ public class RouteServiceImplementation implements RouteService {
 
     @Override
     public List<String> getDistanceAndDuration(String fromLatStr, String fromLonStr, String toLatStr, String toLonStr) {
-        logger.info("RouteServiceImplementation :: getDistanceAndDuration(String fromLatStr:[{}], String fromLonStr:[{}], String toLatStr:[{}], String toLonStr:[{}])", fromLatStr, fromLonStr, toLatStr, toLonStr);
         String url = AppConstants.ROUTE_SERVICE_API_ENDPOINT;
         List<String> result = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();

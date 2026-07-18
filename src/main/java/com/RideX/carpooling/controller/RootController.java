@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class RootController {
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private UserServices userService;
+
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
         if (authentication == null) {
@@ -22,7 +24,6 @@ public class RootController {
             return;
         }
         String username = Helper.getEmailOfLoggedInUser(authentication);
-        logger.info("Fetching information for user: {}", username);
         User user = userService.getNavbarUserByEmail(username);
         if (user == null) {
             logger.error("User not found with email: {}", username);

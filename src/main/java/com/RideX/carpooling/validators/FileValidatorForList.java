@@ -12,7 +12,7 @@ public class FileValidatorForList implements ConstraintValidator<ValidFile, List
     @Override
     public boolean isValid(List<MultipartFile> files, ConstraintValidatorContext context) {
         if (files == null || files.isEmpty()) {
-            return true; // Let @NotEmpty handle this case
+            return true;
         }
 
         for (MultipartFile file : files) {

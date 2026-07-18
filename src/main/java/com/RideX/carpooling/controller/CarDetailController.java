@@ -52,7 +52,6 @@ public class CarDetailController {
 
     @GetMapping("/register")
     public String register(Model model) {
-        logger.info("CarDetailController :: register :: url [/user/car/register]");
         User user = getCurrentUser();
         if (!model.containsAttribute("car")){
             CarDetails existingCarDetails = user.getCarDetails();
@@ -73,9 +72,6 @@ public class CarDetailController {
     }
     @PostMapping("/register-process")
     public String processCarRegister(@Valid @ModelAttribute("car") CarForm carForm, BindingResult rBindingResult, HttpSession session){
-        logger.info("CarDetailController :: processCarRegister :: url [/user/car/register-process]");
-        logger.info("Car-register Form Processing");
-        logger.info(carForm.toString());
         User user = getCurrentUser();
         if (rBindingResult.hasErrors()) {
             logger.info("Validation errors found, returning to form");
@@ -90,8 +86,6 @@ public class CarDetailController {
             details.setUser(user);
             String carNumber = carForm.getCarNumber();
             Optional<CarDetails> isUniqueCarNumber = carRepository.findByCarNumber(carNumber);
-            logger.info("car number is {}",carNumber);
-            logger.info("isUniqueCarNumber is {}",isUniqueCarNumber);
             if (isUniqueCarNumber.isPresent()) {
                 session.setAttribute("message", new Message("Car number already exists", MessageType.red));
                 return "redirect:/user/car/register";
@@ -124,7 +118,6 @@ public class CarDetailController {
         carRepository.save(details);
         userRepository.save(user);
         session.setAttribute("message", new Message(isNew ? "Car Details Created!" : "Car Details Updated", MessageType.green));
-        logger.info("Car - register-update-saved");
         return "redirect:/user/car/register";
     }
 

@@ -24,15 +24,15 @@ public class AdminActions {
 
     @Autowired
     private GovtIdRequestService govtIdRequestService;
+
     @Autowired
     private UserServices userServices;
+
     @Autowired
     private UserRepository userRepository;
 
     @PostMapping("/verifyGovtId/approve/{requestId}")
     public String approveGovtId(@PathVariable String requestId) {
-        // TODO: Add my Approval logic here, e.g. update database, send notification and redirecting to the adminDashboard.
-        System.out.println("Approving govt ID verification for requestId: " + requestId);
         GovtIDVerifyRequest request = govtIdRequestService.getPendingRequest(requestId);
         if (request != null) {
             User user = userServices.getUserById(request.getUserId());
@@ -53,7 +53,6 @@ public class AdminActions {
     }
     @PostMapping("/verifyGovtId/deny/{requestId}")
     public String rejectGovtId(@PathVariable String requestId){
-        System.out.println("Rejecting govt ID verification for requestId: " + requestId);
         GovtIDVerifyRequest request = govtIdRequestService.getPendingRequest(requestId);
         if (request != null) {
             User user = userServices.getUserById(request.getUserId());
@@ -74,7 +73,7 @@ public class AdminActions {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            user.setEnabled(!user.isEnabled()); // toggle the status
+            user.setEnabled(!user.isEnabled());
             userRepository.save(user);
             redirectAttributes.addFlashAttribute("message", "User " + (user.isEnabled() ? "enabled" : "disabled") + " successfully.");
         } else {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/auth")
 public class AuthenticationController {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -46,5 +47,4 @@ public class AuthenticationController {
 
         return "fragments/error";
     }
-
 }

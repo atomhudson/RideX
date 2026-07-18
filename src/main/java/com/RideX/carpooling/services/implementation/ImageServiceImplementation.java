@@ -28,7 +28,6 @@ public class ImageServiceImplementation implements ImageService {
 
     @Override
     public String uploadImage(MultipartFile contactImage, String filename) {
-        logger.info("ImageServiceImplementation :: uploadImage(MultipartFile contactImage: [{}], String filename:[{}]))", contactImage.toString(), filename);
         
         int retryCount = 0;
         while (retryCount < MAX_RETRIES) {
@@ -64,7 +63,6 @@ public class ImageServiceImplementation implements ImageService {
 
     @Override
     public String getUrlFromPublicId(String publicId) {
-        logger.info("ImageServiceImplementation :: getUrlFromPublicId(publicId: [{}]))", publicId);
         return cloudinary
                 .url()
                 .transformation(

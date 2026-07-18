@@ -30,7 +30,6 @@ import java.util.List;
 
 @Component
 public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
-
     Logger logger = LoggerFactory.getLogger(OAuthAuthenticationSuccessHandler.class);
 
     @Autowired
@@ -45,7 +44,6 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        logger.info("OAuthAuthenticationSuccessHandler");
 
         // Ensure that we have an OAuth2AuthenticationToken
         if (!(authentication instanceof OAuth2AuthenticationToken)) {
@@ -56,7 +54,6 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
         // Identify the provider
         OAuth2AuthenticationToken oauth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
         String authorizedClientRegistrationId = oauth2AuthenticationToken.getAuthorizedClientRegistrationId();
-        logger.info("Provider: {}", authorizedClientRegistrationId);
 
         DefaultOAuth2User oauthUser = (DefaultOAuth2User) authentication.getPrincipal();
 //        oauthUser.getAttributes().forEach((key, value) -> logger.info("{} : {}", key, value));
@@ -79,9 +76,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
             user.setDateCreate(new Date());
             user.setDateUpdate(new Date());
         } else if ("github".equalsIgnoreCase(authorizedClientRegistrationId)) {
-            String email = oauthUser.getAttribute("email") != null
-                    ? oauthUser.getAttribute("email")
-                    : oauthUser.getAttribute("login") + "@github.com";
+            String email = oauthUser.getAttribute("email") != null ? oauthUser.getAttribute("email")  : oauthUser.getAttribute("login") + "@github.com";
             user.setEmail(email);
             user.setProfilePic(oauthUser.getAttribute("avatar_url"));
             String fullNameStr = oauthUser.getAttribute("login");
@@ -92,10 +87,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
         } else {
             logger.info("Unknown provider");
         }
-        // Save or update user in database
-        logger.info("----------- fetching user");
         User existingUser = userRepository.findByEmailNative(user.getEmail());
-        logger.info("----------- existing user");
         if (existingUser == null) {
             userRepository.save(user);
             Object principal = authentication.getPrincipal();
@@ -104,8 +96,6 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
                 response.setHeader("X-User-Email", email);
             }
             new DefaultRedirectStrategy().sendRedirect(request, response, "/user/profile");
-            logger.info("User created: {}",user);
-            logger.info("New user saved: {}", user.getEmail());
         } else {
             user = existingUser;
             if (!user.isEnabled()) {
@@ -114,7 +104,6 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
                 message.setContent("User is disabled, Email with verification link is sent on your email id or Contact Us!!");
                 message.setType(MessageType.red);
                 request.getSession().setAttribute("message", message);
-                logger.info("Email not verified");
                 new DefaultRedirectStrategy().sendRedirect(request, response, "/login?error=true");
                 return;
 
@@ -134,10 +123,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
     private void extractName(DefaultOAuth2User oauthUser, User user, String fullNameStr) {
         String[] nameParts = fullNameStr.trim().split(" ");
         String firstName = nameParts[0];
-        String lastName = nameParts.length > 1
-                ? String.join(" ", Arrays.copyOfRange(nameParts, 1, nameParts.length))
-                : "";
-
+        String lastName = nameParts.length > 1 ? String.join(" ", Arrays.copyOfRange(nameParts, 1, nameParts.length)) : "";
         user.setfName(firstName);
         user.setlName(lastName);
         user.setProviderUserId(oauthUser.getName());

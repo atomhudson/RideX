@@ -14,7 +14,6 @@ public class OTPServiceImplementation implements OTPService {
 
     @Override
     public String generateOTP(String email) {
-        // Generate a 6-digit OTP
         String otp = String.format("%06d", secureRandom.nextInt(1000000));
         otpMap.put(email, otp);
         return otp;

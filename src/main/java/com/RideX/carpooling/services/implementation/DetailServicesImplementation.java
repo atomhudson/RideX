@@ -14,8 +14,6 @@ public class DetailServicesImplementation implements DetailServices {
 
     @Override
     public User_Details getUserDetails(User user) {
-        logger.info("DetailServicesImplementation :: getUserDetails(String userId: ({})",user.toString());
-
         Details details = user.getUser_details();
 
         if (details == null) {

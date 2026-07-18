@@ -1,8 +1,3 @@
-/* ============================================================
-   RideX Premium Theme — Design System
-   Dark theme + Emerald accent
-   ============================================================ */
-
 /* ---------- Google Fonts ---------- */
 @import url('https://fonts.googleapis.com/css2?family=Kameron:wght@400..700&display=swap');
 
@@ -1849,4 +1844,134 @@ body {
 
 .rx-sidebar-link:hover i {
     color: var(--rx-accent);
+}
+
+/* ---------- SEARCHABLE DROPDOWN ---------- */
+.rx-searchable-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.rx-searchable-dropdown .rx-search-input {
+    padding-right: 36px;
+    cursor: text;
+}
+
+.rx-search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--rx-text-muted);
+    cursor: pointer;
+    border-radius: var(--rx-radius-full);
+    transition: all 0.2s ease;
+    line-height: 1;
+    z-index: 2;
+}
+
+.rx-search-clear:hover {
+    color: var(--rx-text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.rx-search-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 0;
+    overflow: hidden;
+    background: var(--rx-bg-tertiary);
+    border: 1px solid transparent;
+    border-radius: var(--rx-radius-sm);
+    z-index: 100;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: all 0.2s var(--rx-transition);
+    box-shadow: var(--rx-shadow-lg);
+}
+
+.rx-search-dropdown--open {
+    max-height: 240px;
+    overflow-y: auto;
+    border-color: var(--rx-border-hover);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.rx-search-item {
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    color: var(--rx-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-bottom: 1px solid var(--rx-border);
+}
+
+.rx-search-item:last-child {
+    border-bottom: none;
+}
+
+.rx-search-item:hover,
+.rx-search-item--active {
+    background: var(--rx-bg-card-hover);
+    color: var(--rx-text-primary);
+}
+
+.rx-search-item--active {
+    background: var(--rx-accent-light);
+}
+
+.rx-search-highlight {
+    background: var(--rx-accent-light);
+    color: var(--rx-accent);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.rx-search-no-result {
+    color: var(--rx-text-muted);
+    font-style: italic;
+    cursor: default;
+    text-align: center;
+    padding: 16px;
+}
+
+.rx-search-no-result:hover {
+    background: transparent;
+    color: var(--rx-text-muted);
+}
+
+/* Scrollbar styling for dropdown */
+.rx-search-dropdown--open::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rx-search-dropdown--open::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rx-search-dropdown--open::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+}
+
+.rx-search-dropdown--open::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.rx-search-custom {
+    color: var(--rx-accent);
+    border-bottom: 1px solid var(--rx-border);
+}
+
+.rx-search-custom strong {
+    color: var(--rx-text-primary);
 }

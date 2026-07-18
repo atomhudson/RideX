@@ -37,7 +37,7 @@ public class Rides {
     private boolean luggageAllowed;
     private boolean allowPets;
     private boolean allowSmoking;
-    private String rideStatus; // e.g., PLANNED, ONGOING, COMPLETED, CANCELLED
+    private String rideStatus;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -47,7 +47,7 @@ public class Rides {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", referencedColumnName = "userId", nullable = false)
-    @JsonBackReference // Back reference to break circular dependency with RideRequest
+    @JsonBackReference
     private User driver;
 
     @ManyToOne(fetch = FetchType.LAZY)
