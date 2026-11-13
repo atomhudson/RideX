@@ -71,19 +71,37 @@ public class CarDetailController {
                 car.setAc_available(existingCarDetails.isAc_available());
             }
             model.addAttribute("car", car);
+            model.addAttribute("isEditing", existingCarDetails != null);
+            model.addAttribute("existingCarNumber", existingCarDetails != null ? existingCarDetails.getCarNumber() : null);
+        } else {
+            // Flash-redirected back after error — still set flags
+            CarDetails existingCarDetails = user.getCarDetails();
+            model.addAttribute("isEditing", existingCarDetails != null);
+            model.addAttribute("existingCarNumber", existingCarDetails != null ? existingCarDetails.getCarNumber() : null);
         }
         return "user/carRegistration";
     }
     @PostMapping("/register-process")
-    public String processCarRegister(@Valid @ModelAttribute("car") CarForm carForm, BindingResult rBindingResult, HttpSession session){
+    public String processCarRegister(@Valid @ModelAttribute("car") CarForm carForm, BindingResult rBindingResult, Model model, HttpSession session){
         User user = getCurrentUser();
+        CarDetails carDetails = user.getCarDetails();
+        boolean isNew = (carDetails == null);
+        model.addAttribute("isEditing", !isNew);
+        model.addAttribute("existingCarNumber", !isNew ? carDetails.getCarNumber() : null);
+
         if (rBindingResult.hasErrors()) {
             logger.info("Validation errors found, returning to form");
             session.setAttribute("message", new Message("Please correct the form errors", MessageType.red));
             return "user/carRegistration";
         }
-        CarDetails carDetails = user.getCarDetails();
-        boolean isNew = (carDetails == null);
+
+        // For new registrations, require at least 1 image
+        boolean hasUploadedImage = carForm.getCarImages() != null && carForm.getCarImages().stream().anyMatch(f -> f != null && !f.isEmpty());
+        if (isNew && !hasUploadedImage) {
+            session.setAttribute("message", new Message("Please upload at least one clear image of your car.", MessageType.red));
+            return "user/carRegistration";
+        }
+
         CarDetails details = isNew ? new CarDetails() : carDetails;
         if (isNew){
             details.setCar_id("CRD"+customUUIDService.getUUID());
@@ -104,10 +122,11 @@ public class CarDetailController {
         details.setFuelType(carForm.getFuelType());
         details.setSeat_available(carForm.getSeat_available());
         details.setAc_available(carForm.isAc_available());
-        if (carForm.getCarImages() != null && !carForm.getCarImages().isEmpty()) {
+        if (carForm.getCarImages() != null && !carForm.getCarImages().isEmpty() && hasUploadedImage) {
             List<String> car_image_urls = new ArrayList<>();
             List<String> cloudinaryPublicId = new ArrayList<>();
             for (MultipartFile file : carForm.getCarImages()) {
+                if (file == null || file.isEmpty()) continue;
                 String filename = "CDIURL"+customUUIDService.getUUID();
                 String fileURL = imageService.uploadImage(file, filename);
                 if (fileURL != null) {
@@ -115,9 +134,11 @@ public class CarDetailController {
                     cloudinaryPublicId.add(filename);
                 }
             }
-            details.setCar_image_url(car_image_urls);
-            details.setCloudinaryImagePublicId(cloudinaryPublicId);
-            user.setDateUpdate(new Date());
+            if (!car_image_urls.isEmpty()) {
+                details.setCar_image_url(car_image_urls);
+                details.setCloudinaryImagePublicId(cloudinaryPublicId);
+                user.setDateUpdate(new Date());
+            }
         }
         carRepository.save(details);
         userRepository.save(user);

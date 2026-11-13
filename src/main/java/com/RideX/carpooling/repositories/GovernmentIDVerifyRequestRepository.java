@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface GovernmentIDVerifyRequestRepository extends JpaRepository<GovtIDVerifyRequest, String> {
     List<GovtIDVerifyRequest> getAllByVerifiedAndUpdated(boolean verified, boolean updated);
+    GovtIDVerifyRequest findByUserId(String userId);
 }

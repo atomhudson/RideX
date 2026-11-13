@@ -7,6 +7,8 @@ import com.RideX.carpooling.helpers.GetCurrentLoggedInUser;
 import com.RideX.carpooling.model.GovtIDVerifyRequest;
 import com.RideX.carpooling.model.Rides;
 import com.RideX.carpooling.model.User;
+import com.RideX.carpooling.repositories.RideRepository;
+import com.RideX.carpooling.repositories.UserRepository;
 import com.RideX.carpooling.services.DetailServices;
 import com.RideX.carpooling.services.GovtIdRequestService;
 import com.RideX.carpooling.services.RidesServices;
@@ -43,6 +45,12 @@ public class AdminController {
     private UserServices userService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RideRepository rideRepository;
+
+    @Autowired
     private RidesServices ridesServices;
 
     @Autowired
@@ -72,12 +80,42 @@ public class AdminController {
         userDetails.setPhoneVerified(user.isPhoneVerified());
         userDetails.setGovtIdVerified(user.isGovtIdVerified());
         userDetails.setVerify_Request(user.getGovtIdVerifyRequest());
-        userDetails.setRole(user.getRoleList().get(0));
-        List<GovtIDVerifyRequest> govtIdRequests = govtIdRequestService.getAllPendingRequest(false,false);
+        userDetails.setRole(user.getRoleList() != null && !user.getRoleList().isEmpty() ? user.getRoleList().get(0) : "ROLE_ADMIN");
+        
+        List<GovtIDVerifyRequest> govtIdRequests = govtIdRequestService.getAllPendingRequest(false, false);
+
+        // Platform KPI metrics
+        List<User> allUsers = userRepository.findAll();
+        long usersCount = allUsers.size();
+        long verifiedUser = allUsers.stream().filter(User::isGovtIdVerified).count();
+        long nonVerifiedUser = usersCount - verifiedUser;
+        long enabledUsers = allUsers.stream().filter(User::isEnabled).count();
+        long nonEnabledUsers = usersCount - enabledUsers;
+        long driversCount = allUsers.stream().filter(u -> u.getCarDetails() != null).count();
+
+        List<Rides> allRides = rideRepository.findAll();
+        long totalRides = allRides.size();
+        long activeRides = allRides.stream()
+                .filter(r -> "PLANNED".equalsIgnoreCase(r.getRideStatus()) || "ONGOING".equalsIgnoreCase(r.getRideStatus()))
+                .count();
+        long completedRides = allRides.stream()
+                .filter(r -> "COMPLETED".equalsIgnoreCase(r.getRideStatus()))
+                .count();
 
         model.addAttribute("userDetails", userDetails);
         model.addAttribute("govtIdRequests", govtIdRequests);
-        model.addAttribute("host",AppConstants.HOST);
+        model.addAttribute("host", AppConstants.HOST);
+
+        model.addAttribute("usersCount", usersCount);
+        model.addAttribute("verifiedUser", verifiedUser);
+        model.addAttribute("nonVerifiedUser", nonVerifiedUser);
+        model.addAttribute("enabledUsers", enabledUsers);
+        model.addAttribute("nonEnabledUsers", nonEnabledUsers);
+        model.addAttribute("driversCount", driversCount);
+        model.addAttribute("totalRides", totalRides);
+        model.addAttribute("activeRides", activeRides);
+        model.addAttribute("completedRides", completedRides);
+
         return "admin/adminDashboard";
     }
 
@@ -85,14 +123,16 @@ public class AdminController {
     public String getAllUsers(
             Model model,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = AppConstants.PAGE_SIZE+"") int size,
+            @RequestParam(value = "size", defaultValue = AppConstants.PAGE_SIZE + "") int size,
             @RequestParam(value = "sortBy", defaultValue = "dateCreate") String sortBy,
             @RequestParam(value = "direction", defaultValue = "desc") String direction
     ) {
         Page<User> userPage = userService.getAllUsers(page, size, sortBy, direction);
 
-        model.addAttribute("isValueEmpty",false);
-        model.addAttribute("isFieldEmpty",false);
+        populateUserDirectoryStats(model);
+
+        model.addAttribute("isValueEmpty", false);
+        model.addAttribute("isFieldEmpty", false);
         model.addAttribute("userPage", userPage);
         model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
         model.addAttribute("userSearchForm", new UserSearchForm());
@@ -106,55 +146,41 @@ public class AdminController {
                                    @RequestParam(value = "sortBy", defaultValue = "dateCreate") String sortBy,
                                    @RequestParam(value = "direction", defaultValue = "desc") String direction) {
 
-        if (userSearchForm == null || (userSearchForm.getField() == null && userSearchForm.getValue() == null)) {
+        populateUserDirectoryStats(model);
+
+        if (userSearchForm == null || userSearchForm.getValue() == null || userSearchForm.getValue().trim().isEmpty()) {
             return "redirect:/admin/getUsers";
         }
 
-        if (userSearchForm.getField() == null || userSearchForm.getField().isEmpty()) {
-            model.addAttribute("isFieldEmpty", true);
-            model.addAttribute("message", "Please select a field name");
-            model.addAttribute("userPage", userService.getAllUsers(page, size, sortBy, direction));
-            model.addAttribute("userSearchForm", new UserSearchForm());
-            model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
-            return "admin/users";
-        }
-
-        if (userSearchForm.getValue() == null || userSearchForm.getValue().isEmpty()) {
-            model.addAttribute("isFieldEmpty", true);
-            model.addAttribute("message", "Enter a value in search bar");
-            model.addAttribute("userPage", userService.getAllUsers(page, size, sortBy, direction));
-            model.addAttribute("userSearchForm", new UserSearchForm());
-            model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
-            return "admin/users";
-        }
+        String searchVal = userSearchForm.getValue().trim();
+        String field = userSearchForm.getField() != null ? userSearchForm.getField().trim().toLowerCase() : "";
 
         if (size < 1) size = AppConstants.PAGE_SIZE;
         if (page < 0) page = 0;
 
         Page<User> pageContact;
 
-        switch (userSearchForm.getField().toLowerCase()) {
-            case "userid" -> pageContact = userService.searchByUserId(userSearchForm.getValue(), size, page, sortBy, direction);
-            case "email" -> pageContact = userService.searchByEmail(userSearchForm.getValue(), size, page, sortBy, direction);
-            case "phone" -> pageContact = userService.searchByPhone(userSearchForm.getValue(), size, page, sortBy, direction);
-            default -> {
-                model.addAttribute("isFieldEmpty", true);
-                model.addAttribute("message", "Invalid search field selected");
-                model.addAttribute("userPage", userService.getAllUsers(page, size, sortBy, direction));
-                model.addAttribute("userSearchForm", new UserSearchForm());
-                model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
-                return "admin/users";
+        if (field.isEmpty() || "all".equals(field)) {
+            // Universal Search across User ID, Full Name, Email, Phone
+            pageContact = userService.searchUsersUniversal(searchVal, page, size, sortBy, direction);
+        } else {
+            switch (field) {
+                case "userid" -> pageContact = userService.searchByUserId(searchVal, page, size, sortBy, direction);
+                case "email" -> pageContact = userService.searchByEmail(searchVal, page, size, sortBy, direction);
+                case "phone" -> pageContact = userService.searchByPhone(searchVal, page, size, sortBy, direction);
+                default -> pageContact = userService.searchUsersUniversal(searchVal, page, size, sortBy, direction);
             }
         }
 
         if (pageContact.isEmpty()) {
             model.addAttribute("isFieldEmpty", true);
-            model.addAttribute("message", "No records found for the given input");
+            model.addAttribute("message", "No user records found matching '" + searchVal + "'");
             model.addAttribute("userPage", userService.getAllUsers(page, size, sortBy, direction));
-            model.addAttribute("userSearchForm", new UserSearchForm());
+            model.addAttribute("userSearchForm", userSearchForm);
             model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
             return "admin/users";
         }
+
         model.addAttribute("isFieldEmpty", false);
         model.addAttribute("userSearchForm", userSearchForm);
         model.addAttribute("userPage", pageContact);
@@ -163,20 +189,45 @@ public class AdminController {
         return "admin/users";
     }
 
+    private void populateUserDirectoryStats(Model model) {
+        List<User> all = userRepository.findAll();
+        long total = all.size();
+        long drivers = all.stream().filter(u -> u.getCarDetails() != null).count();
+        long verified = all.stream().filter(User::isGovtIdVerified).count();
+        long suspended = all.stream().filter(u -> !u.isEnabled()).count();
+
+        model.addAttribute("statTotalUsers", total);
+        model.addAttribute("statDrivers", drivers);
+        model.addAttribute("statVerified", verified);
+        model.addAttribute("statSuspended", suspended);
+    }
+
     @GetMapping("/getRides")
     public String getRides(Model model,
                            @RequestParam(value = "page", defaultValue = "0") int page,
-                           @RequestParam(value = "size", defaultValue = AppConstants.PAGE_SIZE+"") int size,
+                           @RequestParam(value = "size", defaultValue = AppConstants.PAGE_SIZE + "") int size,
                            @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
                            @RequestParam(value = "direction", defaultValue = "desc") String direction,
                            @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date
-    ){
+    ) {
         Page<Rides> ridesPage;
         if (date != null) {
             ridesPage = ridesServices.getRidesByDate(date, page, size, sortBy, direction);
         } else {
             ridesPage = ridesServices.getAllRides(page, size, sortBy, direction);
         }
+        
+        List<Rides> allRides = rideRepository.findAll();
+        long plannedCount = allRides.stream().filter(r -> "PLANNED".equalsIgnoreCase(r.getRideStatus())).count();
+        long ongoingCount = allRides.stream().filter(r -> "ONGOING".equalsIgnoreCase(r.getRideStatus())).count();
+        long completedCount = allRides.stream().filter(r -> "COMPLETED".equalsIgnoreCase(r.getRideStatus())).count();
+        long cancelledCount = allRides.stream().filter(r -> "CANCELLED".equalsIgnoreCase(r.getRideStatus())).count();
+
+        model.addAttribute("statPlanned", plannedCount);
+        model.addAttribute("statOngoing", ongoingCount);
+        model.addAttribute("statCompleted", completedCount);
+        model.addAttribute("statCancelled", cancelledCount);
+
         model.addAttribute("ridePages", ridesPage);
         model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
         model.addAttribute("selectedDate", date);
@@ -187,7 +238,7 @@ public class AdminController {
     @ResponseBody
     public List<Map<String, Object>> getRidePassengers(@PathVariable String rideId) {
         Rides ride = ridesServices.getRideById(rideId);
-        if (ride == null) {
+        if (ride == null || ride.getRideRequests() == null) {
             return new ArrayList<>();
         }
 
@@ -195,10 +246,17 @@ public class AdminController {
                 .map(request -> {
                     Map<String, Object> passengerData = new HashMap<>();
                     User user = request.getUser();
-                    passengerData.put("name", user.getfName() + " " + user.getlName());
-                    passengerData.put("email", user.getEmail());
-                    passengerData.put("phone", user.getPhone());
-                    passengerData.put("userId", user.getUserId());
+                    if (user != null) {
+                        passengerData.put("name", user.getfName() + " " + user.getlName());
+                        passengerData.put("email", user.getEmail());
+                        passengerData.put("phone", user.getPhone());
+                        passengerData.put("userId", user.getUserId());
+                    } else {
+                        passengerData.put("name", "Unknown Passenger");
+                        passengerData.put("email", "—");
+                        passengerData.put("phone", "—");
+                        passengerData.put("userId", "—");
+                    }
                     passengerData.put("seats", request.getRequestedSeats());
                     passengerData.put("requestTime", request.getRequestedAt());
                     passengerData.put("coins", request.getUsedCoins());
@@ -209,5 +267,4 @@ public class AdminController {
                 })
                 .collect(Collectors.toList());
     }
-
 }

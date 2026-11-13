@@ -1,34 +1,56 @@
 <div th:fragment="verify_Table">
-    <div class="overflow-x-auto bg-gray-900 rounded-xl shadow-md p-4">
-        <table class="min-w-full table-auto text-left text-sm text-gray-200">
-            <thead class="bg-gray-800 text-gray-300 uppercase text-xs">
+    <div style="overflow-x: auto; background: var(--rx-surface); border-radius: var(--rx-radius-lg); border: 1px solid var(--rx-border); box-shadow: var(--rx-shadow-sm);">
+        <table style="min-width: 100%; width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+            <thead style="background: var(--rx-surface-alt); border-bottom: 2px solid var(--rx-border); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: var(--rx-text-muted);">
             <tr>
-                <th class="px-6 py-3">Request ID</th>
-                <th class="px-6 py-3">User ID</th>
-                <th class="px-6 py-3">Govt ID Number</th>
-                <th class="px-6 py-3">Type</th>
-                <th class="px-6 py-3">Verified</th>
-                <th class="px-6 py-3">Image</th>
-                <th class="px-6 py-3 text-center">Actions</th>
+                <th style="padding: 12px 18px;">Request ID</th>
+                <th style="padding: 12px 18px;">User ID</th>
+                <th style="padding: 12px 18px;">Govt ID Number</th>
+                <th style="padding: 12px 18px;">Type</th>
+                <th style="padding: 12px 18px;">Verified</th>
+                <th style="padding: 12px 18px;">Document</th>
+                <th style="padding: 12px 18px; text-align: center;">Actions</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="request : ${govtIdRequests}" class="border-b border-gray-700 hover:bg-gray-800 transition duration-150">
-                <td class="px-6 py-4 font-mono text-xs" th:text="${request.requestId}">REQ001</td>
-                <td class="px-6 py-4 font-mono text-xs" th:text="${request.userId}">USR123</td>
-                <td class="px-6 py-4" th:text="${request.govtIdUniqueNumber}">371989562398</td>
-                <td class="px-6 py-4" th:text="${request.govtIdType}">Aadhar</td>
-                <td class="px-6 py-4" th:text="${request.verified ? 'Yes' : 'No'}">No</td>
-                <td class="px-6 py-4">
-                    <a th:href="@{${request.govtIdImageUrl}}" target="_blank" class="text-blue-400 hover:underline">View</a>
+            <tr th:if="${govtIdRequests == null or govtIdRequests.isEmpty()}">
+                <td colspan="7" style="padding: 32px 18px; text-align: center; color: var(--rx-text-muted); font-size: 0.95rem;">
+                    <i class="fa-solid fa-circle-check" style="color: var(--rx-accent); margin-right: 6px;"></i> All government ID verification requests are currently cleared!
                 </td>
-                <td class="px-6 py-4 text-center space-x-2">
-                    <form th:action="@{'/admin/action/verifyGovtId/approve/' + ${request.requestId}}" method="post" class="inline">
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-md text-sm shadow">Approve</button>
-                    </form>
-                    <form th:action="@{'/admin/action/verifyGovtId/deny/' + ${request.requestId}}" method="post" class="inline">
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md text-sm shadow">Deny</button>
-                    </form>
+            </tr>
+            <tr th:each="request : ${govtIdRequests}" style="border-bottom: 1px solid var(--rx-border); transition: background 0.15s ease;" onmouseover="this.style.background='var(--rx-surface-alt)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 14px 18px; font-family: monospace; font-size: 0.85rem; color: var(--rx-text-primary);" th:text="${request.requestId}">REQ001</td>
+                <td style="padding: 14px 18px; font-family: monospace; font-size: 0.85rem; color: var(--rx-text-secondary);" th:text="${request.userId}">USR123</td>
+                <td style="padding: 14px 18px; font-weight: 600; color: var(--rx-text-primary);" th:text="${request.govtIdUniqueNumber}">371989562398</td>
+                <td style="padding: 14px 18px;">
+                    <span style="display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 600; background: var(--rx-accent-light); color: var(--rx-accent);" th:text="${request.govtIdType}">Aadhaar</span>
+                </td>
+                <td style="padding: 14px 18px;">
+                    <span th:if="${request.verified}" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem; font-weight: 600; background: rgba(16,185,129,0.12); color: #059669;">
+                        <i class="fa-solid fa-check"></i> Yes
+                    </span>
+                    <span th:unless="${request.verified}" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem; font-weight: 600; background: rgba(239,68,68,0.1); color: #dc2626;">
+                        <i class="fa-solid fa-clock"></i> Pending
+                    </span>
+                </td>
+                <td style="padding: 14px 18px;">
+                    <a th:href="@{${request.govtIdImageUrl}}" target="_blank" style="color: #2563eb; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem;"></i> View Doc
+                    </a>
+                </td>
+                <td style="padding: 14px 18px; text-align: center;">
+                    <div style="display: inline-flex; gap: 8px;">
+                        <form th:action="@{'/admin/action/verifyGovtId/approve/' + ${request.requestId}}" method="post" style="display: inline;">
+                            <button type="submit" style="background: #059669; color: #fff; font-weight: 600; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
+                                Approve
+                            </button>
+                        </form>
+                        <form th:action="@{'/admin/action/verifyGovtId/deny/' + ${request.requestId}}" method="post" style="display: inline;">
+                            <button type="submit" style="background: #dc2626; color: #fff; font-weight: 600; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; border: none; cursor: pointer; transition: all 0.2s;">
+                                Deny
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>

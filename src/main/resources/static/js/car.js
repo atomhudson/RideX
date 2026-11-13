@@ -32,6 +32,20 @@ document.addEventListener("DOMContentLoaded", function () {
         modelDropdown.clearSelection();
       });
 
+      // Expose to window for automated plate lookup
+      window.carMakeDropdown = makeDropdown;
+      window.carModelDropdown = modelDropdown;
+      window.carDataMap = carData;
+      window.setCarMakeAndModel = function(make, model) {
+        if (!make) return;
+        makeDropdown.setSelected(make);
+        const models = carData.get(make) || [];
+        modelDropdown.updateOptions(models);
+        if (model) {
+          modelDropdown.setSelected(model);
+        }
+      };
+
       // Pre-select values for edit forms
       const preSelectedMake = carMakeSelect.dataset.selectedValue || "";
       if (preSelectedMake) {

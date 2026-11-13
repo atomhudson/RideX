@@ -1,10 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Contact Us — RideX</title>
 </head>
 <body>
+<div id="content" style="background: var(--rx-bg-primary);">
+    <section class="rx-section" style="padding-top: 130px; padding-bottom: 90px;">
+        <div class="rx-container" style="max-width: 1040px;">
+            <!-- Header -->
+            <div class="rx-section-header rx-reveal" style="margin-bottom: 48px;">
+                <h1 style="font-size: clamp(2.2rem, 4vw, 3rem); font-family: var(--rx-heading-font); font-weight: 800; color: var(--rx-text-primary); margin-bottom: 14px;">
+                    Get in <span class="rx-text-accent">Touch</span>
+                </h1>
+                <p style="font-size: 1.15rem; color: var(--rx-text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                    Have questions about rides, verification, or enterprise carpooling? Our dedicated team is here to assist you 24/7.
+                </p>
+            </div>
 
+            <!-- 3 Contact Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 48px;">
+                <div class="rx-card rx-card-3d rx-reveal" style="text-align: center; padding: 32px 24px;">
+                    <div class="rx-feature-icon" style="margin: 0 auto 16px; width: 56px; height: 56px; font-size: 1.4rem;">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--rx-text-primary); margin-bottom: 8px;">Email Support</h3>
+                    <p style="font-size: 0.95rem; color: var(--rx-text-secondary); margin-bottom: 16px;">We respond to all tickets within 4 hours.</p>
+                    <a href="mailto:ridexspringapp@gmail.com" class="rx-link" style="font-weight: 700; font-size: 1rem;">ridexspringapp@gmail.com</a>
+                </div>
+
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-1" style="text-align: center; padding: 32px 24px;">
+                    <div class="rx-feature-icon" style="margin: 0 auto 16px; width: 56px; height: 56px; font-size: 1.4rem;">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--rx-text-primary); margin-bottom: 8px;">Headquarters</h3>
+                    <p style="font-size: 0.95rem; color: var(--rx-text-secondary); margin-bottom: 16px;">NIET Campus, Plot 19, Knowledge Park II, Greater Noida, UP, India</p>
+                    <span style="font-size: 0.95rem; font-weight: 600; color: var(--rx-accent);">Open Mon - Sat: 9am - 7pm</span>
+                </div>
+
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-2" style="text-align: center; padding: 32px 24px;">
+                    <div class="rx-feature-icon" style="margin: 0 auto 16px; width: 56px; height: 56px; font-size: 1.4rem;">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--rx-text-primary); margin-bottom: 8px;">Emergency Safety Desk</h3>
+                    <p style="font-size: 0.95rem; color: var(--rx-text-secondary); margin-bottom: 16px;">Real-time ride assistance and SOS dispatch.</p>
+                    <span style="font-weight: 700; font-size: 1.05rem; color: #ef4444;">1800-RIDEX-SOS</span>
+                </div>
+            </div>
+
+            <!-- Contact Message Form -->
+            <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-2" style="padding: 44px 36px; max-width: 800px; margin: 0 auto;">
+                <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--rx-text-primary); margin-bottom: 10px; text-align: center;">Send Us a Message</h2>
+                <p style="font-size: 0.96rem; color: var(--rx-text-secondary); text-align: center; margin-bottom: 32px;">Drop your inquiry and our support engineers will get back to you promptly.</p>
+
+                <form onsubmit="event.preventDefault(); alert('Thank you! Your inquiry has been dispatched to RideX Support.'); this.reset();">
+                    <div class="rx-form-row">
+                        <div class="rx-form-group">
+                            <label class="rx-form-label" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">Your Name</label>
+                            <input type="text" class="rx-form-input" placeholder="e.g. Rahul Sharma" required />
+                        </div>
+                        <div class="rx-form-group">
+                            <label class="rx-form-label" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">Email Address</label>
+                            <input type="email" class="rx-form-input" placeholder="e.g. rahul@example.com" required />
+                        </div>
+                    </div>
+                    <div class="rx-form-group" style="margin-bottom: 20px;">
+                        <label class="rx-form-label" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">Subject</label>
+                        <input type="text" class="rx-form-input" placeholder="Ride booking query, vehicle verification, etc." required />
+                    </div>
+                    <div class="rx-form-group" style="margin-bottom: 28px;">
+                        <label class="rx-form-label" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">Message</label>
+                        <textarea rows="5" class="rx-form-input" placeholder="Describe your question or feedback..." style="min-height: 120px; resize: vertical;" required></textarea>
+                    </div>
+                    <button type="submit" class="rx-btn rx-btn-primary rx-3d-btn" style="width: 100%; padding: 15px; font-size: 1.05rem;">
+                        Send Message <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+<script>console.log("RideX Contact page initialized.");</script>
 </body>
 </html>

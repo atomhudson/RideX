@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const rideList = document.getElementById('rideList');
+    if (!rideList) return;
+
     const clearFiltersBtn = document.getElementById('clearFilters');
     const sortInputs = document.querySelectorAll('input[data-filter="sort"]');
     const timeInputs = document.querySelectorAll('input[data-filter="time"]');
@@ -20,16 +22,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Filter rides
         let filteredRides = allRides.filter(ride => {
-            const rideElement = ride.querySelector('div');
-            
             // Filter by time
             if (selectedTimes.length > 0) {
-                const rideTime = rideElement.querySelector('span[th\\:text*="HH:mm"]').textContent.trim();
-                const timeMatch = selectedTimes.some(timeRange => {
-                    const [start, end] = timeRange.split('-');
-                    return rideTime >= start && rideTime <= end;
-                });
-                if (!timeMatch) return false;
+                const rideTime = ride.dataset.time || '';
+                if (rideTime) {
+                    const timeMatch = selectedTimes.some(timeRange => {
+                        const [start, end] = timeRange.split('-');
+                        return rideTime >= start && rideTime <= end;
+                    });
+                    if (!timeMatch) return false;
+                }
             }
 
             // Filter by amenities
@@ -46,32 +48,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Sort rides
         if (selectedSort) {
             filteredRides.sort((a, b) => {
-                const aElement = a.querySelector('div');
-                const bElement = b.querySelector('div');
-
                 switch (selectedSort) {
-                    case 'earliest':
-                        const aTime = aElement.querySelector('span[th\\:text*="HH:mm"]').textContent.trim();
-                        const bTime = bElement.querySelector('span[th\\:text*="HH:mm"]').textContent.trim();
+                    case 'earliest': {
+                        const aTime = a.dataset.time || '';
+                        const bTime = b.dataset.time || '';
                         return aTime.localeCompare(bTime);
-                    
-                    case 'lowest':
-                        const aPrice = parseFloat(aElement.querySelector('.text-green-400').textContent.replace('₹', '').trim());
-                        const bPrice = parseFloat(bElement.querySelector('.text-green-400').textContent.replace('₹', '').trim());
+                    }
+                    case 'lowest': {
+                        const aPrice = parseFloat(a.dataset.price || '0');
+                        const bPrice = parseFloat(b.dataset.price || '0');
                         return aPrice - bPrice;
-                    
-                    case 'close-departure':
-                        // This would require coordinates to be implemented
-                        return 0;
-                    
-                    case 'close-arrival':
-                        // This would require coordinates to be implemented
-                        return 0;
-                    
-                    case 'shortest':
-                        // This would require duration to be implemented
-                        return 0;
-                    
+                    }
+                    case 'shortest': {
+                        const aDuration = parseFloat(a.dataset.duration || '999999');
+                        const bDuration = parseFloat(b.dataset.duration || '999999');
+                        return aDuration - bDuration;
+                    }
                     default:
                         return 0;
                 }
@@ -81,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update the display
         rideList.innerHTML = '';
         filteredRides.forEach(ride => {
-            // Clone the ride element to avoid any event listener issues
             const clonedRide = ride.cloneNode(true);
             rideList.appendChild(clonedRide);
         });
@@ -89,43 +80,36 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update counts if no rides match the filter
         if (filteredRides.length === 0) {
             const noResults = document.createElement('div');
-            noResults.className = 'text-center py-8 text-gray-400';
+            noResults.style.cssText = 'text-align: center; padding: 48px 0; color: var(--rx-text-muted);';
             noResults.innerHTML = `
-                <i class="fas fa-search text-4xl mb-4"></i>
-                <p class="text-xl">No rides match your filters</p>
-                <p class="text-sm mt-2">Try adjusting your filters to see more results</p>
+                <i class="fa-solid fa-magnifying-glass" style="font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.6;"></i>
+                <p style="font-size: 1.1rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 6px;">No rides match your filters</p>
+                <p style="font-size: 0.84rem; margin: 0;">Try adjusting or clearing your filters to see more results.</p>
             `;
             rideList.appendChild(noResults);
         }
     }
 
     // Add event listeners
-    sortInputs.forEach(input => {
-        input.addEventListener('change', filterRides);
-    });
-
-    timeInputs.forEach(input => {
-        input.addEventListener('change', filterRides);
-    });
-
-    amenityInputs.forEach(input => {
-        input.addEventListener('change', filterRides);
-    });
+    sortInputs.forEach(input => input.addEventListener('change', filterRides));
+    timeInputs.forEach(input => input.addEventListener('change', filterRides));
+    amenityInputs.forEach(input => input.addEventListener('change', filterRides));
 
     // Clear all filters
-    clearFiltersBtn.addEventListener('click', () => {
-        sortInputs.forEach(input => input.checked = false);
-        timeInputs.forEach(input => input.checked = false);
-        amenityInputs.forEach(input => input.checked = false);
-        
-        // Reset the display
-        rideList.innerHTML = '';
-        allRides.forEach(ride => {
-            const clonedRide = ride.cloneNode(true);
-            rideList.appendChild(clonedRide);
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', () => {
+            sortInputs.forEach(input => input.checked = false);
+            timeInputs.forEach(input => input.checked = false);
+            amenityInputs.forEach(input => input.checked = false);
+            
+            rideList.innerHTML = '';
+            allRides.forEach(ride => {
+                const clonedRide = ride.cloneNode(true);
+                rideList.appendChild(clonedRide);
+            });
         });
-    });
+    }
 
     // Initial filter call to set up the initial state
     filterRides();
-}); 
+});

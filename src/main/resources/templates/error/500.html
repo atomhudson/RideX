@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 <head>
-    <title>500 - Internal Server Error</title>
+    <title>500 — System Issue — RideX</title>
 </head>
 <body>
-<div id="content" class="dark:bg-gray-900">
-    <div class="min-h-screen flex flex-col items-center justify-center py-6 px-4">
-        <div class="max-w-md w-full text-center">
-            <h1 class="text-9xl font-bold text-red-600">500</h1>
-            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mt-4">Internal Server Error</h2>
-            <p class="text-slate-500 dark:text-slate-400 mt-4" th:text="${errorMessage}">Something went wrong on our end. Please try again later.</p>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2" th:text="${requestUri}">Requested URL</p>
-            <div class="mt-8">
-                <a href="/" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Go back home
-                </a>
-            </div>
+<div id="content" style="background: var(--rx-bg-primary); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 20px 80px;">
+    <div class="rx-card-3d rx-reveal" style="max-width: 520px; width: 100%; text-align: center; padding: 48px 36px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-xl);">
+        <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(239,68,68,0.1); color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 2.2rem; margin-bottom: 20px;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h1 style="font-size: 5rem; font-weight: 800; line-height: 1; margin: 0 0 10px; font-family: var(--rx-font-display); background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">500</h1>
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 12px; letter-spacing: -0.02em;">Internal System Error</h2>
+        <p style="font-size: 1rem; line-height: 1.6; color: var(--rx-text-secondary); margin: 0 0 8px;" th:text="${errorMessage}">Something unexpected occurred on our servers. Our team has been notified.</p>
+        <p style="font-size: 0.85rem; color: var(--rx-text-muted); margin: 0 0 28px; word-break: break-all;" th:if="${requestUri}" th:text="${requestUri}"></p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+            <a href="/" class="rx-btn rx-btn-primary" style="padding: 12px 28px; font-weight: 700;">
+                <i class="fa-solid fa-house"></i> Return Home
+            </a>
+            <a href="javascript:location.reload()" class="rx-btn rx-btn-outline" style="padding: 12px 24px; font-weight: 600;">
+                <i class="fa-solid fa-rotate-right"></i> Try Again
+            </a>
         </div>
     </div>
 </div>

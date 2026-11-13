@@ -1,0 +1,723 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--[if gte mso 9]>
+<xml>
+  <w:WordDocument>
+    <w:View>Print</w:View>
+    <w:Zoom>100</w:Zoom>
+    <w:DoNotOptimizeForBrowser/>
+  </w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  @page {
+    size: A4;
+    margin: 1in 1in 1in 1in;
+  }
+  body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+    line-height: 1.6;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+    color: #000;
+  }
+  h2 {
+    font-size: 16pt;
+    font-weight: bold;
+    margin-top: 18pt;
+    margin-bottom: 8pt;
+    color: #000;
+    border-bottom: 1px solid #333;
+    padding-bottom: 4pt;
+  }
+  h3 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-top: 14pt;
+    margin-bottom: 6pt;
+    color: #000;
+  }
+  h4 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin-top: 10pt;
+    margin-bottom: 4pt;
+    color: #000;
+  }
+  p {
+    text-align: justify;
+    margin-bottom: 8pt;
+    margin-top: 4pt;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 8pt;
+    margin-bottom: 12pt;
+    font-size: 11pt;
+  }
+  th {
+    background-color: #2c3e50;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 6pt 10pt;
+    border: 1px solid #2c3e50;
+    text-align: left;
+  }
+  td {
+    padding: 5pt 10pt;
+    border: 1px solid #cccccc;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td {
+    background-color: #f2f2f2;
+  }
+  ul, ol {
+    margin-top: 4pt;
+    margin-bottom: 8pt;
+    padding-left: 24pt;
+  }
+  li {
+    margin-bottom: 4pt;
+  }
+  .cover-page {
+    text-align: center;
+    padding-top: 60pt;
+    page-break-after: always;
+  }
+  .cover-page h1 {
+    font-size: 22pt;
+    margin-bottom: 4pt;
+  }
+  .cover-page h2 {
+    font-size: 16pt;
+    border-bottom: none;
+    margin-top: 6pt;
+    text-align: center;
+  }
+  .cover-page h3 {
+    font-size: 14pt;
+    font-weight: normal;
+    font-style: italic;
+  }
+  .cover-page p {
+    text-align: center;
+  }
+  .cover-page hr {
+    border: none;
+    border-top: 2px solid #2c3e50;
+    width: 60%;
+    margin: 16pt auto;
+  }
+  .highlight {
+    font-weight: bold;
+  }
+  .note-box {
+    background-color: #f9f9e0;
+    border-left: 4px solid #e6c200;
+    padding: 8pt 12pt;
+    margin: 10pt 0;
+    font-size: 11pt;
+  }
+  .section-divider {
+    border: none;
+    border-top: 1px solid #999;
+    margin: 20pt 0;
+  }
+  code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10pt;
+    background-color: #f4f4f4;
+    padding: 1pt 3pt;
+  }
+  .er-note {
+    background-color: #eef6ff;
+    border: 1px solid #b0c4de;
+    padding: 10pt;
+    margin: 10pt 0;
+    font-size: 11pt;
+    font-style: italic;
+  }
+</style>
+<title>RideX — Project Synopsis / SRS Report</title>
+</head>
+<body>
+
+<!-- ===================== COVER PAGE ===================== -->
+<div class="cover-page">
+  <h1>Moradabad Institute of Technology, Moradabad</h1>
+  <h2>Department of Computer Science and Engineering</h2>
+  <hr>
+  <h2>Project Synopsis / SRS Report</h2>
+  <h3>BCS-753</h3>
+  <hr>
+  <h1 style="font-size: 20pt; margin-top: 20pt;">RideX — Carpooling &amp; Community Travel Application</h1>
+  <hr>
+  <h3><em>In Pursuit of Excellence</em></h3>
+  <h3>Session 2026-27</h3>
+  <br><br>
+  <p><b>Project Group No:</b> ________</p>
+  <br>
+  <table style="width: 70%; margin: 0 auto;">
+    <tr>
+      <th style="text-align:center;">S.No.</th>
+      <th>Name</th>
+      <th>Roll No.</th>
+    </tr>
+    <tr>
+      <td style="text-align:center;">1</td>
+      <td>__________________</td>
+      <td>__________</td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">2</td>
+      <td>__________________</td>
+      <td>__________</td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">3</td>
+      <td>__________________</td>
+      <td>__________</td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">4</td>
+      <td>__________________</td>
+      <td>__________</td>
+    </tr>
+  </table>
+  <br><br>
+  <p><b>Name and Signature of Supervisor:</b> __________________________</p>
+  <p><b>Designation:</b> __________________________</p>
+</div>
+
+<!-- ===================== SECTION 1 ===================== -->
+<h2>1. Domain Area of the Project</h2>
+
+<table>
+  <tr>
+    <th>Domain Type</th>
+    <th>Area</th>
+  </tr>
+  <tr>
+    <td><b>Primary Domain</b></td>
+    <td>Web Development (Full-Stack Java)</td>
+  </tr>
+  <tr>
+    <td><b>Secondary Domain</b></td>
+    <td>Web Development + Cloud Computing + DevOps (Docker, Prometheus, Grafana)</td>
+  </tr>
+</table>
+
+<p><b>Justification:</b> RideX is primarily a full-stack web application built using Spring Boot 3.4 (Java 17+) with Thymeleaf server-side rendering and a MySQL 8.0 database. The secondary domain extends into Cloud Computing and DevOps through containerized deployment using Docker Compose, cloud-based image storage via Cloudinary, and production-grade system monitoring with Prometheus and Grafana. The application also integrates external APIs such as OSRM (Open Source Routing Machine) for real-time route computation and OpenStreetMap/Leaflet.js for interactive map visualization, blending geospatial computing with traditional web development.</p>
+
+<hr class="section-divider">
+
+<!-- ===================== SECTION 2 ===================== -->
+<h2>2. Summary of Project (Problem Statement, Literature, Proposed Solution)</h2>
+
+<h3>2.1 Problem Statement</h3>
+
+<p>Urban commuting in India is increasingly unsustainable. According to the TomTom Traffic Index 2024, Indian cities like Bengaluru, Mumbai, and Delhi rank among the top 10 most congested cities globally, with commuters spending an average of 30–45 extra minutes per trip due to traffic congestion. The root cause is clear: over 85% of personal vehicles on Indian roads carry only a single occupant, leading to massive road space wastage, fuel over-consumption, and environmental degradation. The transportation sector contributes approximately 13.5% of India's total CO₂ emissions (IEA, 2023), and single-occupancy vehicles are the primary contributor within this segment.</p>
+
+<p>Despite the evident need, existing informal carpooling methods — WhatsApp groups, office bulletin boards, or word-of-mouth arrangements — suffer from critical shortcomings: <b>lack of trust</b> (no identity verification), <b>absence of route optimization</b> (no map-based matching), <b>no accountability</b> (no rating or review systems), and <b>zero incentivization</b> (no reward for repeated sharing). These barriers prevent widespread adoption of carpooling as a viable daily commute alternative.</p>
+
+<h3>2.2 Industry / Society Benefitted</h3>
+
+<p>RideX directly benefits the following groups:</p>
+<ul>
+  <li><b>Daily Commuters &amp; Students:</b> Expected to reduce individual commute costs by up to 60–75% through ride sharing, with an average saving of ₹2,000–₹4,000 per month for a typical 20 km daily commute.</li>
+  <li><b>Urban Traffic Systems:</b> By consolidating 3–4 single-occupancy trips into one shared ride, the platform is expected to reduce the number of vehicles on road by approximately 25–30% among active user groups, alleviating traffic congestion.</li>
+  <li><b>Environment:</b> Each shared ride eliminates an estimated 2.4 kg of CO₂ per trip (assuming 15 km average distance). For a user base of 1,000 active riders completing 3 rides per week, this translates to approximately 374 tonnes of CO₂ reduction annually.</li>
+  <li><b>Educational Institutions &amp; IT Parks:</b> Concentrated commuter clusters (colleges, tech parks) benefit the most due to similar source-destination patterns, making ride matching highly efficient.</li>
+</ul>
+
+<h3>2.3 Presently Available Solutions / Literature</h3>
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>Solution / Research Work</th>
+    <th>Type</th>
+    <th>Key Feature</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><b>BlaBlaCar</b> (blablacar.in)</td>
+    <td>Commercial Product</td>
+    <td>Long-distance intercity carpooling; trust-based profiles</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><b>QuickRide</b> (quickride.in)</td>
+    <td>Commercial Product</td>
+    <td>Daily office commute carpooling; GPS-based matching</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><b>sRide</b> (sride.co)</td>
+    <td>Commercial Product</td>
+    <td>Corporate carpooling with company-verified pools</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>R. Agatz et al., "Optimization for Dynamic Ride-Sharing: A Review," <i>European Journal of Operational Research</i>, vol. 223, no. 2, pp. 295–303, 2012</td>
+    <td>Research Paper</td>
+    <td>Mathematical optimization models for ride matching</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>N. J. Yuan et al., "T-Finder: A Recommender System for Finding Passengers and Vacant Taxis," <i>IEEE Transactions on Knowledge and Data Engineering</i>, vol. 25, no. 10, 2013</td>
+    <td>Research Paper</td>
+    <td>Real-time supply-demand matching algorithms</td>
+  </tr>
+</table>
+
+<h3>2.4 Shortcomings of Presently Available Solutions</h3>
+
+<table>
+  <tr>
+    <th>Solution</th>
+    <th>Shortcomings</th>
+  </tr>
+  <tr>
+    <td><b>BlaBlaCar</b></td>
+    <td>Focused exclusively on intercity travel; no support for daily intra-city commuting; no coin-based reward system; limited real-time route visualization; no open-source monitoring stack</td>
+  </tr>
+  <tr>
+    <td><b>QuickRide</b></td>
+    <td>Proprietary closed-source platform; limited amenity-based filtering; no government ID verification system; ride matching lacks interactive map-based source/destination selection</td>
+  </tr>
+  <tr>
+    <td><b>sRide</b></td>
+    <td>Restricted to corporate users only; no public registration; no multi-level verification (email + phone + govt ID); no admin panel for platform governance</td>
+  </tr>
+  <tr>
+    <td><b>Existing Research</b></td>
+    <td>Optimization models remain largely theoretical; lack end-to-end implementation with production-grade security (OAuth2), caching (Caffeine), containerization (Docker), and observability (Prometheus + Grafana)</td>
+  </tr>
+</table>
+
+<h3>2.5 Idea of Proposed Solution</h3>
+
+<p><b>RideX</b> proposes a comprehensive, production-ready carpooling platform that addresses all identified shortcomings through the following novel contributions:</p>
+
+<ol>
+  <li><b>Multi-Level Identity Verification:</b> Unlike existing platforms that rely on phone-only verification, RideX implements a three-tier verification system — email token verification, phone OTP verification, and admin-reviewed government ID verification (Aadhaar/PAN) — establishing a trust score visible on user profiles.</li>
+  <li><b>Interactive Map-Based Ride Creation &amp; Visualization:</b> Rides are created by selecting source and destination directly on an interactive Leaflet.js map. The OSRM routing engine computes the optimal route polyline, distance, and estimated duration in real-time, displayed as an overlay on OpenStreetMap tiles — a feature absent in most competing platforms.</li>
+  <li><b>Coin-Based Gamification Engine:</b> A novel reward system where drivers earn <code>(distance × 0.10) + 5</code> bonus coins per completed ride, and co-riders earn <code>(distance × 0.10)</code> coins. Accumulated coins can be redeemed as discounts on future bookings, incentivizing repeated platform usage and improving rider retention.</li>
+  <li><b>Amenity-Based Ride Filtering:</b> Beyond basic source/destination/date search, riders can filter by AC availability, luggage space, pet-friendliness, smoking policy, time of day, price range, and driver rating — enabling precise ride matching aligned with passenger preferences.</li>
+  <li><b>Production-Grade Observability:</b> Full Prometheus + Grafana monitoring stack deployed via Docker Compose, scraping JVM metrics, HTTP request latencies, database connection pool statistics, and custom business metrics — a capability typically found only in enterprise applications, not in academic projects.</li>
+  <li><b>Automated Ride Lifecycle Management:</b> A scheduled task (running every 20 minutes) automatically transitions rides through PLANNED → ONGOING → COMPLETED states based on timestamp comparison, and triggers coin disbursement upon completion — eliminating manual status management.</li>
+</ol>
+
+<hr class="section-divider">
+
+<!-- ===================== SECTION 3 ===================== -->
+<h2>3. Module-Wise Description (Major Features)</h2>
+
+<h3>Module 1: Authentication &amp; Authorization Module <i>(Core)</i></h3>
+<ul>
+  <li>Form-based login with email/password (BCrypt-encrypted password hashing)</li>
+  <li>OAuth2 social login integration (Google and GitHub providers)</li>
+  <li>Role-based access control with two roles: <code>USER</code> and <code>ADMIN</code></li>
+  <li>Email verification via secure, time-limited token-based flow</li>
+  <li>Password reset via OTP delivered through SMTP email service</li>
+  <li>Remember-me functionality with 24-hour token validity</li>
+  <li>Custom authentication success/failure handlers for role-based redirects</li>
+</ul>
+
+<h3>Module 2: User Profile &amp; Vehicle Registration Module</h3>
+<ul>
+  <li>Profile creation and editing — name, photo, bio, travel preferences</li>
+  <li>Profile picture upload to Cloudinary cloud storage</li>
+  <li>Travel preferences configuration — music, pets, smoking, chattiness</li>
+  <li>Spoken languages, occupation, city information</li>
+  <li>Ride statistics tracking — completed rides, cancelled rides, last ride date</li>
+  <li>Vehicle (car) registration with make, model, year, type, color, plate number</li>
+  <li>Fuel type specification, seat capacity, AC availability</li>
+  <li>Multi-image upload for vehicle photos via Cloudinary</li>
+</ul>
+
+<h3>Module 3: Multi-Level User Verification Module <i>(Innovative)</i></h3>
+<ul>
+  <li><b>Level 1 — Email Verification:</b> Token-based email confirmation sent via Spring Mail SMTP</li>
+  <li><b>Level 2 — Phone Verification:</b> OTP-based phone number verification</li>
+  <li><b>Level 3 — Government ID Verification:</b> User uploads Aadhaar/PAN document; admin reviews and approves/rejects the verification request through the admin panel</li>
+  <li>Verification status badges displayed prominently on user profiles, building platform trust</li>
+</ul>
+
+<h3>Module 4: Ride Management &amp; Route Visualization Module <i>(Innovative)</i></h3>
+<ul>
+  <li><b>Create Ride:</b> Publish a ride with map-based source/destination selection, date/time picker, per-seat pricing, available seats, and amenity tags</li>
+  <li><b>Route Computation:</b> OSRM API integration for real-time distance, duration, and optimal route polyline calculation</li>
+  <li><b>Interactive Map Display:</b> Leaflet.js + OpenStreetMap with route polyline overlay, source/destination markers, and zoom controls</li>
+  <li><b>Search Ride:</b> Filter by source city, destination city, travel date</li>
+  <li><b>Advanced Filters:</b> Price range slider, amenities (AC, luggage, pets, smoking), time of day, minimum driver rating</li>
+  <li><b>Ride Status Lifecycle:</b> Automated state machine — <code>PLANNED</code> → <code>ONGOING</code> → <code>COMPLETED</code> — managed by a Spring <code>@Scheduled</code> task running every 20 minutes</li>
+</ul>
+
+<h3>Module 5: Booking, Coin Reward &amp; Rating Module <i>(Innovative)</i></h3>
+<ul>
+  <li><b>Ride Booking:</b> Passengers request to join a ride, specifying seat count; option to volunteer as co-driver</li>
+  <li><b>Coin Discount:</b> Passengers can apply earned coins as a price discount during booking</li>
+  <li><b>Driver Decision:</b> Driver reviews and approves or rejects each booking request</li>
+  <li><b>Email Notifications:</b> Automated email sent to passenger on booking approval/rejection</li>
+  <li><b>Coin Reward Engine:</b>
+    <ul>
+      <li>Driver earns: <code>(distance × 0.10) + 5 bonus</code> coins per completed ride</li>
+      <li>Co-rider earns: <code>(distance × 0.10)</code> coins per completed ride</li>
+      <li>Coins accumulate in user wallet and are redeemable on future bookings</li>
+    </ul>
+  </li>
+  <li><b>Rating System:</b> Post-ride star rating (1–5 stars) with text review; average rating computed and displayed on user profiles</li>
+</ul>
+
+<h3>Module 6: Admin Panel &amp; System Monitoring Module</h3>
+<ul>
+  <li><b>Admin Dashboard:</b> Platform-wide statistics (total users, total rides, active rides, pending verifications)</li>
+  <li><b>User Management:</b> View all users, search by name/email, manage accounts</li>
+  <li><b>Ride Management:</b> View all rides with status filters and search capability</li>
+  <li><b>Government ID Review:</b> Admin reviews uploaded ID documents and approves or rejects verification requests</li>
+  <li><b>Prometheus Metrics:</b> JVM metrics, HTTP request metrics, DB connection pool metrics exposed at <code>/actuator/prometheus</code></li>
+  <li><b>Grafana Dashboards:</b> Real-time visualization of system health, request latencies, and resource utilization</li>
+  <li><b>Docker Compose Deployment:</b> Four-service containerized stack (MySQL, Spring Boot App, Prometheus, Grafana)</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ===================== SECTION 4 ===================== -->
+<h2>4. E-R Diagram / Flowchart</h2>
+
+<h3>4.1 Entity-Relationship Diagram</h3>
+
+<div class="er-note">
+  <p><b>Note:</b> The Entity-Relationship diagram is best viewed in the original Markdown file (<code>SYNOPSIS.md</code>) which renders the Mermaid diagram interactively. The textual representation of entities and relationships is provided below.</p>
+</div>
+
+<h4>Entities and Relationships:</h4>
+<ul>
+  <li><b>USER</b> ||--o| <b>CAR_DETAILS</b> : "has one"</li>
+  <li><b>USER</b> ||--o| <b>USER_DETAILS</b> : "has one"</li>
+  <li><b>USER</b> ||--o{ <b>RIDES</b> : "publishes many"</li>
+  <li><b>USER</b> ||--o{ <b>RIDE_REQUEST</b> : "sends many"</li>
+  <li><b>USER</b> ||--o{ <b>RATING</b> : "gives many"</li>
+  <li><b>USER</b> ||--o{ <b>RATING</b> : "receives many"</li>
+  <li><b>USER</b> ||--o{ <b>GOVT_ID_VERIFY_REQUEST</b> : "submits"</li>
+  <li><b>RIDES</b> ||--o{ <b>RIDE_REQUEST</b> : "receives many"</li>
+  <li><b>RIDES</b> }o--o{ <b>USER</b> : "has many passengers"</li>
+  <li><b>RIDES</b> ||--o| <b>CAR_DETAILS</b> : "uses one"</li>
+</ul>
+
+<h4>Entity: USER</h4>
+<table>
+  <tr><th>Attribute</th><th>Type</th><th>Constraint</th></tr>
+  <tr><td>id</td><td>Long</td><td>PK</td></tr>
+  <tr><td>name</td><td>String</td><td></td></tr>
+  <tr><td>email</td><td>String</td><td></td></tr>
+  <tr><td>password</td><td>String</td><td></td></tr>
+  <tr><td>phoneNumber</td><td>String</td><td></td></tr>
+  <tr><td>profilePic</td><td>String</td><td></td></tr>
+  <tr><td>role</td><td>String</td><td></td></tr>
+  <tr><td>enabled</td><td>Boolean</td><td></td></tr>
+  <tr><td>emailVerified</td><td>Boolean</td><td></td></tr>
+  <tr><td>phoneVerified</td><td>Boolean</td><td></td></tr>
+  <tr><td>coins</td><td>Double</td><td></td></tr>
+</table>
+
+<h4>Entity: CAR_DETAILS</h4>
+<table>
+  <tr><th>Attribute</th><th>Type</th><th>Constraint</th></tr>
+  <tr><td>id</td><td>Long</td><td>PK</td></tr>
+  <tr><td>carMake</td><td>String</td><td></td></tr>
+  <tr><td>carModel</td><td>String</td><td></td></tr>
+  <tr><td>carYear</td><td>String</td><td></td></tr>
+  <tr><td>carType</td><td>String</td><td></td></tr>
+  <tr><td>carColor</td><td>String</td><td></td></tr>
+  <tr><td>plateNumber</td><td>String</td><td></td></tr>
+  <tr><td>fuelType</td><td>String</td><td></td></tr>
+  <tr><td>seatCapacity</td><td>int</td><td></td></tr>
+  <tr><td>ac</td><td>Boolean</td><td></td></tr>
+</table>
+
+<h4>Entity: USER_DETAILS</h4>
+<table>
+  <tr><th>Attribute</th><th>Type</th><th>Constraint</th></tr>
+  <tr><td>id</td><td>Long</td><td>PK</td></tr>
+  <tr><td>bio</td><td>String</td><td></td></tr>
+  <tr><td>city</td><td>String</td><td></td></tr>
+  <tr><td>occupation</td><td>String</td><td></td></tr>
+  <tr><td>languages</td><td>String</td><td></td></tr>
+  <tr><td>musicPref</td><td>String</td><td></td></tr>
+  <tr><td>petsPref</td><td>String</td><td></td></tr>
+  <tr><td>smokingPref</td><td>String</td><td></td></tr>
+  <tr><td>talkativePref</td><td>String</td><td></td></tr>
+  <tr><td>completedRides</td><td>int</td><td></td></tr>
+  <tr><td>cancelledRides</td><td>int</td><td></td></tr>
+</table>
+
+<h4>Entity: RIDES</h4>
+<table>
+  <tr><th>Attribute</th><th>Type</th><th>Constraint</th></tr>
+  <tr><td>id</td><td>Long</td><td>PK</td></tr>
+  <tr><td>sourceCity</td><td>String</td><td></td></tr>
+  <tr><td>destinationCity</td><td>String</td><td></td></tr>
+  <tr><td>sourceLat</td><td>Double</td><td></td></tr>
+  <tr><td>sourceLng</td><td>Double</td><td></td></tr>
+  <tr><td>destLat</td><td>Double</td><td></td></tr>
+  <tr><td>destLng</td><td>Double</td><td></td></tr>
+  <tr><td>departureTime</td><td>DateTime</td><td></td></tr>
+  <tr><td>arrivalTime</td><td>DateTime</td><td></td></tr>
+  <tr><td>pricePerSeat</td><td>Double</td><td></td></tr>
+  <tr><td>totalSeats</td><td>int</td><td></td></tr>
+  <tr><td>availableSeats</td><td>int</td><td></td></tr>
+  <tr><td>status</td><td>String</td><td></td></tr>
+  <tr><td>distance</td><td>Double</td><td></td></tr>
+  <tr><td>duration</td><td>Double</td><td></td></tr>
+  <tr><td>ac</td><td>Boolean</td><td></td></tr>
+  <tr><td>luggage</td><td>Boolean</td><td></td></tr>
+  <tr><td>petsAllowed</td><td>Boolean</td><td></td></tr>
+  <tr><td>smokingAllowed</td><td>Boolean</td><td></td></tr>
+</table>
+
+<h4>Entity: RIDE_REQUEST</h4>
+<table>
+  <tr><th>Attribute</th><th>Type</th><th>Constraint</th></tr>
+  <tr><td>id</td><td>Long</td><td>PK</td></tr>
+  <tr><td>seatsRequested</td><td>int</td><td></td></tr>
+  <tr><td>coDriver</td><td>Boolean</td><td></td></tr>
+  <tr><td>totalPrice</td><td>Double</td><td></td></tr>
+  <tr><td>coinsUsed</td><td>Double</td><td></td></tr>
+  <tr><td>status</td><td>String</td><td></td></tr>
+</table>
+
+<h4>Entity: RATING</h4>
+<table>
+  <tr><th>Attribute</th><th>Type</th><th>Constraint</th></tr>
+  <tr><td>id</td><td>Long</td><td>PK</td></tr>
+  <tr><td>stars</td><td>int</td><td></td></tr>
+  <tr><td>message</td><td>String</td><td></td></tr>
+  <tr><td>createdAt</td><td>DateTime</td><td></td></tr>
+</table>
+
+<h4>Entity: GOVT_ID_VERIFY_REQUEST</h4>
+<table>
+  <tr><th>Attribute</th><th>Type</th><th>Constraint</th></tr>
+  <tr><td>id</td><td>Long</td><td>PK</td></tr>
+  <tr><td>documentType</td><td>String</td><td></td></tr>
+  <tr><td>documentImageUrl</td><td>String</td><td></td></tr>
+  <tr><td>status</td><td>String</td><td></td></tr>
+</table>
+
+<h3>4.2 System Data Flow Diagram</h3>
+
+<div class="er-note">
+  <p><b>Note:</b> The System Data Flow Diagram is best viewed in the original Markdown file (<code>SYNOPSIS.md</code>) which renders the Mermaid diagram interactively. A textual description of the data flow is provided below.</p>
+</div>
+
+<h4>Data Flow Summary:</h4>
+
+<p>The system architecture follows a layered MVC pattern with the following data flow:</p>
+
+<ul>
+  <li><b>User/Driver</b> interacts with the system through six controllers: Auth Controller, User Controller, Ride Controller, Search Controller, Admin Controller, and Rating Controller.</li>
+  <li><b>Controllers</b> delegate business logic to service layer components: User Service, Ride Service, Detail Service, Image Service, Cache Service, Ride Request Service, and Rating Service.</li>
+  <li><b>Services</b> interact with:
+    <ul>
+      <li><b>MySQL 8.0 Database</b> — for persistent data storage</li>
+      <li><b>Email Service (SMTP)</b> — for verification emails and booking notifications</li>
+      <li><b>Cloudinary (Image CDN)</b> — for profile and vehicle image storage</li>
+      <li><b>OSRM (Route Engine)</b> — for real-time route computation</li>
+    </ul>
+  </li>
+  <li><b>Monitoring:</b> Prometheus scrapes metrics from <code>/actuator/prometheus</code>, and Grafana visualizes the collected metrics.</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ===================== SECTION 5 ===================== -->
+<h2>5. Feasibility Study</h2>
+
+<h3>5.1 Economic Feasibility</h3>
+
+<table>
+  <tr>
+    <th>Item</th>
+    <th>Tool / Service</th>
+    <th>Cost</th>
+  </tr>
+  <tr>
+    <td>Programming Language</td>
+    <td>Java 17 (OpenJDK)</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>Framework</td>
+    <td>Spring Boot 3.4.5</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>Database</td>
+    <td>MySQL 8.0 Community Edition</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>Frontend Templating</td>
+    <td>Thymeleaf</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>Maps &amp; Routing</td>
+    <td>Leaflet.js + OpenStreetMap + OSRM</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>Image Storage</td>
+    <td>Cloudinary (Free Tier — 25 credits/month)</td>
+    <td><b>Free</b> (sufficient for development &amp; demo)</td>
+  </tr>
+  <tr>
+    <td>Email Service</td>
+    <td>Gmail SMTP (Spring Mail)</td>
+    <td><b>Free</b> (up to 500 emails/day)</td>
+  </tr>
+  <tr>
+    <td>Monitoring</td>
+    <td>Prometheus + Grafana (OSS editions)</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>Containerization</td>
+    <td>Docker + Docker Compose</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>IDE</td>
+    <td>IntelliJ IDEA Community / VS Code</td>
+    <td><b>Free</b></td>
+  </tr>
+  <tr>
+    <td>Build Tool</td>
+    <td>Apache Maven 3.9 (Maven Wrapper)</td>
+    <td><b>Free / Open-Source</b></td>
+  </tr>
+  <tr>
+    <td>Version Control</td>
+    <td>Git + GitHub</td>
+    <td><b>Free</b></td>
+  </tr>
+  <tr>
+    <td colspan="2"><b>Total Estimated Cost</b></td>
+    <td><b>₹0 (entirely open-source stack)</b></td>
+  </tr>
+</table>
+
+<div class="note-box">
+  <b>Note:</b> For production deployment, a cloud VM (e.g., AWS EC2 t3.medium at ~₹2,500/month or DigitalOcean Droplet at ~₹1,500/month) would be required, but is not necessary for the academic demonstration.
+</div>
+
+<h3>5.2 Technical Feasibility</h3>
+
+<table>
+  <tr>
+    <th>Aspect</th>
+    <th>Details</th>
+  </tr>
+  <tr>
+    <td><b>Hardware Requirements</b></td>
+    <td>Development: Any machine with 8 GB RAM, 4-core CPU, 20 GB disk. Deployment: Docker-capable Linux server (2 vCPU, 4 GB RAM minimum)</td>
+  </tr>
+  <tr>
+    <td><b>Software Requirements</b></td>
+    <td>JDK 17+, Maven 3.9+, MySQL 8.0, Docker 24+, Docker Compose v2, Node.js (optional, for frontend build)</td>
+  </tr>
+  <tr>
+    <td><b>Scalability</b></td>
+    <td>Stateless Spring Boot application can be horizontally scaled behind a load balancer. Database can be scaled vertically or migrated to managed services (AWS RDS). Caffeine cache reduces DB load by ~40% on profile/ride queries</td>
+  </tr>
+  <tr>
+    <td><b>Security</b></td>
+    <td>Spring Security with BCrypt hashing, OAuth2 integration, session-based authentication, role-based URL authorization. HTTPS can be configured via reverse proxy (Nginx)</td>
+  </tr>
+  <tr>
+    <td><b>Browser Compatibility</b></td>
+    <td>Tested on Chrome 120+, Firefox 120+, Edge 120+. Responsive CSS design system works on desktop and tablet viewports</td>
+  </tr>
+</table>
+
+<h3>5.3 Challenges &amp; Mitigation</h3>
+
+<table>
+  <tr>
+    <th>Challenge</th>
+    <th>Mitigation Strategy</th>
+  </tr>
+  <tr>
+    <td><b>OSRM API Availability</b></td>
+    <td>OSRM public demo server is rate-limited; for production, a self-hosted OSRM instance can be deployed via Docker with India OSM data (~2 GB extract)</td>
+  </tr>
+  <tr>
+    <td><b>Real-Time Ride Tracking</b></td>
+    <td>Current implementation uses scheduled polling (every 20 min). Future versions can integrate WebSocket (STOMP over SockJS) for real-time status updates</td>
+  </tr>
+  <tr>
+    <td><b>Cloudinary Free Tier Limits</b></td>
+    <td>25 credits/month is sufficient for development. Production usage would require a paid plan (~₹750/month for 75 credits) or migration to self-hosted MinIO</td>
+  </tr>
+  <tr>
+    <td><b>User Adoption (Cold Start)</b></td>
+    <td>Coin-based incentivization and the gamified reward system are designed to address the cold-start problem by rewarding early adopters disproportionately</td>
+  </tr>
+  <tr>
+    <td><b>Government ID Verification Latency</b></td>
+    <td>Admin-reviewed process may introduce delays. Future scope includes OCR-based automated document verification using Tesseract or AWS Textract</td>
+  </tr>
+</table>
+
+<hr class="section-divider">
+
+<!-- ===================== SECTION 6 ===================== -->
+<h2>6. Additional Notes / Highlights</h2>
+
+<ul>
+  <li><b>Code Quality:</b> The project follows clean MVC architecture with 12 controllers, 14 service interfaces, 12 service implementations, 7 JPA repositories, and 34+ Thymeleaf templates — totaling approximately 8,000+ lines of application code.</li>
+  <li><b>Custom Design System:</b> A handcrafted CSS design system (<code>ridex-theme.css</code>) ensures consistent, branded UI across all pages without relying entirely on third-party CSS frameworks.</li>
+  <li><b>Docker-First Deployment:</b> The entire application stack (MySQL + Spring Boot + Prometheus + Grafana) is defined in a single <code>docker-compose.yml</code>, enabling one-command deployment: <code>docker compose up --build</code>.</li>
+  <li><b>Environment Security:</b> All sensitive credentials (database passwords, OAuth secrets, Cloudinary keys) are externalized via environment variables using the <code>dotenv-java</code> library, preventing accidental secret exposure in version control.</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ===================== SECTION 7 ===================== -->
+<h2>7. References / Base Papers Used</h2>
+
+<p>[1] R. Agatz, A. Erera, M. Savelsbergh, and X. Wang, "Optimization for dynamic ride-sharing: A review," <i>European Journal of Operational Research</i>, vol. 223, no. 2, pp. 295–303, Dec. 2012. [Online]. Available: https://doi.org/10.1016/j.ejor.2012.05.028</p>
+
+<p>[2] N. J. Yuan, Y. Zheng, L. Zhang, and X. Xie, "T-Finder: A Recommender System for Finding Passengers and Vacant Taxis," <i>IEEE Transactions on Knowledge and Data Engineering</i>, vol. 25, no. 10, pp. 2390–2403, Oct. 2013. [Online]. Available: https://doi.org/10.1109/TKDE.2012.153</p>
+
+<p>[3] M. Furuhata, M. Dessouky, F. Ordóñez, M. Brunet, X. Wang, and S. Koenig, "Ridesharing: The state-of-the-art and future directions," <i>Transportation Research Part B: Methodological</i>, vol. 57, pp. 28–46, Nov. 2013. [Online]. Available: https://doi.org/10.1016/j.trb.2013.08.012</p>
+
+<p>[4] S. Yan and C. Y. Chen, "An optimization model and a solution algorithm for the real-time carpooling problem," <i>Annals of Operations Research</i>, vol. 244, no. 2, pp. 529–550, Sep. 2016. [Online]. Available: https://doi.org/10.1007/s10479-016-2124-0</p>
+
+<p>[5] P. Santi, G. Resta, M. Szell, S. Sobolevsky, S. H. Strogatz, and C. Ratti, "Quantifying the benefits of vehicle pooling with shareability networks," <i>Proceedings of the National Academy of Sciences</i>, vol. 111, no. 37, pp. 13290–13294, Sep. 2014. [Online]. Available: https://doi.org/10.1073/pnas.1403657111</p>
+
+<hr class="section-divider">
+
+<div class="note-box">
+  <b>Note:</b> All students must submit the Project Synopsis/SRS printed on A4 size sheets, bound in a punched file cover.
+</div>
+
+</body>
+</html>

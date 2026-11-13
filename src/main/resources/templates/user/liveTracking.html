@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Live Ride Tracking: ' + ${ride.sourceCity} + ' → ' + ${ride.destinationCity} + ' — RideX'">Live Ride Tracking — RideX</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        :root {
+            --rx-bg-primary: #f8fafc;
+            --rx-bg-secondary: #ffffff;
+            --rx-bg-card: rgba(255, 255, 255, 0.94);
+            --rx-border: rgba(226, 232, 240, 0.9);
+            --rx-border-focus: #10b981;
+            --rx-accent: #059669;
+            --rx-accent-glow: rgba(16, 185, 129, 0.25);
+            --rx-text-primary: #0f172a;
+            --rx-text-secondary: #334155;
+            --rx-text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--rx-bg-primary);
+            color: var(--rx-text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ── */
+        .track-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--rx-border);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .track-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--rx-text-primary);
+        }
+
+        .track-brand .logo-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #fff;
+            box-shadow: 0 4px 12px var(--rx-accent-glow);
+        }
+
+        .track-route-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .track-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .status--ongoing {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .status--planned {
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+            border: 1px solid rgba(234, 179, 8, 0.35);
+        }
+
+        .status--completed {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+        }
+
+        .pulse-beacon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-ring 1.6s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* ── Map Container ── */
+        #map {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Clean light map tiles */
+        .leaflet-tile-pane {
+            filter: contrast(1.05) saturate(1.05);
+        }
+
+        /* ── Floating Controls and Panels ── */
+        .map-floating-controls {
+            position: fixed;
+            right: 20px;
+            top: 80px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .map-btn {
+            background: #ffffff;
+            border: 1px solid var(--rx-border);
+            color: var(--rx-text-primary);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+        }
+
+        .map-btn:hover {
+            border-color: var(--rx-accent);
+            color: var(--rx-accent);
+            transform: scale(1.05);
+        }
+
+        /* ── Bottom Overlay Panel ── */
+        .tracking-overlay {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(920px, calc(100vw - 32px));
+            z-index: 1000;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 16px;
+            pointer-events: none;
+        }
+
+        .panel-card {
+            background: #ffffff;
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--rx-border);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.15);
+            pointer-events: auto;
+        }
+
+        /* Driver / Car / Trip Details */
+        .driver-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .driver-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .driver-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--rx-accent);
+        }
+
+        .driver-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .car-plate-badge {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        /* Trip Stop Points */
+        .trip-points {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .trip-line {
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: linear-gradient(to bottom, #10b981, #ef4444);
+            border-radius: 2px;
+        }
+
+        .trip-point-dot {
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-green { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
+        .dot-red { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
+
+        .trip-point-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+        }
+
+        .trip-point-city { font-weight: 700; color: #fff; }
+        .trip-point-addr { font-size: 0.72rem; color: var(--rx-text-muted); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Safety & Sharing Panel */
+        .safety-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--rx-accent);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .share-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-whatsapp:hover {
+            background: #1eb956;
+            transform: translateY(-1px);
+        }
+
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--rx-border);
+            color: var(--rx-text-primary);
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Driver Broadcasting Banner */
+        .driver-broadcast-box {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px dashed rgba(16, 185, 129, 0.35);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .broadcast-toggle-btn {
+            background: var(--rx-accent);
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .broadcast-toggle-btn.active {
+            background: #ef4444;
+        }
+
+        /* Marker Styles */
+        .car-marker-container {
+            width: 44px;
+            height: 44px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .car-marker-pulse {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.25);
+            animation: pulse-car 2s infinite;
+        }
+
+        @keyframes pulse-car {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        .car-marker-icon {
+            width: 36px;
+            height: 36px;
+            background: #0f172a;
+            border: 2px solid #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10b981;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+            z-index: 2;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tracking-overlay {
+                grid-template-columns: 1fr;
+                bottom: 12px;
+                max-height: 52vh;
+                overflow-y: auto;
+            }
+            .track-header {
+                padding: 10px 14px;
+            }
+            .track-route-title {
+                font-size: 0.82rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header Bar ── -->
+    <header class="track-header">
+        <a href="/" class="track-brand">
+            <div class="logo-badge">
+                <i class="fa-solid fa-car-tunnel"></i>
+            </div>
+            <div>
+                <div style="font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em;">Ride<span style="color:var(--rx-accent);">X</span> Live</div>
+                <div style="font-size: 0.65rem; color: var(--rx-text-muted);">Family & Passenger Safety Tracker</div>
+            </div>
+        </a>
+
+        <div class="track-route-title">
+            <span th:text="${ride.sourceCity}">Source</span>
+            <i class="fa-solid fa-arrow-right" style="font-size:0.7rem; color:var(--rx-accent);"></i>
+            <span th:text="${ride.destinationCity}">Destination</span>
+        </div>
+
+        <div>
+            <span th:if="${ride.rideStatus == 'ONGOING'}" class="track-status-pill status--ongoing">
+                <span class="pulse-beacon"></span>
+                <span>Live in Transit</span>
+            </span>
+            <span th:if="${ride.rideStatus == 'PLANNED'}" class="track-status-pill status--planned">
+                <i class="fa-regular fa-clock"></i>
+                <span>Planned Ride</span>
+            </span>
+            <span th:if="${ride.rideStatus == 'COMPLETED'}" class="track-status-pill status--completed">
+                <i class="fa-solid fa-check-circle"></i>
+                <span>Completed</span>
+            </span>
+        </div>
+    </header>
+
+    <!-- ── Fullscreen Leaflet Map ── -->
+    <div id="map"></div>
+
+    <!-- ── Floating Map Action Buttons ── -->
+    <div class="map-floating-controls">
+        <button class="map-btn" id="btnRecenter" title="Recenter on Vehicle">
+            <i class="fa-solid fa-crosshairs"></i>
+        </button>
+        <button class="map-btn" id="btnFitBounds" title="View Entire Route">
+            <i class="fa-solid fa-route"></i>
+        </button>
+        <button class="map-btn" onclick="toggleOverlay()" title="Toggle Info Sheet">
+            <i class="fa-solid fa-sliders"></i>
+        </button>
+    </div>
+
+    <!-- ── Bottom Tracking & Safety Panel ── -->
+    <div class="tracking-overlay" id="trackingOverlay">
+
+        <!-- Card 1: Trip & Driver Details -->
+        <div class="panel-card">
+            <div class="driver-strip">
+                <div class="driver-info">
+                    <img th:src="${ride.driver != null and ride.driver.profilePic != null and !#strings.isEmpty(ride.driver.profilePic) ? ride.driver.profilePic : '/images/default-avatar.png'}"
+                         alt="Driver" class="driver-avatar" />
+                    <div>
+                        <div class="driver-name" th:text="${ride.driver != null ? (ride.driver.fName + ' ' + ride.driver.lName) : 'RideX Driver'}">Driver Name</div>
+                        <div style="font-size: 0.72rem; color: var(--rx-text-muted); display:flex; align-items:center; gap:6px;">
+                            <span>⭐ 4.9 Verified Driver</span>
+                            <span th:if="${ride.driver != null and ride.driver.phone != null and isPassenger}"
+                                  th:text="' • 📞 ' + ${ride.driver.phone}">• 📞 9876543210</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${ride.car != null}" style="text-align: right;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #fff;" th:text="${ride.car.carMake + ' ' + ride.car.carModel}">Swift Dzire</div>
+                    <div class="car-plate-badge" th:text="${ride.car.carNumber}">MH 02 AX 1234</div>
+                </div>
+                <div th:unless="${ride.car != null}" style="text-align: right;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">Ride Vehicle</div>
+                    <div class="car-plate-badge">RideX Carpool</div>
+                </div>
+            </div>
+
+            <!-- Stops -->
+            <div class="trip-points">
+                <div class="trip-line"></div>
+                <div class="trip-point-text">
+                    <div>
+                        <div class="trip-point-dot dot-green"></div>
+                        <div class="trip-point-city" th:text="${ride.sourceCity}">Origin</div>
+                        <div class="trip-point-addr" th:text="${ride.sourceAddress}">Detailed pickup address</div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--rx-text-secondary); text-align:right;">
+                        <span th:text="${#dates.format(ride.startTime, 'HH:mm')}">14:00</span>
+                    </div>
+                </div>
+
+                <div class="trip-point-text">
+                    <div>
+                        <div class="trip-point-dot dot-red"></div>
+                        <div class="trip-point-city" th:text="${ride.destinationCity}">Destination</div>
+                        <div class="trip-point-addr" th:text="${ride.destinationAddress}">Detailed destination address</div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--rx-text-secondary); text-align:right;">
+                        <span th:text="${ride.endTime != null ? #dates.format(ride.endTime, 'HH:mm') : '--:--'}">16:30</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Driver GPS Broadcasting Section (Only visible to Driver) -->
+            <div th:if="${isDriver and ride.rideStatus != 'COMPLETED'}" class="driver-broadcast-box">
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-accent); display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-satellite-dish"></i>
+                        <span>Live GPS Broadcast (Driver Mode)</span>
+                    </div>
+                    <div id="broadcastStatusText" style="font-size: 0.68rem; color: var(--rx-text-muted); margin-top:2px;">
+                        Tap to stream this device's GPS to all passengers & family links.
+                    </div>
+                </div>
+                <button type="button" id="btnToggleBroadcast" class="broadcast-toggle-btn" onclick="toggleGpsBroadcasting()">
+                    <i class="fa-solid fa-tower-broadcast"></i> Start GPS
+                </button>
+            </div>
+        </div>
+
+        <!-- Card 2: Family Safety & 1-Tap Share -->
+        <div class="panel-card">
+            <div class="safety-header">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Family Safety Link</span>
+            </div>
+
+            <p style="font-size: 0.75rem; color: var(--rx-text-secondary); line-height: 1.45; margin-bottom: 14px;">
+                Family & friends can track your live location, route, and driver details in any browser without signing in.
+            </p>
+
+            <div class="share-actions">
+                <a th:href="${whatsappShareUrl}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.1rem;"></i>
+                    <span>Share on WhatsApp</span>
+                </a>
+
+                <button type="button" class="btn-copy" onclick="copyTrackingUrl()">
+                    <i class="fa-regular fa-clone"></i>
+                    <span id="copyBtnText">Copy Safety Link</span>
+                </button>
+            </div>
+
+            <!-- Quick Trip Stats -->
+            <div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:12px; border-top: 1px solid var(--rx-border); font-size:0.75rem;">
+                <span style="color:var(--rx-text-muted);">Distance: <strong style="color:#fff;" th:text="${ride.distance} + ' km'">0 km</strong></span>
+                <span style="color:var(--rx-text-muted);">Duration: <strong style="color:#fff;" th:text="${ride.formattedDuration}">0m</strong></span>
+                <span style="color:var(--rx-text-muted);"><span id="lastUpdatedTimer">Live</span></span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script th:inline="javascript">
+        /* ── Server variables ── */
+        const RIDE_ID = /*[[${ride.rideId}]]*/ '';
+        const IS_DRIVER = /*[[${isDriver}]]*/ false;
+        const TRACKING_TOKEN = /*[[${trackingToken}]]*/ '';
+        const LIVE_URL = /*[[${liveTrackingUrl}]]*/ '';
+        const IS_PUBLIC_VIEWER = /*[[${isPublicViewer}]]*/ false;
+
+        const SOURCE_LAT = parseFloat(/*[[${ride.sourceLat}]]*/ 0) || 19.0760;
+        const SOURCE_LON = parseFloat(/*[[${ride.sourceLon}]]*/ 0) || 72.8777;
+        const DEST_LAT = parseFloat(/*[[${ride.destinationLat}]]*/ 0) || 18.5204;
+        const DEST_LON = parseFloat(/*[[${ride.destinationLon}]]*/ 0) || 73.8567;
+
+        let initialCurrentLat = parseFloat(/*[[${ride.currentLat}]]*/ 0) || SOURCE_LAT;
+        let initialCurrentLon = parseFloat(/*[[${ride.currentLon}]]*/ 0) || SOURCE_LON;
+        let initialHeading = parseFloat(/*[[${ride.currentHeading}]]*/ 0) || 0;
+
+        /* ── Initialize Leaflet Map ── */
+        const map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([initialCurrentLat, initialCurrentLon], 13);
+
+        // OpenStreetMap Dark/Voyager tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        L.control.attribution({ position: 'bottomright', prefix: 'RideX Live' }).addTo(map);
+
+        /* ── Custom Marker Icons ── */
+        const originIcon = L.divIcon({
+            className: 'custom-pin',
+            html: '<div style="background:#10b981;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px rgba(16,185,129,0.8);"></div>',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+        });
+
+        const destIcon = L.divIcon({
+            className: 'custom-pin',
+            html: '<div style="background:#ef4444;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px rgba(239,68,68,0.8);"></div>',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+        });
+
+        const carIcon = L.divIcon({
+            className: 'car-marker-container',
+            html: `
+                <div class="car-marker-pulse"></div>
+                <div class="car-marker-icon" id="carIconElem">
+                    <i class="fa-solid fa-car-side"></i>
+                </div>
+            `,
+            iconSize: [44, 44],
+            iconAnchor: [22, 22]
+        });
+
+        // Add Markers
+        const originMarker = L.marker([SOURCE_LAT, SOURCE_LON], { icon: originIcon }).addTo(map);
+        originMarker.bindPopup("<b>Pickup:</b> " + /*[[${ride.sourceCity}]]*/ 'Origin');
+
+        const destMarker = L.marker([DEST_LAT, DEST_LON], { icon: destIcon }).addTo(map);
+        destMarker.bindPopup("<b>Drop-off:</b> " + /*[[${ride.destinationCity}]]*/ 'Destination');
+
+        let carMarker = L.marker([initialCurrentLat, initialCurrentLon], {
+            icon: carIcon,
+            zIndexOffset: 1000
+        }).addTo(map);
+
+        // Polyline connecting source to destination (or OSRM route)
+        let routePolyline = L.polyline([[SOURCE_LAT, SOURCE_LON], [DEST_LAT, DEST_LON]], {
+            color: '#10b981',
+            weight: 5,
+            opacity: 0.65,
+            smoothFactor: 1
+        }).addTo(map);
+
+        // Fetch detailed driving polyline from OSRM
+        async function fetchDetailedRoute() {
+            try {
+                const url = `https://router.project-osrm.org/route/v1/driving/${SOURCE_LON},${SOURCE_LAT};${DEST_LON},${DEST_LAT}?overview=full&geometries=geojson`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.routes && data.routes[0]) {
+                    const coords = data.routes[0].geometry.coordinates.map(pt => [pt[1], pt[0]]);
+                    routePolyline.setLatLngs(coords);
+                }
+            } catch (e) {
+                console.log("Using direct line fallback for route", e);
+            }
+        }
+        fetchDetailedRoute();
+
+        // Fit map initially to show car and route
+        function fitRouteBounds() {
+            const bounds = L.latLngBounds([[SOURCE_LAT, SOURCE_LON], [DEST_LAT, DEST_LON], carMarker.getLatLng()]);
+            map.fitBounds(bounds, { padding: [80, 80] });
+        }
+        fitRouteBounds();
+
+        document.getElementById('btnFitBounds').addEventListener('click', fitRouteBounds);
+        document.getElementById('btnRecenter').addEventListener('click', () => {
+            map.flyTo(carMarker.getLatLng(), 15, { animate: true, duration: 1 });
+        });
+
+        /* ── Smooth Car Marker Movement ── */
+        let lastLat = initialCurrentLat;
+        let lastLon = initialCurrentLon;
+
+        function updateCarLocation(newLat, newLon, heading) {
+            if (!newLat || !newLon) return;
+
+            // Interpolate position smoothly
+            const startLatLng = carMarker.getLatLng();
+            const endLatLng = L.latLng(newLat, newLon);
+
+            carMarker.setLatLng(endLatLng);
+
+            // Rotate car icon if heading is available
+            const iconElem = document.getElementById('carIconElem');
+            if (iconElem && heading) {
+                iconElem.style.transform = `rotate(${heading}deg)`;
+            }
+
+            lastLat = newLat;
+            lastLon = newLon;
+            document.getElementById('lastUpdatedTimer').textContent = 'Live (Just now)';
+        }
+
+        /* ── Auto-Polling Location ── */
+        async function pollLocation() {
+            try {
+                const endpoint = (TRACKING_TOKEN)
+                    ? `/api/ride/location/public/${RIDE_ID}?token=${encodeURIComponent(TRACKING_TOKEN)}`
+                    : `/api/ride/location/${RIDE_ID}`;
+
+                const res = await fetch(endpoint);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.currentLat && data.currentLon) {
+                        updateCarLocation(data.currentLat, data.currentLon, data.currentHeading);
+                    }
+                }
+            } catch (err) {
+                console.warn("Polling location failed:", err);
+            }
+        }
+
+        // Poll every 4 seconds
+        setInterval(pollLocation, 4000);
+
+        /* ── Driver GPS Broadcasting ── */
+        let isBroadcasting = false;
+        let watchId = null;
+
+        function toggleGpsBroadcasting() {
+            const btn = document.getElementById('btnToggleBroadcast');
+            const statusTxt = document.getElementById('broadcastStatusText');
+
+            if (!isBroadcasting) {
+                if (!navigator.geolocation) {
+                    alert("Geolocation is not supported by your browser.");
+                    return;
+                }
+
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop GPS';
+                statusTxt.innerHTML = '<span style="color:#10b981;font-weight:700;">📡 Broadcasting active!</span> Updating location every 5s...';
+                isBroadcasting = true;
+
+                // Transmit immediately and set high-accuracy watchPosition
+                watchId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        sendDriverLocation(
+                            position.coords.latitude,
+                            position.coords.longitude,
+                            position.coords.heading || 0,
+                            position.coords.speed || 0
+                        );
+                    },
+                    (err) => {
+                        console.error("Geolocation error:", err);
+                        statusTxt.textContent = "GPS Warning: " + err.message;
+                    },
+                    { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+                );
+            } else {
+                if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                }
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fa-solid fa-tower-broadcast"></i> Start GPS';
+                statusTxt.textContent = "GPS broadcast paused.";
+                isBroadcasting = false;
+            }
+        }
+
+        async function sendDriverLocation(lat, lon, heading, speed) {
+            try {
+                const res = await fetch('/api/ride/location/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rideId: RIDE_ID,
+                        lat: lat,
+                        lon: lon,
+                        heading: heading,
+                        speed: speed
+                    })
+                });
+                if (res.ok) {
+                    updateCarLocation(lat, lon, heading);
+                    const statusTxt = document.getElementById('broadcastStatusText');
+                    if (statusTxt) {
+                        statusTxt.innerHTML = `<span style="color:#10b981;font-weight:700;">📡 Live:</span> Coordinates sent (${new Date().toLocaleTimeString()})`;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to post GPS update:", e);
+            }
+        }
+
+        /* ── Copy Tracking Link ── */
+        function copyTrackingUrl() {
+            navigator.clipboard.writeText(LIVE_URL).then(() => {
+                const btnText = document.getElementById('copyBtnText');
+                const orig = btnText.textContent;
+                btnText.textContent = "Copied to Clipboard! ✓";
+                setTimeout(() => { btnText.textContent = orig; }, 2500);
+            }).catch(() => {
+                prompt("Copy this tracking link:", LIVE_URL);
+            });
+        }
+
+        /* ── Toggle Overlay Sheet ── */
+        let overlayVisible = true;
+        function toggleOverlay() {
+            const el = document.getElementById('trackingOverlay');
+            overlayVisible = !overlayVisible;
+            el.style.display = overlayVisible ? 'grid' : 'none';
+        }
+    </script>
+</body>
+</html>

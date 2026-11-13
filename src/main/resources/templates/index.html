@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="en" th:fragment="parent(content,title,script)" xmlns:th="http://www.thymeleaf.org">
+<html class="light" lang="en" th:fragment="parent(content,title,script)" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <div th:replace="~{fragments/metadata :: metadata}"></div>
@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{'/css/ridex-theme.css'}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="canonical" href="https://demo.themesberg.com/landwind/" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
@@ -17,7 +17,7 @@
 
 </head>
 
-<body>
+<body th:attr="data-user-id=${loggedInUser != null ? loggedInUser.userId : ''}">
     <div th:if="${loggedInUser}">
         <div data-th-replace="~{user/navbar :: navbar}"></div>
     </div>
@@ -32,6 +32,17 @@
     <div data-th-replace="~{fragments/footer :: footer}"></div>
     <script src="https://unpkg.com/flowbite@1.4.1/dist/flowbite.js"></script>
     <script src="https://kit.fontawesome.com/ed25fb8f70.js" crossorigin="anonymous"></script>
+    <!-- Leaflet JS — loaded globally for map picker on create ride and live tracking -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- RideX In-App Chat Drawer — loaded globally for driver ↔ passenger chat -->
+    <script th:src="@{'/js/chatDrawer.js'}"></script>
+
+    <!-- RideX Razorpay Checkout — loaded globally for seamless booking & payments -->
+    <script th:src="@{'/js/razorpayCheckout.js'}"></script>
+
+    <!-- RideX Spring '26 Interactive 3D Showcase & Car Simulator -->
+    <script th:src="@{'/js/carShowcase.js'}"></script>
 
     <!-- Scroll Reveal Script -->
     <script>

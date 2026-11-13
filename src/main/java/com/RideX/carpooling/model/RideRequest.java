@@ -27,6 +27,21 @@ public class RideRequest {
     private boolean isCoDriver;
     private Date requestedAt;
     private String requestStatus;
+
+    // ── OTP & Payment fields (Phase 2 & 3) ──────────────────────────
+    /** 4-digit boarding OTP shown to passenger; driver enters it to start the ride */
+    private String startOtp;
+
+    /** True once the driver has verified the passenger's OTP at pickup */
+    private boolean otpVerified;
+
+    /** UNPAID | PAID | REFUNDED — for Razorpay integration (Phase 3) */
+    private String paymentStatus = "UNPAID";
+
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
+    private String razorpaySignature;
+
     @PrePersist
     protected void onCreate() {
         requestedAt = new Date();
@@ -104,16 +119,35 @@ public class RideRequest {
         this.finalPrice = finalPrice;
     }
 
+    public String getStartOtp() { return startOtp; }
+    public void setStartOtp(String startOtp) { this.startOtp = startOtp; }
+
+    public boolean isOtpVerified() { return otpVerified; }
+    public void setOtpVerified(boolean otpVerified) { this.otpVerified = otpVerified; }
+
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+
+    public String getRazorpayOrderId() { return razorpayOrderId; }
+    public void setRazorpayOrderId(String razorpayOrderId) { this.razorpayOrderId = razorpayOrderId; }
+
+    public String getRazorpayPaymentId() { return razorpayPaymentId; }
+    public void setRazorpayPaymentId(String razorpayPaymentId) { this.razorpayPaymentId = razorpayPaymentId; }
+
+    public String getRazorpaySignature() { return razorpaySignature; }
+    public void setRazorpaySignature(String razorpaySignature) { this.razorpaySignature = razorpaySignature; }
+
     @Override
     public String toString() {
         return "RideRequest{" +
                 "requestId='" + requestId + '\'' +
                 ", user=" + user +
-                ", ride=" + ride +
                 ", requestedSeats=" + requestedSeats +
                 ", isCoDriver=" + isCoDriver +
                 ", requestedAt=" + requestedAt +
                 ", requestStatus='" + requestStatus + '\'' +
+                ", otpVerified=" + otpVerified +
+                ", paymentStatus='" + paymentStatus + '\'' +
                 '}';
     }
 }

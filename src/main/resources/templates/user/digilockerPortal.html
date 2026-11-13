@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{index :: parent(~{::#content}, ~{::title}, ~{::#pageScript})}">
+<head>
+    <title>DigiLocker Instant KYC — RideX</title>
+</head>
+<body>
+<div id="content" style="background: var(--rx-bg-primary); min-height: 100vh; padding-top: 110px; padding-bottom: 80px;">
+
+    <div class="rx-container" style="max-width: 680px; margin: 0 auto; padding: 0 16px;">
+
+        <!-- DigiLocker Official Styled Container (Modern Light 3D) -->
+        <div style="background: #ffffff; border: 1px solid var(--rx-border); border-radius: 24px; box-shadow: var(--rx-shadow-3d); overflow: hidden;">
+
+            <!-- Indian National Tricolor Strip -->
+            <div style="height: 5px; width: 100%; display: flex;">
+                <div style="flex: 1; background: #ff9933;"></div>
+                <div style="flex: 1; background: #ffffff;"></div>
+                <div style="flex: 1; background: #138808;"></div>
+            </div>
+
+            <!-- Header -->
+            <div style="padding: 28px 32px 20px; border-bottom: 1px solid var(--rx-border); background: linear-gradient(180deg, rgba(248,250,252,0.8) 0%, transparent 100%);">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <!-- DigiLocker Emblem Icon -->
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #3b82f6;">
+                            <i class="fa-solid fa-cloud-arrow-down"></i>
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <h2 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--rx-text-primary); letter-spacing: -0.02em;">DigiLocker</h2>
+                                <span style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #059669; font-size: 0.7rem; padding: 3px 10px; border-radius: 999px; font-weight: 700; text-transform: uppercase;">e-KYC Gateway</span>
+                            </div>
+                            <p style="margin: 2px 0 0; font-size: 0.8rem; color: var(--rx-text-muted);">
+                                National e-Governance Division • Government of India
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #059669; background: rgba(16,185,129,0.08); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(16,185,129,0.25); font-weight: 600;">
+                        <i class="fa-solid fa-lock"></i> 256-bit SSL Encrypted
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flash message if any -->
+            <div th:insert="~{fragments/message::messagebox}"></div>
+
+            <!-- Body Form -->
+            <form th:action="@{/user/digilocker/verify}" method="post" style="padding: 28px 32px 32px;" id="digiLockerForm">
+
+                <!-- Citizen Identity Info -->
+                <div style="background: var(--rx-bg-tertiary); border: 1px solid var(--rx-border); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--rx-text-muted); display: block; font-weight: 600;">Applicant Account</span>
+                        <div style="font-size: 1.05rem; font-weight: 700; color: var(--rx-text-primary);" th:text="${currentUser.fName + ' ' + (currentUser.lName != null ? currentUser.lName : '')}">Applicant Name</div>
+                        <div style="font-size: 0.82rem; color: var(--rx-text-muted);" th:text="${currentUser.email}">email@example.com</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.72rem; color: var(--rx-text-muted); display: block; font-weight: 600;">KYC Bonus Reward</span>
+                        <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 800; color: #f59e0b; background: rgba(245,158,11,0.12); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(245,158,11,0.25);">
+                            🪙 +<span th:text="${bonusCoins}">50</span> Trust Coins
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Document Selection -->
+                <div style="margin-bottom: 24px;">
+                    <label style="font-size: 0.84rem; font-weight: 800; color: var(--rx-text-primary); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 12px;">
+                        Select Document to Verify
+                    </label>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Option 1: Aadhaar Card -->
+                        <label class="digi-doc-card active" id="cardAadhaar" onclick="selectDocType('Aadhaar')">
+                            <input type="radio" name="docType" value="Aadhaar" checked style="display:none;" id="radioAadhaar">
+                            <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
+                                <div class="digi-doc-icon" style="background: rgba(245,158,11,0.12); color: #d97706; border-color: rgba(245,158,11,0.3);">
+                                    <i class="fa-solid fa-id-badge"></i>
+                                </div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="digi-doc-title" style="font-size: 0.96rem; font-weight: 800; color: var(--rx-text-primary);">Aadhaar Card (UIDAI)</span>
+                                        <span style="font-size: 0.68rem; background: rgba(16,185,129,0.15); color: #059669; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Instant e-KYC</span>
+                                    </div>
+                                    <div style="font-size: 0.78rem; color: var(--rx-text-secondary); font-weight: 500;">Unique Identification Authority of India</div>
+                                </div>
+                            </div>
+                            <div class="digi-radio-check">✓</div>
+                        </label>
+
+                        <!-- Option 2: Driving License -->
+                        <label class="digi-doc-card" id="cardDL" onclick="selectDocType('DrivingLicense')">
+                            <input type="radio" name="docType" value="DrivingLicense" style="display:none;" id="radioDL">
+                            <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
+                                <div class="digi-doc-icon" style="background: rgba(59,130,246,0.12); color: #2563eb; border-color: rgba(59,130,246,0.3);">
+                                    <i class="fa-solid fa-car-side"></i>
+                                </div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="digi-doc-title" style="font-size: 0.96rem; font-weight: 800; color: var(--rx-text-primary);">Driving License (MoRTH)</span>
+                                        <span style="font-size: 0.68rem; background: rgba(59,130,246,0.15); color: #2563eb; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Recommended for Drivers</span>
+                                    </div>
+                                    <div style="font-size: 0.78rem; color: var(--rx-text-secondary); font-weight: 500;">Ministry of Road Transport &amp; Highways</div>
+                                </div>
+                            </div>
+                            <div class="digi-radio-check">✓</div>
+                        </label>
+
+                        <!-- Option 3: PAN Card -->
+                        <label class="digi-doc-card" id="cardPAN" onclick="selectDocType('PAN')">
+                            <input type="radio" name="docType" value="PAN" style="display:none;" id="radioPAN">
+                            <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
+                                <div class="digi-doc-icon" style="background: rgba(168,85,247,0.12); color: #7e22ce; border-color: rgba(168,85,247,0.3);">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="digi-doc-title" style="font-size: 0.96rem; font-weight: 800; color: var(--rx-text-primary);">PAN Card (Income Tax)</span>
+                                        <span style="font-size: 0.68rem; background: rgba(147,51,234,0.15); color: #7e22ce; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Tax Identity</span>
+                                    </div>
+                                    <div style="font-size: 0.78rem; color: var(--rx-text-secondary); font-weight: 500;">Income Tax Department, Govt. of India</div>
+                                </div>
+                            </div>
+                            <div class="digi-radio-check">✓</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Optional Custom Document Number -->
+                <div style="background: var(--rx-bg-tertiary); border: 1px solid var(--rx-border); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px;">
+                    <label for="customDocNum" style="font-size: 0.82rem; font-weight: 700; color: var(--rx-text-primary); display: block; margin-bottom: 6px;">
+                        Document Number <span style="color: var(--rx-text-muted); font-weight: 400; font-size: 0.75rem;">(Optional — leave blank to auto-generate)</span>
+                    </label>
+                    <input type="text"
+                           name="customDocNum"
+                           id="customDocNum"
+                           placeholder="e.g. 5432 1098 7654 (Aadhaar) or DL-0420110023456 (DL)"
+                           style="width: 100%; padding: 11px 14px; background: #ffffff; border: 1.5px solid var(--rx-border); border-radius: 10px; color: var(--rx-text-primary); font-size: 0.95rem; font-family: monospace; outline: none;"
+                           onfocus="this.style.borderColor='#10b981'"
+                           onblur="this.style.borderColor='var(--rx-border)'" />
+                </div>
+
+                <!-- OTP / Authorization Section -->
+                <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.25); border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label for="otpInput" style="font-size: 0.82rem; font-weight: 700; color: var(--rx-text-primary); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Enter DigiLocker Security OTP
+                        </label>
+                        <button type="button" onclick="autoFillOtp()" style="background: transparent; border: none; color: #059669; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                            ⚡ Auto-Fill Test OTP (123456)
+                        </button>
+                    </div>
+
+                    <div style="position: relative;">
+                        <input type="text"
+                               name="otp"
+                               id="otpInput"
+                               maxlength="6"
+                               placeholder="Enter 6-digit OTP sent to registered mobile..."
+                               value="123456"
+                               required
+                               style="width: 100%; padding: 14px 16px; background: #ffffff; border: 1.5px solid var(--rx-border); border-radius: 12px; color: var(--rx-text-primary); font-size: 1.15rem; letter-spacing: 0.25em; text-align: center; font-family: monospace; outline: none; transition: border 0.2s;"
+                               onfocus="this.style.borderColor='#10b981'"
+                               onblur="this.style.borderColor='var(--rx-border)'" />
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--rx-text-muted); margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-circle-info" style="color: #3b82f6;"></i>
+                        <span>Sandbox Test Mode: Test OTP <code style="color:#059669;font-weight:700;">123456</code> is pre-filled for 1-click evaluation.</span>
+                    </div>
+                </div>
+
+                <!-- Consent Declaration -->
+                <div style="margin-bottom: 24px; font-size: 0.8rem; color: var(--rx-text-secondary); line-height: 1.55; display: flex; gap: 10px; align-items: flex-start;">
+                    <input type="checkbox" id="consentCheck" checked required style="margin-top: 3px; accent-color: #10b981; cursor: pointer;" />
+                    <label for="consentCheck" style="cursor: pointer;">
+                        I hereby provide my free and informed consent to <strong>DigiLocker (Govt. of India)</strong> to digitally share my verified document details with <strong>RideX Carpooling</strong> strictly for safety verification and trusted badge activation.
+                    </label>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button type="submit"
+                            id="submitKycBtn"
+                            style="width: 100%; padding: 15px; border-radius: 14px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 25px rgba(16,185,129,0.35); transition: transform 0.15s ease;">
+                        <i class="fa-solid fa-shield-halved"></i> Authorize & Complete Instant KYC
+                    </button>
+
+                    <a th:href="@{/user/verifyGovtId}"
+                       style="text-align: center; font-size: 0.85rem; color: var(--rx-text-muted); text-decoration: none; padding: 8px;">
+                        ← Cancel and Return to Manual Upload
+                    </a>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="pageScript">
+    <style>
+        .digi-doc-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1.5px solid var(--rx-border);
+            border-radius: 14px;
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .digi-doc-card:hover {
+            background: var(--rx-surface-alt);
+            border-color: #10b981;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.12);
+        }
+        .digi-doc-card.active {
+            background: rgba(16,185,129,0.08);
+            border-color: #10b981;
+            box-shadow: 0 0 0 1px #10b981, 0 4px 14px rgba(16,185,129,0.15);
+        }
+        .digi-doc-title {
+            color: var(--rx-text-primary);
+            transition: color 0.2s ease;
+        }
+        .digi-doc-card.active .digi-doc-title {
+            color: #065f46;
+        }
+        .digi-doc-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .digi-radio-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(15,23,42,0.08);
+            color: transparent;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            transition: all 0.2s ease;
+        }
+        .digi-doc-card.active .digi-radio-check {
+            background: #10b981;
+            color: #ffffff;
+        }
+    </style>
+    <script>
+        function selectDocType(type) {
+            document.querySelectorAll('.digi-doc-card').forEach(el => el.classList.remove('active'));
+            if (type === 'Aadhaar') {
+                document.getElementById('cardAadhaar').classList.add('active');
+                document.getElementById('radioAadhaar').checked = true;
+            } else if (type === 'DrivingLicense') {
+                document.getElementById('cardDL').classList.add('active');
+                document.getElementById('radioDL').checked = true;
+            } else if (type === 'PAN') {
+                document.getElementById('cardPAN').classList.add('active');
+                document.getElementById('radioPAN').checked = true;
+            }
+        }
+
+        function autoFillOtp() {
+            const input = document.getElementById('otpInput');
+            input.value = '123456';
+            input.focus();
+        }
+
+        document.getElementById('digiLockerForm').onsubmit = function() {
+            const btn = document.getElementById('submitKycBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying with DigiLocker...';
+            btn.disabled = true;
+            return true;
+        };
+    </script>
+</div>
+</body>
+</html>

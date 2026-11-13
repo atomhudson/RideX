@@ -21,5 +21,5 @@ public interface UserServices {
     Page<User> searchByUserId(String userId, int page, int size, String sortField, String sortDirection);
     Page<User> searchByEmail(String email, int page, int size, String sortField, String sortDirection);
     Page<User> searchByPhone(String phone, int page, int size, String sortField, String sortDirection);
-
+    Page<User> searchUsersUniversal(String keyword, int page, int size, String sortField, String sortDirection);
 }

@@ -40,7 +40,9 @@ public class CarDetailImplementation implements CarDetailsServices {
         carDetailDTO.setSeat_available(carDetail.getSeat_available());
         carDetailDTO.setCarNumber(carDetail.getCarNumber());
         carDetailDTO.setAc_available(carDetail.isAc_available());
-        carDetailDTO.setCar_Image_Url(carDetail.getCar_image_url().get(0));
+        if (carDetail.getCar_image_url() != null && !carDetail.getCar_image_url().isEmpty()) {
+            carDetailDTO.setCar_Image_Url(carDetail.getCar_image_url().get(0));
+        }
         return carDetailDTO;
     }
 }

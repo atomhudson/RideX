@@ -2,72 +2,296 @@
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 
 <head>
-    <title>RideX - Find a Ride</title>
+    <title>Find a Ride — Interactive Route Search — RideX</title>
 </head>
 
 <body>
-    <div id="content" style="background: var(--rx-bg-primary);">
+    <div id="content" style="background: var(--rx-bg-primary); min-height: 100vh;">
 
-        <!-- Search Section -->
-        <section class="rx-section" style="padding-top: 140px;">
+        <!-- ═══════════════════════════════════════════════════════════════
+             SEARCH & INTERACTIVE MAP SECTION
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="rx-section" style="padding-top: 110px; padding-bottom: 40px;">
             <div class="rx-container">
-                <div class="rx-search-hero rx-reveal">
-                    <h2>Your pick of rides at low prices</h2>
-                    <form class="rx-search-form" th:action="@{'/process-search'}" method="post" th:object="${searchForm}">
-                        <!-- From -->
-                        <div class="rx-search-input-group">
-                            <i class="fa-solid fa-location-dot rx-input-icon" style="color: var(--rx-accent);"></i>
-                            <input id="from" name="from" th:field="*{from}" type="text" placeholder="From"
-                                class="rx-form-input" />
-                            <ul id="from-suggestions" class="hidden"></ul>
+
+                <!-- Header / Hero Title -->
+                <div class="rx-section-header rx-reveal" style="margin-bottom: 32px; text-align: center;">
+                    <div style="display:inline-flex; align-items:center; gap:8px; padding:4px 14px; border-radius:20px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); color:var(--rx-accent); font-size:0.75rem; font-weight:700; margin-bottom:12px; letter-spacing:0.04em; text-transform:uppercase;">
+                        <i class="fa-solid fa-map-location-dot"></i> Interactive Map Search
+                    </div>
+                    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--rx-text-primary); margin: 0 0 10px; letter-spacing: -0.02em;">
+                        Find Your <span class="rx-text-accent">Ride</span> Across India
+                    </h1>
+                    <p style="font-size: 0.95rem; color: var(--rx-text-muted); max-width: 680px; margin: 0 auto;">
+                        Click on the interactive map to drop your pickup & destination pins, use 1-click GPS, or type to search rides.
+                    </p>
+                </div>
+
+                <!-- 2-Column Layout: Form Card + Interactive Map Card -->
+                <div style="display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 32px; align-items: start;" class="rx-search-grid">
+
+                    <!-- ── LEFT: Smart Search Form Card ── -->
+                    <div class="rx-card-3d rx-form-card rx-reveal" style="max-width: none; margin: 0; padding: 32px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-lg);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
+                            <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0; color: var(--rx-text-primary); display:flex; align-items:center; gap:8px;">
+                                <i class="fa-solid fa-magnifying-glass" style="color:var(--rx-accent); font-size:1rem;"></i> Search Rides
+                            </h2>
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--rx-text-muted);">
+                                📍 Pick on Map or GPS
+                            </span>
                         </div>
 
-                        <!-- To -->
-                        <div class="rx-search-input-group">
-                            <i class="fa-solid fa-location-dot rx-input-icon" style="color: #ef4444;"></i>
-                            <input id="to" name="to" th:field="*{to}" type="text" placeholder="To"
-                                class="rx-form-input" />
-                            <ul id="to-suggestions" class="hidden"></ul>
-                        </div>
+                        <form id="searchRideForm" th:action="@{'/process-search'}" method="post" th:object="${searchForm}">
 
-                        <!-- Date -->
-                        <div class="rx-search-input-group">
-                            <input id="date" name="date" th:field="*{date}" type="date" class="rx-form-input" />
-                        </div>
+                            <!-- ── FROM (Pickup) ── -->
+                            <div style="margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <label for="searchFrom" style="margin-bottom: 0; font-size: 0.88rem; font-weight: 600; color: var(--rx-text-primary);">
+                                        Pickup Location
+                                    </label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <!-- 1-Click GPS Button -->
+                                        <button type="button" id="searchGpsBtn" onclick="useGPSForPassengerSearch()"
+                                                title="Auto-detect current location"
+                                                style="display: flex; align-items: center; gap: 6px; font-size: 0.76rem; padding: 5px 12px; border-radius: 20px; background: rgba(5,150,105,0.1); color: var(--rx-accent); border: 1px solid rgba(5,150,105,0.3); cursor: pointer; transition: all 0.2s; font-weight: 600;">
+                                            <i class="fa-solid fa-location-crosshairs"></i>
+                                            <span id="searchGpsTxt">Use GPS</span>
+                                        </button>
+                                        <!-- Map Mode Shortcut -->
+                                        <button type="button" onclick="setSearchMapMode('from')"
+                                                title="Set pickup on map"
+                                                style="display: flex; align-items: center; gap: 4px; font-size: 0.76rem; padding: 5px 10px; border-radius: 20px; background: rgba(99,102,241,0.1); color: #4f46e5; border: 1px solid rgba(99,102,241,0.25); cursor: pointer; transition: all 0.2s; font-weight: 600;">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                </div>
 
-                        <!-- Search Button -->
-                        <button type="submit" class="rx-btn rx-btn-primary" style="padding: 12px 32px; white-space: nowrap;">
-                            <i class="fa-solid fa-magnifying-glass"></i> Search
-                        </button>
-                    </form>
+                                <div class="rx-autocomplete-wrap">
+                                    <div style="position: relative; display: flex; align-items: center;">
+                                        <i class="fa-solid fa-location-dot" style="position: absolute; left: 14px; color: #059669; font-size: 1rem; pointer-events: none; z-index: 2;"></i>
+                                        <input id="searchFrom" name="from" th:field="*{from}" type="text"
+                                               placeholder="Type pickup city or click on map…"
+                                               class="rx-form-input" style="padding-left: 42px;" autocomplete="off" />
+                                    </div>
+                                    <ul id="searchFrom-suggestions" class="rx-suggestion-list hidden"></ul>
+                                </div>
+
+                                <!-- Detected City Badge -->
+                                <div id="fromCityBadge" style="display: none; margin-top: 6px; font-size: 0.8rem; color: #059669; align-items: center; gap: 6px; font-weight: 600;">
+                                    <i class="fa-solid fa-map-pin"></i> <span id="fromCityText"></span>
+                                </div>
+                            </div>
+
+                            <!-- ── SWAP BUTTON ── -->
+                            <div style="text-align: center; margin: 6px 0;">
+                                <button type="button" id="searchSwapBtn" onclick="swapSearchLocations()"
+                                        title="Swap Pickup ↔ Destination"
+                                        style="background: var(--rx-surface-alt); border: 1px solid var(--rx-border); border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1rem; color: var(--rx-text-secondary); transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--rx-shadow-sm);">
+                                    ⇄
+                                </button>
+                            </div>
+
+                            <!-- ── TO (Destination) ── -->
+                            <div style="margin-bottom: 18px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <label for="searchTo" style="margin-bottom: 0; font-size: 0.88rem; font-weight: 600; color: var(--rx-text-primary);">
+                                        Destination
+                                    </label>
+                                    <button type="button" onclick="setSearchMapMode('to')"
+                                            title="Set destination on map"
+                                            style="display: flex; align-items: center; gap: 4px; font-size: 0.76rem; padding: 5px 10px; border-radius: 20px; background: rgba(239,68,68,0.1); color: #dc2626; border: 1px solid rgba(239,68,68,0.25); cursor: pointer; transition: all 0.2s; font-weight: 600;">
+                                        <i class="fa-solid fa-flag-checkered"></i> Pick on Map
+                                    </button>
+                                </div>
+
+                                <div class="rx-autocomplete-wrap">
+                                    <div style="position: relative; display: flex; align-items: center;">
+                                        <i class="fa-solid fa-location-dot" style="position: absolute; left: 14px; color: #dc2626; font-size: 1rem; pointer-events: none; z-index: 2;"></i>
+                                        <input id="searchTo" name="to" th:field="*{to}" type="text"
+                                               placeholder="Type destination city or click on map…"
+                                               class="rx-form-input" style="padding-left: 42px;" autocomplete="off" />
+                                    </div>
+                                    <ul id="searchTo-suggestions" class="rx-suggestion-list hidden"></ul>
+                                </div>
+
+                                <!-- Detected City Badge -->
+                                <div id="toCityBadge" style="display: none; margin-top: 6px; font-size: 0.8rem; color: #dc2626; align-items: center; gap: 6px; font-weight: 600;">
+                                    <i class="fa-solid fa-flag-checkered"></i> <span id="toCityText"></span>
+                                </div>
+                            </div>
+
+                            <!-- ── TRAVEL DATE ── -->
+                            <div style="margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <label for="date" style="margin-bottom: 0; font-size: 0.88rem; font-weight: 600; color: var(--rx-text-primary);">
+                                        Travel Date
+                                    </label>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button type="button" onclick="setSearchDateQuick(0)"
+                                                style="font-size: 0.76rem; padding: 4px 10px; border-radius: 12px; background: var(--rx-surface-alt); color: var(--rx-text-secondary); border: 1px solid var(--rx-border); cursor: pointer; font-weight: 600;">
+                                            Today
+                                        </button>
+                                        <button type="button" onclick="setSearchDateQuick(1)"
+                                                style="font-size: 0.76rem; padding: 4px 10px; border-radius: 12px; background: var(--rx-surface-alt); color: var(--rx-text-secondary); border: 1px solid var(--rx-border); cursor: pointer; font-weight: 600;">
+                                            Tomorrow
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="position: relative; display: flex; align-items: center;">
+                                    <i class="fa-regular fa-calendar" style="position: absolute; left: 14px; color: var(--rx-accent); font-size: 1rem; pointer-events: none; z-index: 2;"></i>
+                                    <input id="date" name="date" th:field="*{date}" type="date"
+                                           class="rx-form-input" style="padding-left: 42px;" />
+                                </div>
+                            </div>
+
+                            <!-- ── ROUTE PREVIEW BANNER (auto-calculated) ── -->
+                            <div id="searchRouteInfoBanner" style="display: none; background: linear-gradient(135deg, rgba(5,150,105,0.08), rgba(99,102,241,0.08)); border: 1px solid rgba(5,150,105,0.25); border-radius: var(--rx-radius-sm); padding: 12px 16px; margin-bottom: 20px; font-size: 0.88rem;">
+                                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                                    <span style="color: var(--rx-text-primary);">🛣️ Distance: <strong id="searchRouteDist" style="color: #059669;">—</strong></span>
+                                    <span style="color: var(--rx-text-primary);">⏱️ Driving: <strong id="searchRouteDur" style="color: #4f46e5;">—</strong></span>
+                                    <span style="margin-left: auto; color: #059669; font-weight: 700; font-size: 0.8rem;">
+                                        <i class="fa-solid fa-circle-check"></i> Corridor verified
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- ── SUBMIT SEARCH ── -->
+                            <button type="submit" class="rx-btn rx-btn-primary"
+                                    style="width: 100%; padding: 14px; font-weight: 700; font-size: 1.02rem; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 20px var(--rx-accent-glow);">
+                                <i class="fa-solid fa-magnifying-glass"></i> Search Available Rides
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- ── RIGHT: Interactive Leaflet Map Card ── -->
+                    <div class="rx-reveal rx-reveal-delay-1">
+                        <div class="rx-card-3d" style="background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); overflow: hidden; box-shadow: var(--rx-shadow-lg);">
+
+                            <!-- Map Card Top Bar -->
+                            <div style="padding: 14px 18px; border-bottom: 1px solid var(--rx-border); display: flex; align-items: center; gap: 10px; background: var(--rx-surface-alt);">
+                                <i class="fa-solid fa-map-location-dot" style="color: var(--rx-accent); font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.92rem; font-weight: 700; color: var(--rx-text-primary);">
+                                    Interactive Location Picker
+                                </span>
+                                <!-- Current Pin Mode Badge -->
+                                <span id="searchMapPinMode"
+                                      style="margin-left: auto; font-size: 0.76rem; padding: 4px 12px; border-radius: 14px; background: rgba(5,150,105,0.12); color: #059669; border: 1px solid rgba(5,150,105,0.3); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-location-dot"></i> Pickup Mode
+                                </span>
+                            </div>
+
+                            <!-- Leaflet Map Div -->
+                            <div id="searchMap" style="height: 360px; width: 100%; position: relative;"></div>
+
+                            <!-- Map Toolbar Controls -->
+                            <div style="padding: 12px 16px; background: var(--rx-surface-alt); border-top: 1px solid var(--rx-border); display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button type="button" id="btnSetPickupMode" onclick="setSearchMapMode('from')"
+                                        style="flex: 1; min-width: 110px; font-size: 0.8rem; padding: 8px; border-radius: 8px; background: rgba(5,150,105,0.15); color: #059669; border: 1px solid #059669; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                                    <i class="fa-solid fa-location-dot"></i> 📍 Set Pickup
+                                </button>
+                                <button type="button" id="btnSetDropMode" onclick="setSearchMapMode('to')"
+                                        style="flex: 1; min-width: 110px; font-size: 0.8rem; padding: 8px; border-radius: 8px; background: rgba(239,68,68,0.08); color: #dc2626; border: 1px solid rgba(239,68,68,0.25); cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                                    <i class="fa-solid fa-flag-checkered"></i> 🏁 Set Drop-off
+                                </button>
+                                <button type="button" onclick="useGPSForPassengerSearch()"
+                                        title="Use my current GPS location"
+                                        style="padding: 8px 12px; border-radius: 8px; background: rgba(5,150,105,0.1); color: var(--rx-accent); border: 1px solid rgba(5,150,105,0.3); cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                    <i class="fa-solid fa-location-crosshairs"></i> GPS
+                                </button>
+                                <button type="button" onclick="swapSearchLocations()"
+                                        title="Swap Pickup and Drop-off"
+                                        style="padding: 8px 12px; border-radius: 8px; background: var(--rx-surface); color: var(--rx-text-secondary); border: 1px solid var(--rx-border); cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                    ⇄ Swap
+                                </button>
+                                <button type="button" onclick="resetSearchMap()"
+                                        title="Clear all pins"
+                                        style="padding: 8px 10px; border-radius: 8px; background: var(--rx-surface); color: var(--rx-text-muted); border: 1px solid var(--rx-border); cursor: pointer; font-size: 0.8rem;">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </button>
+                            </div>
+
+                            <!-- Helpful Map Guide Bar -->
+                            <div style="padding: 10px 18px; background: var(--rx-surface-alt); border-top: 1px solid var(--rx-border); font-size: 0.78rem; color: var(--rx-text-muted); display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-circle-info" style="color: var(--rx-accent);"></i>
+                                <span>Tip: Click anywhere on the map or drag pins to adjust. Selected locations auto-fill your search!</span>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- Results or Landing -->
-        <section class="rx-section" style="padding-top: 0;">
+        <!-- ═══════════════════════════════════════════════════════════════
+             RESULTS / EMPTY STATE / LANDING SECTION
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="rx-section" style="padding-top: 10px; padding-bottom: 80px;">
             <div class="rx-container">
-                <div th:if="${matchedRides != null && !matchedRides.isEmpty()}"
-                     th:insert="~{fragments/rideCard :: rideCardsWithFilter}"></div>
-                <div th:unless="${matchedRides != null && !matchedRides.isEmpty()}"
-                     th:insert="~{fragments/landing :: landing}"></div>
+
+                <!-- Notice Banner if fallback or broad search used -->
+                <div th:if="${searchNotice != null}" style="margin-bottom: 22px; padding: 14px 20px; border-radius: var(--rx-radius-md); background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: var(--rx-accent); font-size: 0.92rem; display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                    <i class="fa-solid fa-circle-info" style="font-size: 1.1rem;"></i>
+                    <span th:text="${searchNotice}">Search Notice</span>
+                </div>
+
+                <!-- 1. Search Results Found -->
+                <div th:if="${matchedRides != null && !matchedRides.isEmpty()}">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--rx-border);">
+                        <div>
+                            <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 4px;">
+                                Available Rides
+                            </h2>
+                            <p style="font-size: 0.82rem; color: var(--rx-text-muted); margin: 0;">
+                                Showing <strong style="color: var(--rx-accent);" th:text="${matchedRides.size()}">0</strong> verified rides for your route
+                            </p>
+                        </div>
+                    </div>
+                    <div th:insert="~{fragments/rideCard :: rideCardsWithFilter}"></div>
+                </div>
+
+                <!-- 2. Search Executed, but No Rides Found -->
+                <div th:if="${matchedRides != null && matchedRides.isEmpty()}"
+                     style="text-align: center; padding: 60px 20px; background: var(--rx-bg-secondary); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); max-width: 720px; margin: 0 auto;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #ef4444; margin-bottom: 20px;">
+                        <i class="fa-solid fa-car-side"></i>
+                    </div>
+                    <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 8px;">
+                        No Rides Found on This Route
+                    </h3>
+                    <p style="font-size: 0.88rem; color: var(--rx-text-muted); max-width: 480px; margin: 0 auto 24px;">
+                        We couldn't find any upcoming rides matching these exact cities or date. Try clearing the destination filter or checking upcoming dates.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                        <a th:href="@{'/searchRide'}" class="rx-btn rx-btn-primary" style="padding: 10px 24px; font-size: 0.88rem;">
+                            <i class="fa-solid fa-rotate-left"></i> View All Upcoming Rides
+                        </a>
+                        <a th:href="@{'/user/ride/create'}" class="rx-btn rx-btn-outline" style="padding: 10px 24px; font-size: 0.88rem;">
+                            <i class="fa-solid fa-plus"></i> Publish a Ride as Driver
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. Initial Visit (No search query submitted yet) -->
+                <div th:if="${matchedRides == null}" th:insert="~{fragments/landing :: landing}"></div>
+
             </div>
         </section>
 
     </div>
 
-    <script th:src="@{'/js/searchRide.js'}" type="module"></script>
+    <!-- Scripts -->
+    <script th:src="@{'/js/passengerLocationAutomation.js'}"></script>
     <script th:src="@{'/js/rideFilters.js'}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>
-        window.addEventListener("DOMContentLoaded", () => {
-            const dateInput = document.getElementById("date");
-            if (dateInput && !dateInput.value) {
-                const today = new Date().toISOString().split('T')[0];
-                dateInput.value = today;
+
+    <style>
+        @media (max-width: 960px) {
+            .rx-search-grid {
+                grid-template-columns: 1fr !important;
             }
-        });
-    </script>
+        }
+    </style>
 </body>
 
 </html>

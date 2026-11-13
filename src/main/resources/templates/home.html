@@ -2,229 +2,434 @@
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 
 <head>
-    <title>RideX — Smart Ride Sharing</title>
+    <title>RideX — Spring '26 Edition | Smart Luxury Carpooling</title>
 </head>
 
 <body>
 <div id="content">
 
-    <!-- ========== HERO SECTION ========== -->
-    <section class="rx-hero">
-        <div class="rx-hero-inner">
+    <!-- ==========================================================================
+         1. HERO SECTION: 3D CAR SHOWCASE & INTERACTIVE TELEMETRY
+         ========================================================================== -->
+    <section class="rx-hero-3d">
+        <div class="rx-hero-3d-grid">
+
+            <!-- Hero Left: Typography & CTAs -->
             <div class="rx-hero-content rx-reveal">
-                <div class="rx-hero-badge">
-                    <i class="fa-solid fa-bolt" style="font-size: 0.65rem;"></i>
-                    Trusted by 2M+ commuters
+                <div class="rx-hero-badge" style="display: inline-flex; align-items: center; gap: 8px;">
+                    <span class="rx-pulse-dot"></span>
+                    <span>Spring '26 Edition · Autonomous Matching & Zero Emissions</span>
                 </div>
-                <h1>
+
+                <h1 style="font-family: var(--rx-heading-font); font-size: clamp(2.8rem, 5.2vw, 4.4rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.035em; color: var(--rx-text-primary); margin: 18px 0 22px;">
                     Share Rides.<br>
-                    <span class="rx-text-accent">Save More.</span><br>
-                    Travel Together.
+                    <span class="rx-text-accent">Save Fuel.</span><br>
+                    Drive the Future.
                 </h1>
-                <p class="rx-hero-sub">
-                    RideX connects drivers and passengers heading in the same direction. Save money, reduce emissions, and make every commute better.
+
+                <p class="rx-hero-sub" style="font-size: 1.18rem; color: var(--rx-text-secondary); line-height: 1.7; max-width: 540px; margin-bottom: 34px;">
+                    The intelligent shared mobility network for modern commuters. Cut daily transit costs by up to 60%, eliminate travel friction, and verify every co-traveler instantly.
                 </p>
-                <div class="rx-hero-actions">
-                    <a th:href="@{'/signup'}" class="rx-btn rx-btn-primary rx-btn-lg">
-                        Get Started <i class="fa-solid fa-arrow-right" style="font-size: 0.85rem;"></i>
+
+                <!-- Action Buttons -->
+                <div class="rx-hero-actions" style="margin-bottom: 36px;">
+                    <a th:if="${loggedInUser != null}" th:href="@{'/searchRide'}" class="rx-3d-btn" style="padding: 15px 34px; font-size: 1.05rem;">
+                        Find a Ride <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
                     </a>
-                    <a th:href="@{'/searchRide'}" class="rx-btn rx-btn-outline rx-btn-lg">
-                        Find a Ride
+                    <a th:unless="${loggedInUser != null}" th:href="@{'/signup'}" class="rx-3d-btn" style="padding: 15px 34px; font-size: 1.05rem;">
+                        Get Started Free <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
                     </a>
+                    <a th:href="@{'/features'}" class="rx-btn rx-btn-outline" style="padding: 14px 28px; font-size: 1rem; border-radius: var(--rx-radius-full);">
+                        <i class="fa-solid fa-play" style="font-size: 0.8rem; color: var(--rx-accent);"></i> Platform Tour
+                    </a>
+                </div>
+
+                <!-- Live Ticker Bar -->
+                <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: center; padding-top: 18px; border-top: 1px solid var(--rx-border);">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-bolt" style="color: var(--rx-accent); font-size: 1rem;"></i>
+                        <span style="font-size: 0.92rem; font-weight: 700; color: var(--rx-text-primary);">12.8M+ km</span>
+                        <span style="font-size: 0.84rem; color: var(--rx-text-muted);">Shared</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-shield-check" style="color: #06b6d4; font-size: 1rem;"></i>
+                        <span style="font-size: 0.92rem; font-weight: 700; color: var(--rx-text-primary);">100%</span>
+                        <span style="font-size: 0.84rem; color: var(--rx-text-muted);">Govt ID Verified</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-leaf" style="color: #10b981; font-size: 1rem;"></i>
+                        <span style="font-size: 0.92rem; font-weight: 700; color: var(--rx-text-primary);">2,400+ Tons</span>
+                        <span style="font-size: 0.84rem; color: var(--rx-text-muted);">CO₂ Cut</span>
+                    </div>
                 </div>
             </div>
-            <div class="rx-hero-visual rx-reveal rx-reveal-delay-2">
-                <img th:src="@{'/images/hero.png'}" alt="RideX ride sharing illustration">
+
+            <!-- Hero Right: Interactive 3D Car Stage -->
+            <div class="rx-car-stage rx-reveal rx-reveal-delay-1" id="carStage">
+                
+                <!-- Headlight Projection Beam -->
+                <div class="rx-beams-cone" id="carBeams"></div>
+
+                <!-- 3D Car Image Container (Tilted by Mouse Parallax) -->
+                <div class="rx-car-wrapper" id="carWrapper">
+                    <img th:src="@{'/images/car-3d-hero.png'}"
+                         src="/images/car-3d-hero.png"
+                         alt="RideX Electric Mobility 3D Model"
+                         class="rx-car-img"
+                         id="carHeroImg" />
+                </div>
+
+                <!-- Floating Glassmorphic Telemetry HUD -->
+                <div class="rx-car-hud" id="carHud">
+                    <div class="rx-hud-stat">
+                        <div class="val"><span id="hudSpeed">84</span> <small>km/h</small></div>
+                        <div class="lbl">Cruise Speed</div>
+                    </div>
+
+                    <div style="width: 1px; height: 26px; background: var(--rx-border);"></div>
+
+                    <!-- Drive Mode Selector -->
+                    <div class="rx-hud-modes">
+                        <button type="button" class="rx-hud-mode-btn active" data-mode="eco">🌿 Eco</button>
+                        <button type="button" class="rx-hud-mode-btn" data-mode="cruise">⚡ Cruise</button>
+                        <button type="button" class="rx-hud-mode-btn" data-mode="boost">🏎️ Boost</button>
+                    </div>
+
+                    <div style="width: 1px; height: 26px; background: var(--rx-border);"></div>
+
+                    <!-- Headlight Switch Tool -->
+                    <button type="button" class="rx-hud-tool-btn active" id="headlightToggle" title="Toggle Headlight Beams">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </button>
+
+                    <!-- Sound FX Toggle Tool -->
+                    <button type="button" class="rx-hud-tool-btn active" id="soundToggle" title="Toggle Tactile Sound Effects">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+         2. SHOPIFY EDITIONS '26 STYLE FAST SEARCH COMMAND BAR
+         ========================================================================== -->
+    <div class="rx-fast-search-wrapper rx-reveal">
+        <form th:action="@{'/process-search'}" method="post" class="rx-fast-search-bar" id="fastSearchForm">
+            <!-- Pickup City -->
+            <div class="rx-search-hud-field">
+                <i class="fa-solid fa-location-dot"></i>
+                <input type="text" name="fromCity" id="hudFromCity" placeholder="Leaving from... (e.g. New Delhi)" required />
+            </div>
+
+            <!-- Destination City -->
+            <div class="rx-search-hud-field">
+                <i class="fa-solid fa-flag-checkered"></i>
+                <input type="text" name="toCity" id="hudToCity" placeholder="Going to... (e.g. Chandigarh)" required />
+            </div>
+
+            <!-- Date Picker -->
+            <div class="rx-search-hud-field">
+                <i class="fa-regular fa-calendar"></i>
+                <input type="date" name="date" id="hudDate" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="rx-3d-btn" id="hudSearchSubmit" style="padding: 14px 28px; font-size: 1rem;">
+                <i class="fa-solid fa-magnifying-glass"></i> Find Rides
+            </button>
+        </form>
+
+        <!-- Quick Route Chips & Keyboard Shortcut -->
+        <div class="rx-quick-routes">
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">Popular Routes:</span>
+            <button type="button" class="rx-quick-route-chip" data-from="New Delhi" data-to="Gurugram">
+                <i class="fa-solid fa-route"></i> Delhi ⇄ Gurugram · ₹120
+            </button>
+            <button type="button" class="rx-quick-route-chip" data-from="Noida" data-to="New Delhi">
+                <i class="fa-solid fa-route"></i> Noida ⇄ CP · ₹90
+            </button>
+            <button type="button" class="rx-quick-route-chip" data-from="Bengaluru" data-to="Electronic City">
+                <i class="fa-solid fa-route"></i> Bengaluru ⇄ Whitefield · ₹160
+            </button>
+            <button type="button" class="rx-quick-route-chip" data-from="Mumbai" data-to="Pune">
+                <i class="fa-solid fa-route"></i> Mumbai ⇄ Pune · ₹380
+            </button>
+            <span class="rx-kbd-shortcut" title="Press Ctrl + K anytime to focus search">⌘K</span>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         3. ADVANCED BENTO GRID: 2026 INNOVATION SHOWCASE
+         ========================================================================== -->
+    <section class="rx-section" style="padding-top: 20px;">
+        <div class="rx-container">
+            <div class="rx-section-header rx-reveal" style="margin-bottom: 50px;">
+                <div class="rx-bento-tag"><i class="fa-solid fa-cubes"></i> Architecture 2.0</div>
+                <h2 style="font-size: clamp(2.2rem, 4vw, 3.2rem);">Engineered for Seamless Mobility</h2>
+                <p>Explore the breakthrough capabilities driving India's fastest-growing verified carpooling network.</p>
+            </div>
+
+            <div class="rx-bento-26">
+
+                <!-- BENTO CARD 1: Interactive Commute Savings & CO2 Simulator (7 cols) -->
+                <div class="rx-bento-card rx-bento-col-7 rx-reveal">
+                    <div class="rx-bento-tag"><i class="fa-solid fa-calculator"></i> Real-time Impact Simulator</div>
+                    <h3 class="rx-bento-title">Calculate Your Commuter Savings</h3>
+                    <p class="rx-bento-desc">Drag the commute distance slider below to visualize your monthly financial savings and environmental offset by sharing your seat.</p>
+
+                    <div class="rx-slider-wrap">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+                            <span style="font-size: 0.95rem; font-weight: 700; color: var(--rx-text-primary);">One-way Travel Distance:</span>
+                            <span id="calcDistanceVal" style="font-family: var(--rx-heading-font); font-size: 1.4rem; font-weight: 800; color: var(--rx-accent);">40 km</span>
+                        </div>
+                        <input type="range" min="10" max="180" value="40" step="5" class="rx-range-slider" id="savingsSlider" />
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--rx-text-muted); margin-top: 6px;">
+                            <span>10 km (Local)</span>
+                            <span>90 km (Intercity)</span>
+                            <span>180 km (Expressway)</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Metrics Output Grid -->
+                    <div class="rx-savings-metrics">
+                        <div class="rx-metric-box">
+                            <div class="rx-metric-num" id="calcMoneyVal">₹4,800</div>
+                            <div class="rx-metric-lbl">Monthly Cash Saved</div>
+                        </div>
+                        <div class="rx-metric-box">
+                            <div class="rx-metric-num" id="calcFuelVal">38 L</div>
+                            <div class="rx-metric-lbl">Fuel Conserved</div>
+                        </div>
+                        <div class="rx-metric-box">
+                            <div class="rx-metric-num" id="calcCo2Val">88 kg</div>
+                            <div class="rx-metric-lbl">CO₂ Cut Yearly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BENTO CARD 2: Autonomous DigiLocker Verification (5 cols) -->
+                <div class="rx-bento-card rx-bento-col-5 rx-reveal rx-reveal-delay-1" style="background: linear-gradient(145deg, #ffffff 0%, rgba(16,185,129,0.04) 100%);">
+                    <div class="rx-bento-tag"><i class="fa-solid fa-id-card-clip"></i> Trust Infrastructure</div>
+                    <h3 class="rx-bento-title">Autonomous DigiLocker & KYC</h3>
+                    <p class="rx-bento-desc">Zero manual waiting. Real-time API integration with the Government of India validates driver licenses and Aadhaar in 10 seconds.</p>
+
+                    <!-- Holographic Trust Pass Preview -->
+                    <div style="background: rgba(255, 255, 255, 0.95); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 20px; box-shadow: 0 10px 24px rgba(16, 185, 129, 0.1); margin-top: auto;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: var(--rx-accent);">
+                                    <i class="fa-solid fa-shield-check" style="font-size: 1.1rem;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.92rem; font-weight: 800; color: var(--rx-text-primary);">Government Verified</div>
+                                    <div style="font-size: 0.75rem; color: var(--rx-text-muted);">UIDAI & MoRTH Encrypted</div>
+                                </div>
+                            </div>
+                            <span class="rx-badge" style="background: rgba(16, 185, 129, 0.12); color: #059669; font-weight: 800; font-size: 0.72rem;">ACTIVE PASS</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--rx-text-secondary); line-height: 1.5; padding: 8px 12px; background: var(--rx-bg-tertiary); border-radius: 10px;">
+                            🔒 Boarding OTP Handshake enabled. Unverified users cannot join or publish rides.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BENTO CARD 3: Digital Boarding Pass & Live OTP (4 cols) -->
+                <div class="rx-bento-card rx-bento-col-4 rx-reveal">
+                    <div class="rx-bento-tag"><i class="fa-solid fa-key"></i> Contactless Security</div>
+                    <h3 class="rx-bento-title" style="font-size: 1.35rem;">Cryptographic Boarding OTP</h3>
+                    <p class="rx-bento-desc" style="font-size: 0.9rem;">4-digit dynamic verification passcode issued upon approval. Passengers present the token at pickup to board safely.</p>
+
+                    <div style="background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.08) 100%); border: 1.5px dashed rgba(99,102,241,0.35); border-radius: 18px; padding: 18px; text-align: center; margin-top: auto;">
+                        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--rx-text-muted); display: block; margin-bottom: 6px;">Pickup Authorization Passcode</span>
+                        <div style="font-family: monospace; font-size: 2.2rem; font-weight: 900; letter-spacing: 0.25em; color: #4f46e5;">8 4 9 2</div>
+                        <span style="font-size: 0.74rem; color: #10b981; font-weight: 700; margin-top: 6px; display: block;">✓ Auto-Verified by Driver Scan</span>
+                    </div>
+                </div>
+
+                <!-- BENTO CARD 4: Live Telemetry & GPS Tracking (4 cols) -->
+                <div class="rx-bento-card rx-bento-col-4 rx-reveal rx-reveal-delay-1">
+                    <div class="rx-bento-tag"><i class="fa-solid fa-satellite-dish"></i> Real-time Telemetry</div>
+                    <h3 class="rx-bento-title" style="font-size: 1.35rem;">Live Route Waypoint Radar</h3>
+                    <p class="rx-bento-desc" style="font-size: 0.9rem;">Continuous GPS position streaming powered by Leaflet. Real-time ETA updates, route deviations, and emergency SOS dispatch.</p>
+
+                    <div style="background: var(--rx-bg-tertiary); border: 1px solid var(--rx-border); border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-top: auto;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="rx-pulse-dot"></span>
+                            <span style="font-size: 0.88rem; font-weight: 700; color: var(--rx-text-primary);">Delhi ➔ Jaipur</span>
+                        </div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--rx-accent);">ETA: 42 min</span>
+                    </div>
+                </div>
+
+                <!-- BENTO CARD 5: Co-Driver System (4 cols) -->
+                <div class="rx-bento-card rx-bento-col-4 rx-reveal rx-reveal-delay-2">
+                    <div class="rx-bento-tag"><i class="fa-solid fa-steering-wheel"></i> Fatigue Mitigation</div>
+                    <h3 class="rx-bento-title" style="font-size: 1.35rem;">Co-Driver Long-Haul Assist</h3>
+                    <p class="rx-bento-desc" style="font-size: 0.9rem;">Share the steering wheel on 150+ km cross-state trips. Dual verified drivers keep every journey alert, secure, and restful.</p>
+
+                    <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.25); border-radius: 16px; padding: 14px; text-align: center; margin-top: auto;">
+                        <span style="font-size: 0.84rem; font-weight: 700; color: var(--rx-accent);">
+                            <i class="fa-solid fa-users" style="margin-right: 6px;"></i> Verified Co-Driver Enabled
+                        </span>
+                    </div>
+                </div>
+
+                <!-- BENTO CARD 6: Interactive Highway Canvas Simulation (Full 12 cols) -->
+                <div class="rx-bento-card rx-bento-col-12 rx-reveal">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 14px;">
+                        <div>
+                            <div class="rx-bento-tag"><i class="fa-solid fa-road"></i> Interactive Highway Sandbox</div>
+                            <h3 class="rx-bento-title">Autonomous Cruise & Station Pickup Simulator</h3>
+                            <p class="rx-bento-desc" style="margin-bottom: 0;">Experience the dynamic commuter routing algorithm in action. Control vehicle throttle, shift express lanes, or trigger an on-demand commuter pickup.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <span id="simStatusDisplay" style="font-size: 0.88rem; font-weight: 700; color: var(--rx-text-secondary); background: var(--rx-bg-tertiary); padding: 8px 16px; border-radius: 100px; border: 1px solid var(--rx-border);">
+                                <span style="color: #10b981;">● Cruising</span> · Expressway Mode
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Canvas Wrapper -->
+                    <div class="rx-highway-sim-wrap">
+                        <canvas id="highwaySimCanvas" style="display: block; width: 100%; height: 240px; cursor: crosshair;"></canvas>
+
+                        <!-- Controls Toolbar -->
+                        <div class="rx-highway-sim-toolbar">
+                            <div class="rx-highway-controls">
+                                <button type="button" class="rx-sim-btn primary" id="simAccelBtn">
+                                    <i class="fa-solid fa-gauge-high"></i> Accelerate / Nitro
+                                </button>
+                                <button type="button" class="rx-sim-btn" id="simLaneBtn">
+                                    <i class="fa-solid fa-arrows-up-down"></i> Switch Lane
+                                </button>
+                                <button type="button" class="rx-sim-btn" id="simPickupBtn">
+                                    <i class="fa-solid fa-person-walking-luggage"></i> Pick Up Commuter
+                                </button>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 14px; font-size: 0.88rem; font-weight: 700; color: var(--rx-text-primary);">
+                                <span>Current Velocity: <span id="simSpeedDisplay" style="color: var(--rx-accent);">72 km/h</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
-    <!-- ========== HOW IT WORKS ========== -->
+    <!-- ==========================================================================
+         4. HOW RIDEX WORKS: 3-STEP SEAMLESS JOURNEY
+         ========================================================================== -->
     <section class="rx-section rx-section-alt">
         <div class="rx-container">
             <div class="rx-section-header rx-reveal">
-                <h2>How RideX Works</h2>
-                <p>Three simple steps to start sharing rides and saving money on every trip.</p>
+                <h2>Three Steps to Your Next Journey</h2>
+                <p>Designed from the ground up for frictionless, high-trust daily commuting.</p>
             </div>
             <div class="rx-steps-grid">
-                <div class="rx-step-card rx-reveal rx-reveal-delay-1">
-                    <div class="rx-step-number">1</div>
-                    <i class="fa-solid fa-magnifying-glass-location" style="font-size: 1.8rem; color: var(--rx-accent); margin-bottom: 16px;"></i>
-                    <h3>Find a Ride</h3>
-                    <p>Search available rides by your route and travel date. Filter by time, price, and preferences.</p>
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-1" style="text-align: center; padding: 40px 30px;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; margin: 0 auto 20px;">
+                        1
+                    </div>
+                    <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--rx-text-primary); margin: 0 0 10px;">Select Route</h3>
+                    <p style="font-size: 0.96rem; color: var(--rx-text-secondary); line-height: 1.6; margin: 0;">
+                        Enter your departure point and destination. Intelligent token matching pinpoints optimal pickup nodes.
+                    </p>
                 </div>
-                <div class="rx-step-card rx-reveal rx-reveal-delay-2">
-                    <div class="rx-step-number">2</div>
-                    <i class="fa-solid fa-handshake" style="font-size: 1.8rem; color: var(--rx-accent); margin-bottom: 16px;"></i>
-                    <h3>Book Your Seat</h3>
-                    <p>Review driver profiles, ratings, and vehicle details. Book instantly with verified users.</p>
+
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-2" style="text-align: center; padding: 40px 30px;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; margin: 0 auto 20px;">
+                        2
+                    </div>
+                    <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--rx-text-primary); margin: 0 0 10px;">Book & Verify OTP</h3>
+                    <p style="font-size: 0.96rem; color: var(--rx-text-secondary); line-height: 1.6; margin: 0;">
+                        Examine vehicle specs, AC availability, and DigiLocker credentials. Lock in your seat instantly via Razorpay.
+                    </p>
                 </div>
-                <div class="rx-step-card rx-reveal rx-reveal-delay-3">
-                    <div class="rx-step-number">3</div>
-                    <i class="fa-solid fa-road" style="font-size: 1.8rem; color: var(--rx-accent); margin-bottom: 16px;"></i>
-                    <h3>Ride Together</h3>
-                    <p>Meet your driver, share the journey, and split the cost. Rate your experience after the trip.</p>
+
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-3" style="text-align: center; padding: 40px 30px;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; margin: 0 auto 20px;">
+                        3
+                    </div>
+                    <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--rx-text-primary); margin: 0 0 10px;">Travel & Earn Coins</h3>
+                    <p style="font-size: 0.96rem; color: var(--rx-text-secondary); line-height: 1.6; margin: 0;">
+                        Scan your boarding OTP at the pickup point. Enjoy live GPS tracking, smooth transit, and reward coins upon trip completion.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ========== FEATURES ========== -->
+    <!-- ==========================================================================
+         5. REPUTATION & VERIFIED COMMUTER TESTIMONIALS
+         ========================================================================== -->
     <section class="rx-section">
         <div class="rx-container">
             <div class="rx-section-header rx-reveal">
-                <h2>Why Choose RideX</h2>
-                <p>Built for modern commuters who value safety, savings, and sustainability.</p>
-            </div>
-            <div class="rx-features-grid">
-                <div class="rx-card rx-reveal rx-reveal-delay-1">
-                    <div class="rx-card-icon">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <h3>Verified Users</h3>
-                    <p>Every user goes through identity verification. Government ID checks, phone verification, and profile reviews keep the community safe.</p>
-                </div>
-                <div class="rx-card rx-reveal rx-reveal-delay-2">
-                    <div class="rx-card-icon">
-                        <i class="fa-solid fa-route"></i>
-                    </div>
-                    <h3>Smart Route Matching</h3>
-                    <p>Our algorithm matches riders going in the same direction with optimized pickup and drop-off points for maximum convenience.</p>
-                </div>
-                <div class="rx-card rx-reveal rx-reveal-delay-3">
-                    <div class="rx-card-icon">
-                        <i class="fa-solid fa-coins"></i>
-                    </div>
-                    <h3>Rewards Program</h3>
-                    <p>Earn coins for every ride you share. Redeem rewards, unlock premium features, and get recognized as a top contributor.</p>
-                </div>
-                <div class="rx-card rx-reveal rx-reveal-delay-1">
-                    <div class="rx-card-icon">
-                        <i class="fa-solid fa-car-side"></i>
-                    </div>
-                    <h3>Co-Driver System</h3>
-                    <p>Share driving responsibilities on long trips. Switch drivers mid-journey for a safer, more comfortable experience.</p>
-                </div>
-                <div class="rx-card rx-reveal rx-reveal-delay-2">
-                    <div class="rx-card-icon">
-                        <i class="fa-solid fa-bell"></i>
-                    </div>
-                    <h3>Real-time Notifications</h3>
-                    <p>Stay updated with instant alerts for ride requests, booking confirmations, trip updates, and messages from co-travelers.</p>
-                </div>
-                <div class="rx-card rx-reveal rx-reveal-delay-3">
-                    <div class="rx-card-icon">
-                        <i class="fa-solid fa-leaf"></i>
-                    </div>
-                    <h3>Eco-friendly Travel</h3>
-                    <p>Reduce your carbon footprint by sharing rides. Track your environmental impact and contribute to greener transportation.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== STATS ========== -->
-    <section class="rx-section rx-section-alt">
-        <div class="rx-container">
-            <div class="rx-section-header rx-reveal">
-                <h2>Trusted by Commuters</h2>
-                <p>Growing community of riders and drivers making travel better for everyone.</p>
-            </div>
-            <div class="rx-stats-grid">
-                <div class="rx-stat rx-reveal rx-reveal-delay-1">
-                    <div class="rx-stat-icon">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div class="rx-stat-number">2M+</div>
-                    <div class="rx-stat-label">Active Users</div>
-                </div>
-                <div class="rx-stat rx-reveal rx-reveal-delay-2">
-                    <div class="rx-stat-icon">
-                        <i class="fa-solid fa-earth-americas"></i>
-                    </div>
-                    <div class="rx-stat-number">50+</div>
-                    <div class="rx-stat-label">Cities Covered</div>
-                </div>
-                <div class="rx-stat rx-reveal rx-reveal-delay-3">
-                    <div class="rx-stat-icon">
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <div class="rx-stat-number">4.8/5</div>
-                    <div class="rx-stat-label">User Rating</div>
-                </div>
-                <div class="rx-stat rx-reveal rx-reveal-delay-4">
-                    <div class="rx-stat-icon">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
-                    <div class="rx-stat-number">99.9%</div>
-                    <div class="rx-stat-label">On-time Rate</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== TESTIMONIALS ========== -->
-    <section class="rx-section">
-        <div class="rx-container">
-            <div class="rx-section-header rx-reveal">
-                <h2>What Our Users Say</h2>
-                <p>Real stories from riders and drivers who trust RideX every day.</p>
+                <h2>Trusted by India's Modern Workforce</h2>
+                <p>Authentic feedback from daily commuters and verified EV drivers.</p>
             </div>
             <div class="rx-testimonials-grid">
-                <div class="rx-testimonial rx-reveal rx-reveal-delay-1">
-                    <div class="rx-testimonial-stars">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-1" style="padding: 34px 28px;">
+                    <div class="rx-testimonial-stars" style="margin-bottom: 16px;">
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
                     </div>
-                    <blockquote>
-                        &ldquo;The reward system is fantastic. I earn points for every ride and the co-driver feature helps me find reliable partners for long trips.&rdquo;
+                    <blockquote style="font-size: 1.05rem; color: var(--rx-text-secondary); line-height: 1.65; margin: 0 0 20px;">
+                        &ldquo;The DigiLocker verification brings immense peace of mind. Knowing every passenger has undergone official government identity validation makes my daily Delhi–Noida commute hassle-free.&rdquo;
                     </blockquote>
-                    <div class="rx-testimonial-author">
-                        <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/joseph-mcfall.png" alt="Michael Chen">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/joseph-mcfall.png" alt="Rohan Verma" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover;">
                         <div>
-                            <div class="rx-testimonial-author-name">Michael Chen</div>
-                            <div class="rx-testimonial-author-role">Driver, 120+ rides</div>
+                            <div style="font-size: 1rem; font-weight: 800; color: var(--rx-text-primary);">Rohan Verma</div>
+                            <div style="font-size: 0.82rem; color: var(--rx-text-muted);">Senior Tech Lead · 140+ Rides Published</div>
                         </div>
                     </div>
                 </div>
-                <div class="rx-testimonial rx-reveal rx-reveal-delay-2">
-                    <div class="rx-testimonial-stars">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
+
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-2" style="padding: 34px 28px;">
+                    <div class="rx-testimonial-stars" style="margin-bottom: 16px;">
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
                     </div>
-                    <blockquote>
-                        &ldquo;Safety features give me peace of mind. User verification is thorough, and I love the real-time ride tracking. Customer support is always responsive.&rdquo;
+                    <blockquote style="font-size: 1.05rem; color: var(--rx-text-secondary); line-height: 1.65; margin: 0 0 20px;">
+                        &ldquo;I save over ₹6,500 every month on gas and tolls between Mumbai and Pune. The boarding OTP feature eliminates any awkward passenger misunderstandings at pickup points.&rdquo;
                     </blockquote>
-                    <div class="rx-testimonial-author">
-                        <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/sofia-mcguire.png" alt="Emma Rodriguez">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/sofia-mcguire.png" alt="Ananya Deshmukh" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover;">
                         <div>
-                            <div class="rx-testimonial-author-name">Emma Rodriguez</div>
-                            <div class="rx-testimonial-author-role">Frequent Passenger</div>
+                            <div style="font-size: 1rem; font-weight: 800; color: var(--rx-text-primary);">Ananya Deshmukh</div>
+                            <div style="font-size: 0.82rem; color: var(--rx-text-muted);">Management Consultant · Frequent Commuter</div>
                         </div>
                     </div>
                 </div>
-                <div class="rx-testimonial rx-reveal rx-reveal-delay-3">
-                    <div class="rx-testimonial-stars">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star-half-stroke"></i>
+
+                <div class="rx-card rx-card-3d rx-reveal rx-reveal-delay-3" style="padding: 34px 28px;">
+                    <div class="rx-testimonial-stars" style="margin-bottom: 16px;">
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
+                        <i class="fa-solid fa-star" style="color: #facc15;"></i>
                     </div>
-                    <blockquote>
-                        &ldquo;Flexible scheduling and easy ride creation are perfect for my irregular work hours. I have reduced my carbon footprint while saving money.&rdquo;
+                    <blockquote style="font-size: 1.05rem; color: var(--rx-text-secondary); line-height: 1.65; margin: 0 0 20px;">
+                        &ldquo;The Spring '26 interface is clean, lightning fast, and feels like Apple hardware software. Live tracking keeps my family informed on every late evening expressway trip.&rdquo;
                     </blockquote>
-                    <div class="rx-testimonial-author">
-                        <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/roberta-casas.png" alt="David Kim">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/roberta-casas.png" alt="Kabir Saxena" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover;">
                         <div>
-                            <div class="rx-testimonial-author-name">David Kim</div>
-                            <div class="rx-testimonial-author-role">Business Professional</div>
+                            <div style="font-size: 1rem; font-weight: 800; color: var(--rx-text-primary);">Kabir Saxena</div>
+                            <div style="font-size: 0.82rem; color: var(--rx-text-muted);">Product Designer · Daily Bengaluru Rider</div>
                         </div>
                     </div>
                 </div>
@@ -232,17 +437,24 @@
         </div>
     </section>
 
-    <!-- ========== CTA ========== -->
-    <section class="rx-cta rx-section-alt">
-        <div class="rx-container rx-reveal">
-            <h2>Ready to start sharing rides?</h2>
-            <p>Join the community and make every commute count.</p>
-            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative;">
-                <a th:href="@{'/signup'}" class="rx-btn rx-btn-primary rx-btn-lg">
-                    Create Account <i class="fa-solid fa-arrow-right" style="font-size: 0.85rem;"></i>
+    <!-- ==========================================================================
+         6. CALL TO ACTION BANNER: ZERO-FRICTION ONBOARDING
+         ========================================================================== -->
+    <section class="rx-section rx-section-alt" style="position: relative; overflow: hidden;">
+        <div class="rx-container rx-reveal" style="text-align: center; max-width: 820px; margin: 0 auto; padding: 40px 20px;">
+            <span class="rx-bento-tag" style="justify-content: center;"><i class="fa-solid fa-sparkles"></i> Step Into Tomorrow</span>
+            <h2 style="font-size: clamp(2.4rem, 4.5vw, 3.4rem); font-weight: 800; color: var(--rx-text-primary); margin: 12px 0 18px;">
+                Ready to Experience the Spring '26 Mobility Standard?
+            </h2>
+            <p style="font-size: 1.15rem; color: var(--rx-text-secondary); line-height: 1.65; margin: 0 0 34px;">
+                Join 2M+ forward-thinking commuters cutting traffic, slashing commute bills, and building a cleaner travel ecosystem.
+            </p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a th:href="@{'/signup'}" class="rx-3d-btn" style="padding: 16px 42px; font-size: 1.08rem;">
+                    Create Free Account <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
                 </a>
-                <a th:href="@{'/features'}" class="rx-btn rx-btn-ghost rx-btn-lg">
-                    Explore Features
+                <a th:href="@{'/searchRide'}" class="rx-btn rx-btn-outline" style="padding: 15px 36px; font-size: 1.05rem; border-radius: var(--rx-radius-full);">
+                    Explore Active Trips
                 </a>
             </div>
         </div>
@@ -250,8 +462,9 @@
 
 </div>
 </body>
+
 <script>
-    console.log("Home Page");
+    console.log("RideX Spring '26 Edition Loaded.");
 </script>
 
 </html>

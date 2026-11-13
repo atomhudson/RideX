@@ -38,12 +38,33 @@ public class Rides {
     private boolean allowPets;
     private boolean allowSmoking;
     private String rideStatus;
+    private String trackingToken;
+    private String currentLat;
+    private String currentLon;
+    private Double currentHeading;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastLocationUpdate;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    @PrePersist
+    protected void onPrePersist() {
+        if (createdAt == null) createdAt = new Date();
+        if (updatedAt == null) updatedAt = new Date();
+        if (trackingToken == null || trackingToken.trim().isEmpty()) {
+            trackingToken = java.util.UUID.randomUUID().toString().replace("-", "");
+        }
+    }
+
+    @PreUpdate
+    protected void onPreUpdate() {
+        updatedAt = new Date();
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", referencedColumnName = "userId", nullable = false)
@@ -115,6 +136,12 @@ public class Rides {
     }
 
     public Date getEndTime() {
+        if (endTime == null && startTime != null) {
+            double d = getDuration();
+            if (d > 0) {
+                return new Date(startTime.getTime() + (long)(d * 60 * 1000));
+            }
+        }
         return endTime;
     }
 
@@ -258,8 +285,89 @@ public class Rides {
         this.destinationLon = destinationLon;
     }
 
+    public String getTrackingToken() {
+        if (trackingToken == null || trackingToken.trim().isEmpty()) {
+            trackingToken = java.util.UUID.randomUUID().toString().replace("-", "");
+        }
+        return trackingToken;
+    }
+
+    public void setTrackingToken(String trackingToken) {
+        this.trackingToken = trackingToken;
+    }
+
+    public String getCurrentLat() {
+        return currentLat != null && !currentLat.trim().isEmpty() ? currentLat : sourceLat;
+    }
+
+    public void setCurrentLat(String currentLat) {
+        this.currentLat = currentLat;
+    }
+
+    public String getCurrentLon() {
+        return currentLon != null && !currentLon.trim().isEmpty() ? currentLon : sourceLon;
+    }
+
+    public void setCurrentLon(String currentLon) {
+        this.currentLon = currentLon;
+    }
+
+    public Double getCurrentHeading() {
+        return currentHeading != null ? currentHeading : 0.0;
+    }
+
+    public void setCurrentHeading(Double currentHeading) {
+        this.currentHeading = currentHeading;
+    }
+
+    public Date getLastLocationUpdate() {
+        return lastLocationUpdate;
+    }
+
+    public void setLastLocationUpdate(Date lastLocationUpdate) {
+        this.lastLocationUpdate = lastLocationUpdate;
+    }
+
     public double getDuration() {
+        if (duration <= 0) {
+            if (startTime != null && endTime != null) {
+                long diff = endTime.getTime() - startTime.getTime();
+                if (diff > 0) {
+                    return (double) (diff / (1000 * 60));
+                }
+            } else if (distance > 0) {
+                return Math.round((distance / 55.0) * 60.0);
+            }
+        }
         return duration;
+    }
+
+    public String getFormattedDuration() {
+        double d = getDuration();
+        if (d <= 0) {
+            return "";
+        }
+        int totalMinutes = (int) Math.round(d);
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        if (hours > 0 && minutes > 0) {
+            return hours + "h " + minutes + "m";
+        } else if (hours > 0) {
+            return hours + "h";
+        } else {
+            return minutes + " min";
+        }
+    }
+
+    public String getFormattedTime() {
+        if (startTime == null) return "";
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
+        String startStr = sdf.format(startTime);
+        Date end = getEndTime();
+        if (end != null) {
+            return startStr + " → " + sdf.format(end);
+        }
+        return startStr;
     }
 
     public void setDuration(double duration) {
@@ -280,6 +388,36 @@ public class Rides {
 
     public void setRideRequests(List<RideRequest> rideRequests) {
         this.rideRequests = rideRequests;
+    }
+
+    /** Returns true if at least one co-rider has an APPROVED booking */
+    public boolean hasApprovedPassengers() {
+        if (rideRequests == null) return false;
+        return rideRequests.stream()
+                .anyMatch(rr -> "APPROVED".equalsIgnoreCase(rr.getRequestStatus()));
+    }
+
+    /** Returns true if at least one approved co-rider has verified OTP (boarded) */
+    public boolean hasBoardedPassengers() {
+        if (rideRequests == null) return false;
+        return rideRequests.stream()
+                .anyMatch(RideRequest::isOtpVerified);
+    }
+
+    /** Returns total number of approved passengers */
+    public int getApprovedPassengerCount() {
+        if (rideRequests == null) return 0;
+        return (int) rideRequests.stream()
+                .filter(rr -> "APPROVED".equalsIgnoreCase(rr.getRequestStatus()))
+                .count();
+    }
+
+    /** Returns total number of pending passenger requests */
+    public int getPendingPassengerCount() {
+        if (rideRequests == null) return 0;
+        return (int) rideRequests.stream()
+                .filter(rr -> "PENDING".equalsIgnoreCase(rr.getRequestStatus()))
+                .count();
     }
 
     @Override

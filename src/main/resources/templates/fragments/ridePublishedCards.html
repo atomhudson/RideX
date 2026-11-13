@@ -1,28 +1,271 @@
 <div th:fragment="ridePublishedCards">
-    <div th:each="ride : ${profileRidesDetails.ridesCreated}" style="margin-bottom: 12px;">
-        <a th:href="@{'/user/ride/detail/' + ${ride.rideId}}" class="rx-card" style="display: block; text-decoration: none;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 700; color: var(--rx-text-primary);">
+    <div th:each="ride : ${profileRidesDetails.ridesCreated}" style="margin-bottom: 16px;">
+
+        <!-- Ride Card -->
+        <div class="rx-card rx-card-3d" style="display:block;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Route -->
+                    <a th:href="@{'/user/ride/detail/' + ${ride.rideId}}"
+                       style="display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:700;color:var(--rx-text-primary);text-decoration:none;">
                         <span th:text="${ride.sourceCity}">Source</span>
-                        <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem; color: var(--rx-accent);"></i>
+                        <i class="fa-solid fa-arrow-right" style="font-size:0.65rem;color:var(--rx-accent);"></i>
                         <span th:text="${ride.destinationCity}">Dest</span>
-                    </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                        <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'HH:mm')}">08:00</span>
+                    </a>
+                    <!-- Time badges -->
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+                        <span class="rx-badge" style="font-weight:600;color:var(--rx-accent);">
+                            <i class="fa-regular fa-clock" style="margin-right:4px;"></i>
+                            <span th:text="${#dates.format(ride.startTime, 'HH:mm')}">08:00</span>
+                            <span th:if="${ride.endTime != null}"
+                                  th:text="' → ' + ${#dates.format(ride.endTime, 'HH:mm')}"> → 10:30</span>
+                        </span>
                         <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">01 Jan</span>
+                        <span class="rx-badge" th:if="${ride.duration > 0}">
+                            <i class="fa-solid fa-hourglass-half" style="margin-right:4px;font-size:0.75rem;"></i>
+                            <span th:text="${ride.formattedDuration}">2h 30m</span>
+                        </span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <img th:src="${loggedInUser.profilePic}" alt="Driver" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" />
-                        <span style="font-size: 0.84rem; color: var(--rx-text-secondary);" th:text="${loggedInUser.fName + ' ' + loggedInUser.lName}">Driver</span>
+                    <!-- Driver info -->
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <img th:if="${ride.driver != null and ride.driver.profilePic != null}" th:src="${ride.driver.profilePic}" alt="Driver"
+                             style="width:28px;height:28px;border-radius:50%;object-fit:cover;" />
+                        <span style="font-size:0.84rem;color:var(--rx-text-secondary);"
+                              th:text="${ride.driver != null ? ride.driver.fName + ' ' + (ride.driver.lName != null ? ride.driver.lName : '') : 'Driver'}">Driver</span>
                     </div>
                 </div>
-                <div style="text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-                    <span style="font-size: 1.1rem; font-weight: 800; color: var(--rx-accent);" th:text="'₹' + ${ride.price}">₹500</span>
-                    <span class="rx-badge" th:text="${ride.rideStatus}"
-                          th:style="${ride.rideStatus == 'PLANNED' ? 'background: rgba(34,197,94,0.15); color: #22c55e;' : ride.rideStatus == 'ONGOING' ? 'background: rgba(234,179,8,0.15); color: #eab308;' : ride.rideStatus == 'COMPLETED' ? 'background: rgba(59,130,246,0.15); color: #3b82f6;' : 'background: rgba(239,68,68,0.15); color: #ef4444;'}">Status</span>
+
+                <!-- Right: price + status badge -->
+                <div style="text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                    <span style="font-size:1.1rem;font-weight:800;color:var(--rx-accent);"
+                          th:text="'₹' + ${ride.price}">₹500</span>
+                    <span class="rx-badge"
+                          th:text="${ride.rideStatus}"
+                          th:style="${ride.rideStatus == 'PLANNED'   ? 'background:rgba(34,197,94,0.15);color:#22c55e;'
+                                    : ride.rideStatus == 'ONGOING'  ? 'background:rgba(234,179,8,0.15);color:#eab308;'
+                                    : ride.rideStatus == 'COMPLETED'? 'background:rgba(59,130,246,0.15);color:#3b82f6;'
+                                    : 'background:rgba(239,68,68,0.15);color:#ef4444;'}">Status</span>
                 </div>
             </div>
-        </a>
+
+            <!-- ── Action Buttons ── -->
+
+            <!-- PLANNED: Show "Start Ride" OTP button if there are approved passengers -->
+            <div th:if="${ride.rideStatus == 'PLANNED'}"
+                 style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+
+                <a th:href="@{'/user/ride/detail/' + ${ride.rideId}}"
+                   style="flex:1;text-align:center;font-size:0.78rem;padding:7px 12px;border-radius:8px;
+                          background:rgba(99,102,241,0.1);color:var(--rx-accent);
+                          border:1px solid rgba(99,102,241,0.25);text-decoration:none;font-weight:600;">
+                    <i class="fa-solid fa-users" style="margin-right:4px;"></i> Manage Requests
+                </a>
+
+                <!-- Start Ride button: rendered exactly ONCE when there are approved passengers -->
+                <button th:if="${ride.hasApprovedPassengers()}"
+                        type="button"
+                        th:attr="onclick='openOtpModal(\'' + ${ride.rideId} + '\')'"
+                        style="flex:1;font-size:0.78rem;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600;
+                               background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.3);
+                               display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;"
+                        onmouseover="this.style.background='rgba(34,197,94,0.22)'"
+                        onmouseout="this.style.background='rgba(34,197,94,0.12)'">
+                    <i class="fa-solid fa-play"></i> Start Ride (OTP)
+                </button>
+            </div>
+
+            <!-- ONGOING: Show Live Tracking & "Complete Ride" button -->
+            <div th:if="${ride.rideStatus == 'ONGOING'}"
+                 style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a th:href="@{'/track-trip/' + ${ride.rideId}}"
+                       style="flex:1;text-align:center;padding:8px 12px;border-radius:8px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.35);text-decoration:none;font-size:0.8rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+                        <i class="fa-solid fa-location-crosshairs"></i> Open Live Tracker
+                    </a>
+                    <a th:href="@{'https://api.whatsapp.com/send?text=' + ${#uris.escapePathSegment('Track our live RideX ride: ' + @environment.getProperty('server.baseUrl', 'http://localhost:8080') + '/track-trip/' + ride.rideId + '?token=' + ride.trackingToken)}}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       style="padding:8px 14px;border-radius:8px;background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);text-decoration:none;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;">
+                        <i class="fa-brands fa-whatsapp"></i> Share Link
+                    </a>
+                </div>
+                <form th:action="@{'/user/ride/complete-ride/' + ${ride.rideId}}" method="post">
+                    <button type="submit"
+                            onclick="return confirm('Mark this ride as COMPLETED? Coins will be distributed to all boarded passengers.')"
+                            style="width:100%;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:700;
+                                   background:rgba(59,130,246,0.12);color:#3b82f6;border:1px solid rgba(59,130,246,0.3);">
+                        <i class="fa-solid fa-flag-checkered" style="margin-right:5px;"></i> Complete Ride & Distribute Coins
+                    </button>
+                </form>
+            </div>
+
+            <!-- Chat with Co-riders / Passengers -->
+            <div th:if="${ride.rideRequests != null and !ride.rideRequests.isEmpty()}"
+                 style="margin-top:12px;padding-top:10px;border-top:1px solid var(--rx-border);">
+                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--rx-text-muted);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+                    <i class="fa-regular fa-comments" style="color:var(--rx-accent);"></i>
+                    <span>Passenger Chat:</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    <button th:each="rr : ${ride.rideRequests}"
+                            th:if="${rr.user != null}"
+                            type="button"
+                            th:attr="data-ride-id=${ride.rideId},
+                                     data-user-id=${rr.user.userId},
+                                     data-user-name=${rr.user.fName + ' ' + (rr.user.lName != null ? rr.user.lName : '')},
+                                     data-user-avatar=${rr.user.profilePic}"
+                            onclick="event.preventDefault(); openChat(this.getAttribute('data-ride-id'), this.getAttribute('data-user-id'), this.getAttribute('data-user-name'), this.getAttribute('data-user-avatar'));"
+                            style="padding:5px 12px;border-radius:20px;background:var(--rx-bg-tertiary);border:1px solid var(--rx-border);color:var(--rx-text-primary);font-size:0.75rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;"
+                            onmouseover="this.style.borderColor='var(--rx-accent)'"
+                            onmouseout="this.style.borderColor='var(--rx-border)'">
+                        <img th:src="${rr.user.profilePic != null and !#strings.isEmpty(rr.user.profilePic) ? rr.user.profilePic : '/images/default-avatar.png'}"
+                             style="width:20px;height:20px;border-radius:50%;object-fit:cover;" />
+                        <span th:text="${rr.user.fName}">Name</span>
+                        <i class="fa-solid fa-comment-dots" style="color:var(--rx-accent);font-size:0.7rem;"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         Start-Ride OTP Modal (shared — opens per ride)
+         ══════════════════════════════════════════════════════ -->
+    <div id="otpModal" style="display:none;position:fixed;inset:0;z-index:9999;
+                              background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+                              align-items:center;justify-content:center;">
+        <div style="background:var(--rx-bg-secondary);border:1px solid var(--rx-border);border-radius:var(--rx-radius-lg);
+                    padding:32px;max-width:400px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,0.5);">
+            <h3 style="margin:0 0 6px;font-size:1.1rem;">🔐 Verify Passenger OTP</h3>
+            <p style="font-size:0.82rem;color:var(--rx-text-muted);margin:0 0 24px;">
+                Ask the passenger for their 4-digit boarding code and enter it below.
+            </p>
+
+            <div id="otpPassengerList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+                <!-- Populated by JS -->
+            </div>
+
+            <div style="display:flex;gap:10px;">
+                <input type="text" id="otpInput" maxlength="4"
+                       placeholder="Enter 4-digit OTP"
+                       style="flex:1;padding:10px 14px;border-radius:8px;background:var(--rx-bg-tertiary);
+                              border:1px solid var(--rx-border);color:var(--rx-text-primary);font-size:1.1rem;
+                              letter-spacing:0.2em;text-align:center;font-family:monospace;">
+                <button onclick="submitOtp()"
+                        style="padding:10px 18px;border-radius:8px;background:var(--rx-accent);color:#fff;
+                               border:none;cursor:pointer;font-weight:700;font-size:0.85rem;">
+                    Verify
+                </button>
+            </div>
+
+            <div id="otpMessage" style="margin-top:12px;font-size:0.82rem;display:none;"></div>
+
+            <button onclick="closeOtpModal()"
+                    style="margin-top:16px;width:100%;padding:8px;border-radius:8px;
+                           background:transparent;border:1px solid var(--rx-border);
+                           color:var(--rx-text-muted);cursor:pointer;font-size:0.82rem;">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentRequestId = null;
+
+        function openOtpModal(rideId) {
+            currentRequestId = null;
+            document.getElementById('otpMessage').style.display = 'none';
+            document.getElementById('otpInput').value = '';
+            document.getElementById('otpModal').dataset.rideId = rideId;
+
+            // Load approved passenger list via AJAX
+            fetch('/user/ride/approved-requests/' + rideId)
+                .then(r => r.json())
+                .then(data => {
+                    const list = document.getElementById('otpPassengerList');
+                    list.innerHTML = '';
+                    if (!data || data.length === 0) {
+                        list.innerHTML = '<p style="color:var(--rx-text-muted);font-size:0.82rem;">No approved passengers found.</p>';
+                        return;
+                    }
+                    data.forEach(req => {
+                        const item = document.createElement('div');
+                        item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .2s;background:var(--rx-bg-tertiary);';
+                        item.innerHTML = `
+                            <div style="width:10px;height:10px;border-radius:50%;background:${req.otpVerified ? '#22c55e' : 'var(--rx-border)'}"></div>
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">${req.passengerName}</div>
+                                <div style="font-size:0.72rem;color:var(--rx-text-muted);">${req.otpVerified ? '✅ Already boarded' : 'Tap to select & verify OTP'}</div>
+                            </div>
+                        `;
+                        if (!req.otpVerified) {
+                            item.addEventListener('click', () => {
+                                document.querySelectorAll('#otpPassengerList > div').forEach(el => el.style.borderColor = 'transparent');
+                                item.style.borderColor = 'var(--rx-accent)';
+                                currentRequestId = req.requestId;
+                            });
+                        }
+                        list.appendChild(item);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById('otpPassengerList').innerHTML =
+                        '<p style="color:#ef4444;font-size:0.82rem;">Could not load passengers. Try again.</p>';
+                });
+
+            const modal = document.getElementById('otpModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeOtpModal() {
+            document.getElementById('otpModal').style.display = 'none';
+            currentRequestId = null;
+        }
+
+        function submitOtp() {
+            const otp = document.getElementById('otpInput').value.trim();
+            const msgEl = document.getElementById('otpMessage');
+
+            if (!currentRequestId) {
+                showOtpMsg('⚠️ Please select a passenger first.', '#eab308');
+                return;
+            }
+            if (otp.length !== 4) {
+                showOtpMsg('⚠️ Please enter the full 4-digit OTP.', '#eab308');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('requestId', currentRequestId);
+            formData.append('enteredOtp', otp);
+
+            fetch('/user/ride/verify-start-otp', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showOtpMsg('✅ ' + data.message, '#22c55e');
+                        if (data.rideStarted) {
+                            setTimeout(() => { closeOtpModal(); location.reload(); }, 1500);
+                        } else {
+                            setTimeout(() => { openOtpModal(document.getElementById('otpModal').dataset.rideId); }, 1200);
+                        }
+                    } else {
+                        showOtpMsg('❌ ' + data.message, '#ef4444');
+                    }
+                })
+                .catch(() => showOtpMsg('❌ Server error. Please try again.', '#ef4444'));
+        }
+
+        function showOtpMsg(text, color) {
+            const el = document.getElementById('otpMessage');
+            el.textContent = text;
+            el.style.color = color;
+            el.style.display = 'block';
+        }
+
+        // Close on backdrop click
+        document.getElementById('otpModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeOtpModal();
+        });
+    </script>
 </div>

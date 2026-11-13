@@ -1,86 +1,163 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 <head>
-    <title>Admin - Profile</title>
+    <title>Admin Operations Console — RideX</title>
 </head>
 <body>
-<div id="content" class="bg-gray-900 pt-20 text-gray-100">
-    <main class="pb-12 md:py-14 px-6 2xl:px-20 2xl:container 2xl:mx-auto">
-        <div class="flex flex-col lg:flex-row items-start gap-6 w-full">
-            <!-- Sidebar / Profile -->
-            <div th:insert="~{fragments/sidebarProfile :: sideBarProfile}" class="w-full sm:w-1/3 flex-shrink-0 bg-gray-900 p-6 xl:p-8 flex flex-col space-y-6"></div>
-            <!-- Details Section -->
-            <div class="flex flex-col py-15 justify-start items-start gap-2 w-full sm:w-2/3">
-                <!-- Government ID Verify Requests -->
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">Government ID Verify Requests</h1>
-                </div>
-                <div th:insert="~{admin/adminFragements/verify_request_table :: verify_Table}" class="h-[275px] w-full rounded-md border border-gray-700 p-4 overflow-y-auto bg-gray-800"></div>
+<div id="content" style="background: var(--rx-bg-primary); min-height: 100vh; padding: 110px 20px 80px;">
+    <main class="rx-container" style="max-width: 1280px; margin: 0 auto;">
+        
+        <!-- Header Banner -->
+        <div class="rx-reveal" style="margin-bottom: 32px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 20px; background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.25); color: var(--rx-accent); font-size: 0.78rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;">
+                <i class="fa-solid fa-screwdriver-wrench"></i> System Administration
+            </div>
+            <h1 style="font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 800; color: var(--rx-text-primary); letter-spacing: -0.02em; margin: 0 0 6px;">
+                Operations &amp; Governance <span class="rx-text-accent">Console</span>
+            </h1>
+            <p style="font-size: 1rem; color: var(--rx-text-muted); margin: 0;">
+                Manage user verifications, audit published rides, and inspect live cluster telemetry.
+            </p>
+        </div>
 
-                <!-- Divider -->
-                <hr class="border-t border-gray-600 my-6 w-full">
+        <div style="display: grid; grid-template-columns: 340px 1fr; gap: 28px; align-items: start;" class="rx-admin-layout">
+            
+            <!-- Left Column: Admin Profile Card -->
+            <div class="rx-card-3d rx-reveal" style="padding: 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-md);">
+                <div th:insert="~{fragments/sidebarProfile :: sideBarProfile}"></div>
+            </div>
 
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">View | Update - Users</h1>
-                    <a th:href="@{'/admin/getUsers'}" class="inline-flex items-center justify-center rounded-full border border-primary px-7 py-3 text-center text-base font-medium text-primary hover:bg-[#1B44C8]">
-                        Get Users
-                    </a>
-                </div>
+            <!-- Right Column: Operations Sections -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <!-- 0. Live Platform KPI Cards -->
+                <div th:insert="~{admin/adminDashboardCards :: cardSection}"></div>
 
-                <!-- Divider -->
-                <hr class="border-t border-gray-600 my-6 w-full">
-
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">View - Rides</h1>
-                    <a th:href="@{'/admin/getRides'}" class="inline-flex items-center justify-center rounded-full border border-primary px-7 py-3 text-center text-base font-medium text-primary hover:bg-[#1B44C8]">
-                        Get Rides
-                    </a>
-                </div>
-
-                <hr class="border-t border-gray-600 my-6 w-full">
-
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">Grafana Dashboard - JVM SpringBoot3 dashboard (for Prometheus Operator)</h1>
-                    <a th:href="@{'http://'+${host}+':3000/d/hou469910799/jvm-springboot3-dashboard-for-prometheus-operator'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
-                        Get Monitoring
-                    </a>
-                </div>
-
-                <hr class="border-t border-gray-600 my-6 w-full">
-
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">Grafana Dashboard - Spring Boot 2.1 System Monitor</h1>
-                    <a th:href="@{'http://'+${host}+':3000/d/spring_boot_21/spring-boot-2-1-system-monitor'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
-                        Get Monitoring
-                    </a>
+                <!-- 1. Government ID Verification Queue -->
+                <div class="rx-card-3d rx-reveal" style="padding: 28px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-md);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 4px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-id-card" style="color: var(--rx-accent);"></i> Government ID Verifications
+                            </h2>
+                            <p style="font-size: 0.88rem; color: var(--rx-text-muted); margin: 0;">
+                                Review and approve Aadhaar, Driving License, and RC document submissions.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div th:insert="~{admin/adminFragements/verify_request_table :: verify_Table}"></div>
                 </div>
 
-                <hr class="border-t border-gray-600 my-6 w-full">
+                <!-- 2. Management Shortcuts -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;" class="rx-admin-split">
+                    
+                    <!-- Users Management Card -->
+                    <div class="rx-card-3d rx-reveal" style="padding: 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59,130,246,0.12); color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                                    <i class="fa-solid fa-users-gear"></i>
+                                </div>
+                                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0;">User Database</h3>
+                            </div>
+                            <p style="font-size: 0.92rem; color: var(--rx-text-secondary); margin: 0 0 20px;">
+                                Search, audit, enable, or suspend commuter and driver accounts.
+                            </p>
+                        </div>
+                        <a th:href="@{'/admin/getUsers'}" class="rx-btn rx-btn-primary" style="padding: 10px 20px; font-weight: 600; text-align: center; justify-content: center;">
+                            <i class="fa-solid fa-table-list"></i> Open User Directory
+                        </a>
+                    </div>
 
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">Grafana Dashboard - Spring Boot 3.x Statistics</h1>
-                    <a th:href="@{'http://'+${host}+':3000/d/spring_boot_17/spring-boot-3-x-statistics'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
-                        Get Monitoring
-                    </a>
+                    <!-- Rides Management Card -->
+                    <div class="rx-card-3d rx-reveal rx-reveal-delay-1" style="padding: 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(5,150,105,0.12); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                                    <i class="fa-solid fa-route"></i>
+                                </div>
+                                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0;">Ride Ledger</h3>
+                            </div>
+                            <p style="font-size: 0.92rem; color: var(--rx-text-secondary); margin: 0 0 20px;">
+                                Inspect scheduled, in-transit, and completed carpool corridors across India.
+                            </p>
+                        </div>
+                        <a th:href="@{'/admin/getRides'}" class="rx-btn rx-btn-primary" style="padding: 10px 20px; font-weight: 600; text-align: center; justify-content: center;">
+                            <i class="fa-solid fa-car-tunnel"></i> View All Rides
+                        </a>
+                    </div>
+
                 </div>
 
-                <hr class="border-t border-gray-600 my-6 w-full">
+                <!-- 3. Monitoring & Telemetry Infrastructure -->
+                <div class="rx-card-3d rx-reveal" style="padding: 28px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-md);">
+                    <div style="margin-bottom: 18px;">
+                        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 4px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-chart-line" style="color: #6366f1;"></i> Telemetry &amp; System Health
+                        </h2>
+                        <p style="font-size: 0.88rem; color: var(--rx-text-muted); margin: 0;">
+                            Live metrics collection via Prometheus Operator and Grafana enterprise dashboards.
+                        </p>
+                    </div>
 
-                <div class="flex justify-between items-center w-full">
-                    <h1 class="text-xl font-semibold text-white">Prometheus Operator</h1>
-                    <a th:href="@{'http://'+${host}+':9090/query?query=up'}" class="inline-flex items-center justify-center rounded-md border border-primary bg-[#FFA500] px-7 py-3 text-center text-base font-medium text-white hover:border-[#1B44C8] hover:bg-[#FFAC1C] active:border-[#1B44C8]">
-                        Get Prometheus
-                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 14px;">
+                        
+                        <div style="padding: 16px 20px; background: var(--rx-surface-alt); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                            <div>
+                                <h4 style="font-size: 0.96rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 2px;">JVM &amp; Spring Boot 3 Telemetry</h4>
+                                <p style="font-size: 0.82rem; color: var(--rx-text-muted); margin: 0;">Heap allocations, garbage collection cadence, and HikariCP thread pools.</p>
+                            </div>
+                            <a th:href="@{'http://'+${host}+':3000/d/hou469910799/jvm-springboot3-dashboard-for-prometheus-operator'}" target="_blank"
+                               class="rx-btn rx-btn-outline" style="font-size: 0.84rem; padding: 6px 16px;">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Grafana
+                            </a>
+                        </div>
+
+                        <div style="padding: 16px 20px; background: var(--rx-surface-alt); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                            <div>
+                                <h4 style="font-size: 0.96rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 2px;">HTTP Traffic &amp; Route Performance</h4>
+                                <p style="font-size: 0.82rem; color: var(--rx-text-muted); margin: 0;">P99 latency, request rates, HTTP 5xx error anomalies, and throughput.</p>
+                            </div>
+                            <a th:href="@{'http://'+${host}+':3000/d/spring_boot_17/spring-boot-3-x-statistics'}" target="_blank"
+                               class="rx-btn rx-btn-outline" style="font-size: 0.84rem; padding: 6px 16px;">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Dashboard
+                            </a>
+                        </div>
+
+                        <div style="padding: 16px 20px; background: var(--rx-surface-alt); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-md); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                            <div>
+                                <h4 style="font-size: 0.96rem; font-weight: 600; color: var(--rx-text-primary); margin: 0 0 2px;">Prometheus Query Engine</h4>
+                                <p style="font-size: 0.82rem; color: var(--rx-text-muted); margin: 0;">Direct PromQL console for querying cluster health and targets.</p>
+                            </div>
+                            <a th:href="@{'http://'+${host}+':9090/query?query=up'}" target="_blank"
+                               class="rx-btn rx-btn-outline" style="font-size: 0.84rem; padding: 6px 16px;">
+                                <i class="fa-solid fa-terminal"></i> Open Prometheus
+                            </a>
+                        </div>
+
+                    </div>
                 </div>
 
             </div>
         </div>
     </main>
 </div>
+
+<style>
+    @media (max-width: 960px) {
+        .rx-admin-layout {
+            grid-template-columns: 1fr !important;
+        }
+        .rx-admin-split {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
 </body>
 <th:block th:fragment="script">
     <script>
-        console.log("Admin Profile Page");
+        console.log("Admin Console loaded");
     </script>
 </th:block>
 </html>

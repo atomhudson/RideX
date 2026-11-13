@@ -17,6 +17,7 @@ public class User_Details {
     private String email;
     private String phone;
     private String govtIdType;
+    private String govtIdNumber;
     private String verify_Request;
     private String role;
     private boolean isPhoneVerified;
@@ -185,6 +186,14 @@ public class User_Details {
 
     public void setGovtIdType(String govtIdType) {
         this.govtIdType = govtIdType;
+    }
+
+    public String getGovtIdNumber() {
+        return govtIdNumber;
+    }
+
+    public void setGovtIdNumber(String govtIdNumber) {
+        this.govtIdNumber = govtIdNumber;
     }
 
     public String getVerify_Request() {

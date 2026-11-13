@@ -34,9 +34,7 @@ public class CarForm {
 
     private boolean ac_available = false;
 
-    @NotEmpty(message = "Please upload at least one clear image of your car.")
     @Size(max = 3, message = "You can upload a maximum of 3 car images.")
-    @ValidFile(message = "Each image must be non-empty and less than 2MB.")
     private List<MultipartFile> carImages;
 
     public @NotBlank(message = "Please select the car manufacturer.") String getCarMake() {
