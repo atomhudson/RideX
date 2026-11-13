@@ -7,54 +7,100 @@
 
 <body>
 <div id="content" style="background: var(--rx-bg-primary);">
-    <section class="rx-section" style="padding-top: 140px;">
+    <section class="rx-section" style="padding-top: 120px; padding-bottom: 60px;">
         <div class="rx-container">
             <div class="rx-section-header rx-reveal" style="margin-bottom: 40px;">
                 <h2>Publish a <span class="rx-text-accent">Ride</span> in Just Minutes</h2>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+            <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: start;">
 
                 <!-- Form Card -->
                 <div class="rx-form-card rx-reveal" style="max-width: none;">
                     <h1 style="font-size: 1.25rem;">Create a Ride</h1>
                     <p style="text-align: center; font-size: 0.84rem; color: var(--rx-text-muted); margin: -20px 0 28px;">
-                        Publish your ride with just one click.
+                        Publish your ride — location, route & price auto-filled.
                     </p>
                     <div th:insert="~{fragments/message::messagebox}"></div>
+
+                    <!-- ══ NO CAR REGISTERED BANNER ══ -->
+                    <div th:if="${noCarRegistered}"
+                         style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(249,115,22,0.08));border:1px solid rgba(239,68,68,0.35);border-radius:12px;padding:20px 22px;margin-bottom:24px;text-align:center;">
+                        <i class="fa-solid fa-car-burst" style="font-size:2rem;color:#ef4444;margin-bottom:10px;display:block;"></i>
+                        <h3 style="font-size:1rem;font-weight:700;color:var(--rx-text-primary);margin:0 0 6px;">No Vehicle Registered</h3>
+                        <p style="font-size:0.84rem;color:var(--rx-text-secondary);margin:0 0 16px;">
+                            You need to register your car before you can publish a ride. It only takes 30 seconds!
+                        </p>
+                        <a href="/user/car/register" class="rx-btn rx-btn-primary" style="display:inline-flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-plus"></i> Register Your Vehicle Now
+                        </a>
+                    </div>
 
                     <form id="publishRideForm" th:action="@{'/user/ride/process'}" th:object="${rideForm}" method="post">
                         <input type="hidden" th:field="*{rideId}" id="rideId"/>
 
-                        <!-- From / To -->
-                        <div class="rx-form-row">
-                            <div>
-                                <div class="rx-form-group rx-autocomplete-wrap">
-                                    <label for="fromAddress">From (Address)</label>
-                                    <input type="text" th:field="*{fromAddress}" id="fromAddress" name="fromAddress" class="rx-form-input" placeholder="Enter full address" autocomplete="off" required />
+                        <!-- ══════════════════════════════════
+                             FROM / TO — Unified Smart Inputs
+                             ══════════════════════════════════ -->
+                        <div style="position: relative; margin-bottom: 18px;">
+
+                            <!-- FROM block -->
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <label for="fromAddress" style="margin-bottom:0;">Pickup Location</label>
+                                    <button type="button" id="gpsBtn" onclick="useCurrentLocation()"
+                                        style="display:flex;align-items:center;gap:5px;font-size:0.75rem;padding:4px 10px;border-radius:20px;background:rgba(99,102,241,0.12);color:var(--rx-accent);border:1px solid rgba(99,102,241,0.3);cursor:pointer;transition:all .2s;">
+                                        <i class="fa-solid fa-location-crosshairs"></i> Use Current Location
+                                    </button>
+                                </div>
+                                <div class="rx-autocomplete-wrap">
+                                    <input type="text" th:field="*{fromAddress}" id="fromAddress" name="fromAddress"
+                                        class="rx-form-input" placeholder="Type your pickup address…"
+                                        autocomplete="off" required />
                                     <ul id="fromAddress-suggestions" class="rx-suggestion-list hidden"></ul>
                                 </div>
-                                <div class="rx-form-group rx-autocomplete-wrap" style="margin-top: 12px;">
-                                    <label for="from">From (City)</label>
-                                    <input type="text" id="from" th:field="*{fromCity}" name="from" class="rx-form-input" placeholder="Select city" autocomplete="off" required />
-                                    <ul id="from-suggestions" class="rx-suggestion-list hidden"></ul>
-                                </div>
-                                <input type="hidden" th:field="*{fromLat}" id="fromLat" name="fromLat" />
-                                <input type="hidden" th:field="*{fromLng}" id="fromLon" name="fromLon" />
+                                <!-- hidden city / coords -->
+                                <input type="hidden" th:field="*{fromCity}" id="from" name="from" />
+                                <input type="hidden" th:field="*{fromLat}" id="fromLat" />
+                                <input type="hidden" th:field="*{fromLng}" id="fromLng" />
+                                <div id="fromCityBadge" style="display:none;margin-top:5px;font-size:0.78rem;color:var(--rx-accent);"><i class="fa-solid fa-map-pin"></i> <span id="fromCityText"></span></div>
                             </div>
+
+                            <!-- Swap button -->
+                            <div style="text-align:center;margin:6px 0;">
+                                <button type="button" id="swapBtn" onclick="swapLocations()"
+                                    title="Swap From ↔ To"
+                                    style="background:var(--rx-bg-tertiary);border:1px solid var(--rx-border);border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:0.9rem;color:var(--rx-text-muted);transition:all .2s;">
+                                    ⇄
+                                </button>
+                            </div>
+
+                            <!-- TO block -->
                             <div>
-                                <div class="rx-form-group rx-autocomplete-wrap">
-                                    <label for="toAddress">To (Address)</label>
-                                    <input type="text" th:field="*{toAddress}" id="toAddress" name="toAddress" class="rx-form-input" placeholder="Enter full address" autocomplete="off" required />
+                                <label for="toAddress" style="margin-bottom:6px;display:block;">Drop-off Location</label>
+                                <div class="rx-autocomplete-wrap">
+                                    <input type="text" th:field="*{toAddress}" id="toAddress" name="toAddress"
+                                        class="rx-form-input" placeholder="Type your drop-off address…"
+                                        autocomplete="off" required />
                                     <ul id="toAddress-suggestions" class="rx-suggestion-list hidden"></ul>
                                 </div>
-                                <div class="rx-form-group rx-autocomplete-wrap" style="margin-top: 12px;">
-                                    <label for="to">To (City)</label>
-                                    <input type="text" id="to" th:field="*{toCity}" name="to" class="rx-form-input" placeholder="Select city" autocomplete="off" required />
-                                    <ul id="to-suggestions" class="rx-suggestion-list hidden"></ul>
-                                </div>
-                                <input type="hidden" th:field="*{toLat}" id="toLat" name="toLat" />
-                                <input type="hidden" th:field="*{toLng}" id="toLon" name="toLon" />
+                                <!-- hidden city / coords -->
+                                <input type="hidden" th:field="*{toCity}" id="to" name="to" />
+                                <input type="hidden" th:field="*{toLat}" id="toLat" />
+                                <input type="hidden" th:field="*{toLng}" id="toLng" />
+                                <div id="toCityBadge" style="display:none;margin-top:5px;font-size:0.78rem;color:var(--rx-accent);"><i class="fa-solid fa-flag-checkered"></i> <span id="toCityText"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- Route Info Banner (auto-filled) -->
+                        <div id="routeInfoBanner" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.08));border:1px solid rgba(99,102,241,0.25);border-radius:var(--rx-radius-sm);padding:12px 16px;margin-bottom:18px;font-size:0.85rem;">
+                            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                                <span>🛣️ <strong id="routeDistance">—</strong> km</span>
+                                <span>⏱️ <strong id="routeDuration">—</strong></span>
+                                <span style="margin-left:auto;color:var(--rx-accent);font-weight:600;">
+                                    Suggested Price: <span id="suggestedPrice">—</span>
+                                    <button type="button" onclick="applyPrice()" style="margin-left:8px;font-size:0.72rem;padding:2px 8px;border-radius:12px;background:var(--rx-accent);color:#fff;border:none;cursor:pointer;">Apply</button>
+                                </span>
                             </div>
                         </div>
 
@@ -69,7 +115,7 @@
                             <div th:unless="${#lists.isEmpty(rideForm.available_car)}">
                                 <select id="car" name="car" class="rx-form-input" required>
                                     <option value="">-- Choose a car --</option>
-                                    <option th:value="${rideForm.available_car.getLast()}" th:text="${rideForm.available_car.get(0)+' '+rideForm.available_car.get(1)}"></option>
+                                    <option th:value="${rideForm.available_car.get(rideForm.available_car.size()-1)}" th:text="${rideForm.available_car.get(0)+' '+rideForm.available_car.get(1)}"></option>
                                 </select>
                             </div>
                         </div>
@@ -86,15 +132,16 @@
                                 <input type="hidden" id="seat" th:field="*{seat}" name="seat" value="1">
                             </div>
                             <div class="rx-form-group">
-                                <label for="price">Price</label>
-                                <input type="number" th:field="*{price}" id="price" name="price" min="0" placeholder="Price" class="rx-form-input" />
+                                <label for="price">Price per Seat (₹)</label>
+                                <input type="number" th:field="*{price}" id="price" name="price" min="0"
+                                    placeholder="Auto-calculated or enter manually" class="rx-form-input" />
                             </div>
                         </div>
 
                         <!-- Departure Time -->
                         <div class="rx-form-group" style="margin-bottom: 24px;">
-                            <label for="startTime">Departure Time</label>
-                            <input type="datetime-local" th:field="*{departure_time}" id="startTime" name="startTime" class="rx-form-input" />
+                            <label for="departure_time">Departure Time</label>
+                            <input type="datetime-local" th:field="*{departure_time}" id="departure_time" class="rx-form-input" required />
                         </div>
 
                         <!-- Preferences -->
@@ -131,14 +178,41 @@
                     </form>
                 </div>
 
-                <!-- Steps Sidebar -->
-                <div class="rx-reveal rx-reveal-delay-1" th:replace="~{/fragments/createRideStep :: steps}"></div>
+                <!-- Right Panel: Leaflet Map Picker + Steps -->
+                <div class="rx-reveal rx-reveal-delay-1">
+                    <!-- Interactive Map Picker -->
+                    <div style="background:var(--rx-bg-secondary);border:1px solid var(--rx-border);border-radius:var(--rx-radius);overflow:hidden;margin-bottom:24px;">
+                        <div style="padding:14px 18px;border-bottom:1px solid var(--rx-border);display:flex;align-items:center;gap:10px;">
+                            <i class="fa-solid fa-map" style="color:var(--rx-accent);"></i>
+                            <span style="font-size:0.88rem;font-weight:600;color:var(--rx-text-primary);">Click map to set Pickup / Drop</span>
+                            <span id="mapPinMode" style="margin-left:auto;font-size:0.73rem;padding:3px 10px;border-radius:12px;background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.3);">
+                                📍 Pickup mode
+                            </span>
+                        </div>
+                        <div id="createMap" style="height: 320px; width: 100%;"></div>
+                        <div style="padding:10px 18px;display:flex;gap:10px;">
+                            <button type="button" id="btnSetPickup" onclick="setMapMode('from')"
+                                style="flex:1;font-size:0.75rem;padding:6px;border-radius:8px;background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.3);cursor:pointer;font-weight:600;">
+                                📍 Set Pickup
+                            </button>
+                            <button type="button" id="btnSetDrop" onclick="setMapMode('to')"
+                                style="flex:1;font-size:0.75rem;padding:6px;border-radius:8px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);cursor:pointer;font-weight:600;">
+                                🏁 Set Drop-off
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Steps sidebar -->
+                    <div th:replace="~{/fragments/createRideStep :: steps}"></div>
+                </div>
+
             </div>
         </div>
     </section>
 </div>
-<script th:src="@{'/js/coordinates.js'}"></script>
+
 <script th:src="@{'/js/createRide.js'}"></script>
+<script th:src="@{'/js/locationAutomation.js'}"></script>
 <script th:src="@{'/js/createRideAutocomplete.js'}" type="module"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <div th:fragment="rideRequestCards">
     <div th:each="request : ${profileRidesDetails.requestMade}" style="margin-bottom: 12px;">
-        <div class="rx-card">
+        <div class="rx-card rx-card-3d">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 700; color: var(--rx-text-primary);">
@@ -8,9 +8,17 @@
                         <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem; color: var(--rx-accent);"></i>
                         <span th:text="${request.ride.destinationCity}">Dest</span>
                     </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                        <span class="rx-badge" th:text="${#dates.format(request.ride.startTime, 'HH:mm')}">08:00</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                        <span class="rx-badge" style="font-weight: 600; color: var(--rx-accent);">
+                            <i class="fa-regular fa-clock" style="margin-right: 4px;"></i>
+                            <span th:text="${#dates.format(request.ride.startTime, 'HH:mm')}">08:00</span>
+                            <span th:if="${request.ride.endTime != null}" th:text="' → ' + ${#dates.format(request.ride.endTime, 'HH:mm')}"> → 10:30</span>
+                        </span>
                         <span class="rx-badge" th:text="${#dates.format(request.ride.startTime, 'dd MMM yyyy')}">01 Jan</span>
+                        <span class="rx-badge" th:if="${request.ride.duration > 0}">
+                            <i class="fa-solid fa-hourglass-half" style="margin-right: 4px; font-size: 0.75rem;"></i>
+                            <span th:text="${request.ride.formattedDuration}">2h 30m</span>
+                        </span>
                         <span class="rx-badge" th:text="'Seats: ' + ${request.requestedSeats}">Seats: 2</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -25,6 +33,17 @@
                 <div style="text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
                     <span style="font-size: 1.1rem; font-weight: 800; color: var(--rx-accent);" th:text="'₹' + ${request.finalPrice}">₹500</span>
                     <span class="rx-badge" th:text="${request.requestStatus}" style="background: rgba(139,92,246,0.15); color: #8b5cf6;">Pending</span>
+                    <button type="button"
+                            th:attr="data-ride-id=${request.ride.rideId},
+                                     data-driver-id=${request.ride.driver.userId},
+                                     data-driver-name=${request.ride.driver.fName + ' ' + request.ride.driver.lName},
+                                     data-driver-avatar=${request.ride.driver.profilePic}"
+                            onclick="event.preventDefault(); openChat(this.getAttribute('data-ride-id'), this.getAttribute('data-driver-id'), this.getAttribute('data-driver-name'), this.getAttribute('data-driver-avatar'));"
+                            style="padding:5px 12px;border-radius:8px;background:rgba(99,102,241,0.12);color:var(--rx-accent);border:1px solid rgba(99,102,241,0.25);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;margin-top:4px;"
+                            onmouseover="this.style.background='rgba(99,102,241,0.22)'"
+                            onmouseout="this.style.background='rgba(99,102,241,0.12)'">
+                        <i class="fa-regular fa-comment-dots"></i> Chat
+                    </button>
                 </div>
             </div>
         </div>

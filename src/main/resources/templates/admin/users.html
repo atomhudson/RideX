@@ -1,203 +1,352 @@
 <!doctype html>
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 <head>
-    <title>User Tables | RideX</title>
+    <title>User &amp; Driver Directory — RideX Administration</title>
 </head>
 <body>
-<div id="content">
-    <!-- ====== Page Header Start ====== -->
-    <div class="pt-20 font font-Poppins bg-gray-900">
-        <div class="flex flex-col items-center relative pt-20 overflow-hidden">
-            <h1 class="absolute text-6xl md:text-[10rem] font-bold text-white opacity-10">
-                Getting All The Users
-            </h1>
-            <div class="relative flex flex-col items-center mt-5 md:mt-10 group">
-                <h1 class="text-3xl md:text-5xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-300 mb-2 transition-all duration-500 group-hover:scale-105">
-                    Know About Your Users
-                </h1>
-                <div class="relative">
-                    <div class="w-20 md:w-32 h-1 bg-gray-600 rounded-full overflow-hidden">
-                        <div class="h-full bg-orange-600 animate-progress-bar origin-left"></div>
-                    </div>
-                    <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-orange-400 rounded-full animate-ping"></div>
-                </div>
+<div id="content" style="background: var(--rx-bg-primary); min-height: 100vh; padding: 110px 20px 80px;">
+    
+    <div class="rx-container" style="max-width: 1380px; margin: 0 auto;">
+        
+        <!-- ====== Page Header Start ====== -->
+        <div class="rx-reveal" style="margin-bottom: 28px; text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 20px; background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.25); color: var(--rx-accent); font-size: 0.78rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;">
+                <i class="fa-solid fa-users-gear"></i> Directory &amp; Governance
             </div>
-            <p class="mt-6 text-gray-400 text-center max-w-md md:max-w-2xl px-4 text-sm md:text-base animate-fade-in">
-                Here are all the users I have interacted with — whether rides were planned, completed, or offered to them.
+            <h1 style="font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 800; color: var(--rx-text-primary); letter-spacing: -0.02em; margin: 0 0 8px;">
+                User &amp; Driver <span class="rx-text-accent">Management</span>
+            </h1>
+            <p style="font-size: 1rem; color: var(--rx-text-muted); max-width: 640px; margin: 0 auto;">
+                Audit commuter and driver credentials, inspect vehicle registrations, verify phone &amp; DigiLocker states, and manage account statuses.
             </p>
         </div>
-    </div>
+        <!-- ====== Page Header End ====== -->
 
-    <!-- ====== Page Header End ====== -->
-
-    <!-- ====== Table Section Start -->
-    <section class="bg-gray-900 py-20 lg:py-[120px]">
-        <div class="container mx-auto">
-            <div class="-mx-4 flex flex-wrap">
-                <div class="flex md:flex-row flex-col items-center px-4 justify-between bg-white dark:bg-gray-900" >
-                    <form th:object="${userSearchForm}" th:action="@{/admin/getUsers/search}" method="get">
-                    <div class="flex space-x-3 p-5 items-center justify-start flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4" >
-                            <div>
-                                <select data-th-field="*{field}"  id="countries_disabled"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
-                                    <option selected value="">Select Field</option>
-                                    <option value="userid">UserId</option>
-                                    <option value="phone">Phone</option>
-                                    <option value="email">Email</option>
-                                </select>
-                            </div>
-                            <label for="table-search" class="sr-only">Search</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none" >
-                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"  aria-hidden="true"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                    </svg>
-                                </div>
-                                <input data-th-field="*{value}" type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for users"/>
-                            </div>
-                            <button type="submit" class="px-3 py-2 bg-gray-800 text-white rounded">
-                                Search
-                            </button>
-                        </div>
-                    </form>
+        <!-- ====== Quick Telemetry Strip ====== -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;" class="rx-reveal">
+            
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(59,130,246,0.12); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-users"></i>
                 </div>
-                <div class="w-full px-4">
-                    <div class="max-w-full overflow-x-auto">
-                        <div th:if="${isFieldEmpty}" class="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded">
-                            <p th:text="${message}">Please enter valid search inputs</p>
-                        </div>
-                        <table class="w-full table-auto border border-gray-700">
-                            <thead>
-                            <tr class="bg-gray-800 text-white text-center border-b border-gray-700">
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    S. No.
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    User ID
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Full Name
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Email
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Phone
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Email Verified
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Phone Verified
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Enabled
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Provider
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Coins
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Created At
-                                </th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold lg:px-4 lg:py-6">
-                                    Role
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="user, iterStat : ${userPage.content}" class="odd:bg-gray-800 even:bg-gray-900 text-white border-b border-gray-700">
-                                <td th:text="${iterStat.index + 1}" class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                    1
-                                </td>
-                                <td th:text="${user.userId}" class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                    USR001
-                                </td>
-                                <td th:text="${user.fName + ' ' + user.lName}" class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                    John Doe
-                                </td>
-                                <td th:text="${user.email}" class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                    john@example.com
-                                </td>
-                                <td th:text="${user.phone == null or user.phone.isEmpty() ? '-' : user.phone}"
-                                    class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                </td>
-                                <td th:text="${user.emailVerified ? 'Yes' : 'No'}"
-                                    th:classappend="${user.emailVerified} ? ' text-green-400' : ' text-red-400'"
-                                    class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                </td>
-                                <td th:text="${user.phoneVerified ? 'Yes' : 'No'}"
-                                    th:classappend="${user.phoneVerified} ? ' text-green-400' : ' text-red-400'"
-                                    class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                </td>
-                                <td class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                    <form th:action="@{'/admin/action/user/accountAction/' + ${user.userId}}" method="post">
-                                        <button type="submit"
-                                                th:text="${user.enabled ? 'DISABLE USER' : 'ENABLE'}"
-                                                th:classappend="${user.enabled} ? ' text-red-400' : ' text-green-400'"
-                                                class="underline">
-                                        </button>
-                                    </form>
-                                </td>
-
-                                <td th:text="${user.provider}" class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                    SELF
-                                </td>
-                                <td th:text="${user.coins}" class="border border-gray-700 px-2 py-5 text-center text-base font-medium text-yellow-400">
-                                    150
-                                </td>
-                                <td th:text="${#dates.format(user.dateCreate, 'yyyy-MM-dd')}" class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                    2024-01-01
-                                </td>
-                                <td th:text="${user.roleList.get(0) == 'ROLE_USER'  ? 'USER' : 'ADMIN'}"
-                                    th:classappend="${user.roleList.get(0) == 'ROLE_USER' ? ' text-green-400' : ' text-red-400'}"
-                                    class="border border-gray-700 px-2 py-5 text-center text-base font-medium">
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Total Accounts</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: var(--rx-text-primary);" th:text="${statTotalUsers != null ? statTotalUsers : userPage.totalElements}">0</div>
                 </div>
             </div>
+
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16,185,129,0.12); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-steering-wheel"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Drivers with Car</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #10b981;" th:text="${statDrivers != null ? statDrivers : '—'}">0</div>
+                </div>
+            </div>
+
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(99,102,241,0.12); color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-shield-check"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Govt ID Verified</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #6366f1;" th:text="${statVerified != null ? statVerified : '—'}">0</div>
+                </div>
+            </div>
+
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(239,68,68,0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Suspended</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #ef4444;" th:text="${statSuspended != null ? statSuspended : '0'}">0</div>
+                </div>
+            </div>
+
         </div>
-    </section>
-    <!-- ====== Table Section End -->
-    <!-- ====== Pagination Section Start -->
-    <div th:if="${userPage.totalElements > 0}" class="pagination_container bg-white dark:bg-gray-900 p-5 text-center">
-        <nav aria-label="Page navigation">
-            <ul class="inline-flex -space-x-px text-base h-10">
-                <!-- Previous Button -->
-                <li th:unless="${userPage.first}">
-                    <a th:href="@{/admin/getUsers/search(size=${pageSize}, page=${userPage.number - 1}, field=${userSearchForm.field}, value=${userSearchForm.value})}"
-                       class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-s-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                        Previous
-                    </a>
-                </li>
 
-                <!-- Page Numbers -->
-                <li th:each="index : ${#numbers.sequence(0, userPage.totalPages - 1)}">
-                    <a th:href="@{/admin/getUsers/search(size=${pageSize}, page=${index}, field=${userSearchForm.field}, value=${userSearchForm.value})}"
-                       th:classappend="${index == userPage.number} ? 'text-white bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500' : 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white'"
-                       class="flex items-center justify-center px-4 h-10 leading-tight border border-gray-300 dark:border-gray-700">
-                        <span th:text="${index + 1}"></span>
-                    </a>
-                </li>
+        <!-- ====== Search & Interactive Filter Bar Start ====== -->
+        <div class="rx-card-3d rx-reveal" style="padding: 20px 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); margin-bottom: 24px;">
+            <form th:object="${userSearchForm}" th:action="@{/admin/getUsers/search}" method="get"
+                  style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between;">
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; flex: 1;">
+                    <div style="min-width: 170px;">
+                        <select data-th-field="*{field}" id="countries_disabled" class="rx-form-input" style="padding: 10px 14px; font-size: 0.92rem;">
+                            <option value="all">🔍 Universal (All Fields)</option>
+                            <option value="userid">User ID</option>
+                            <option value="phone">Phone Number</option>
+                            <option value="email">Email Address</option>
+                        </select>
+                    </div>
 
-                <!-- Next Button -->
-                <li th:unless="${userPage.last}">
-                    <a th:href="@{/admin/getUsers/search(size=${pageSize}, page=${userPage.number + 1}, field=${userSearchForm.field}, value=${userSearchForm.value})}"
-                       class="flex items-center justify-center px-4 h-10 leading-tight text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-e-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                        Next
+                    <div style="position: relative; flex: 1; min-width: 280px;">
+                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--rx-text-muted); font-size: 0.95rem;"></i>
+                        <input data-th-field="*{value}" type="text" id="adminUserSearchInput"
+                               class="rx-form-input" style="padding: 10px 14px 10px 40px; font-size: 0.92rem;"
+                               placeholder="Type name, email, phone, or User ID to search..." />
+                    </div>
+
+                    <button type="submit" class="rx-btn rx-btn-primary" style="padding: 10px 22px; font-weight: 700; font-size: 0.92rem;">
+                        <i class="fa-solid fa-filter"></i> Search Directory
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a th:href="@{'/admin/getUsers'}" class="rx-btn rx-btn-outline" style="padding: 10px 18px; font-size: 0.88rem;">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
                     </a>
-                </li>
-            </ul>
-        </nav>
+                </div>
+            </form>
+
+            <!-- Client-Side Quick Filter Chips -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rx-border);">
+                <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--rx-text-muted); letter-spacing: 0.05em; margin-right: 4px;">Quick Filter:</span>
+                <button type="button" class="rx-filter-chip active" onclick="filterUserTable('all', this)">All Users</button>
+                <button type="button" class="rx-filter-chip" onclick="filterUserTable('driver', this)">🚗 Drivers Only</button>
+                <button type="button" class="rx-filter-chip" onclick="filterUserTable('commuter', this)">🎒 Commuters</button>
+                <button type="button" class="rx-filter-chip" onclick="filterUserTable('verified', this)">🛡️ KYC Verified</button>
+                <button type="button" class="rx-filter-chip" onclick="filterUserTable('suspended', this)">🔴 Suspended</button>
+            </div>
+        </div>
+        <!-- ====== Search & Filter Bar End ====== -->
+
+        <div th:if="${isFieldEmpty}" style="margin-bottom: 20px; padding: 14px 20px; border-radius: var(--rx-radius-md); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #d97706; font-size: 0.92rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span th:text="${message}">Please enter valid search inputs</span>
+        </div>
+
+        <!-- ====== Table Section Start ====== -->
+        <div class="rx-card-3d rx-reveal rx-reveal-delay-1" style="background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-md); overflow: hidden;">
+            <div style="overflow-x: auto;">
+                <table id="userTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+                    <thead style="background: var(--rx-surface-alt); border-bottom: 2px solid var(--rx-border); text-transform: uppercase; font-size: 0.76rem; letter-spacing: 0.05em; color: var(--rx-text-muted);">
+                    <tr>
+                        <th style="padding: 14px 16px; text-align: center;">#</th>
+                        <th style="padding: 14px 16px;">User</th>
+                        <th style="padding: 14px 16px;">Contact Info</th>
+                        <th style="padding: 14px 16px; text-align: center;">Account Type</th>
+                        <th style="padding: 14px 16px; text-align: center;">KYC Status</th>
+                        <th style="padding: 14px 16px; text-align: center;">State</th>
+                        <th style="padding: 14px 16px; text-align: center;">Coins</th>
+                        <th style="padding: 14px 16px;">Registered</th>
+                        <th style="padding: 14px 16px; text-align: center;">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                    <tr th:if="${userPage.content == null or userPage.content.isEmpty()}">
+                        <td colspan="9" style="padding: 48px; text-align: center; color: var(--rx-text-muted); font-size: 1rem;">
+                            <i class="fa-solid fa-user-slash" style="font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
+                            No users matched your search criteria.
+                        </td>
+                    </tr>
+                    <tr th:each="user, iterStat : ${userPage.content}"
+                        class="rx-user-row"
+                        th:attr="data-is-driver=${user.carDetails != null ? 'true' : 'false'},
+                                 data-is-verified=${user.govtIdVerified ? 'true' : 'false'},
+                                 data-is-enabled=${user.enabled ? 'true' : 'false'}"
+                        style="border-bottom: 1px solid var(--rx-border); transition: background 0.15s ease;"
+                        onmouseover="this.style.background='var(--rx-surface-alt)'" onmouseout="this.style.background='transparent'">
+                        
+                        <!-- Index -->
+                        <td style="padding: 14px 16px; text-align: center; font-weight: 600; color: var(--rx-text-muted);"
+                            th:text="${iterStat.index + 1}">1</td>
+                        
+                        <!-- User Identity -->
+                        <td style="padding: 14px 16px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img th:if="${user.profilePic != null and !user.profilePic.isEmpty()}" th:src="${user.profilePic}"
+                                     style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--rx-border);" alt="Avatar" />
+                                <div th:unless="${user.profilePic != null and !user.profilePic.isEmpty()}"
+                                     style="width: 36px; height: 36px; border-radius: 50%; background: var(--rx-accent-light); color: var(--rx-accent); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">
+                                    <span th:text="${#strings.substring(user.fName != null ? user.fName : 'U', 0, 1)}">U</span>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; color: var(--rx-text-primary);"
+                                         th:text="${user.fName + ' ' + (user.lName != null ? user.lName : '')}">John Doe</div>
+                                    <div style="font-family: monospace; font-size: 0.78rem; color: var(--rx-text-muted);"
+                                         th:text="${user.userId}">USR001</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Contact -->
+                        <td style="padding: 14px 16px;">
+                            <div style="color: var(--rx-text-primary); font-weight: 600; font-size: 0.88rem;" th:text="${user.email}">john@example.com</div>
+                            <div style="color: var(--rx-text-muted); font-size: 0.8rem; margin-top: 2px;">
+                                <i class="fa-solid fa-phone" style="font-size: 0.7rem; margin-right: 4px;"></i>
+                                <span th:text="${user.phone == null or user.phone.isEmpty() ? 'Not provided' : user.phone}">—</span>
+                            </div>
+                        </td>
+                        
+                        <!-- Account Type (Driver / Commuter) -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <div th:if="${user.carDetails != null}">
+                                <span class="rx-badge" style="background: rgba(16,185,129,0.12); color: #059669; font-weight: 700; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class="fa-solid fa-car"></i> Driver
+                                </span>
+                                <div style="font-size: 0.74rem; color: var(--rx-text-muted); margin-top: 4px;"
+                                     th:text="${user.carDetails.carMake + ' ' + user.carDetails.carModel}">Kia Sonet</div>
+                            </div>
+                            <div th:unless="${user.carDetails != null}">
+                                <span class="rx-badge" style="background: rgba(100,116,139,0.1); color: #475569; font-weight: 600; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class="fa-solid fa-person-walking-luggage"></i> Commuter
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- KYC Status -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <span th:if="${user.govtIdVerified}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 700; background: rgba(16,185,129,0.12); color: #059669;">
+                                <i class="fa-solid fa-circle-check"></i> Verified
+                            </span>
+                            <span th:unless="${user.govtIdVerified}" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 700; background: rgba(239,68,68,0.1); color: #dc2626;">
+                                <i class="fa-solid fa-circle-xmark"></i> Unverified
+                            </span>
+                        </td>
+
+                        <!-- State (Active / Suspended) -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <span th:if="${user.enabled}" style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 8px; font-size: 0.76rem; font-weight: 700; background: rgba(16,185,129,0.1); color: #059669;">
+                                ● Active
+                            </span>
+                            <span th:unless="${user.enabled}" style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 8px; font-size: 0.76rem; font-weight: 700; background: rgba(239,68,68,0.1); color: #dc2626;">
+                                ✕ Suspended
+                            </span>
+                        </td>
+
+                        <!-- Coins -->
+                        <td style="padding: 14px 16px; text-align: center; font-weight: 800; color: #f59e0b;">
+                            <i class="fa-solid fa-coins" style="font-size: 0.8rem; margin-right: 2px;"></i>
+                            <span th:text="${user.coins}">0</span>
+                        </td>
+
+                        <!-- Registered Date -->
+                        <td style="padding: 14px 16px; font-size: 0.82rem; color: var(--rx-text-muted);"
+                            th:text="${user.dateCreate != null ? #dates.format(user.dateCreate, 'dd MMM yyyy') : '—'}">01 Jan 2026</td>
+
+                        <!-- Action Button -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <form th:action="@{'/admin/action/user/accountAction/' + ${user.userId}}" method="post" style="display: inline;">
+                                <button type="submit"
+                                        th:onclick="'return confirm(\'Are you sure you want to ' + (${user.enabled} ? 'suspend' : 'activate') + ' this account?\');'"
+                                        th:style="${user.enabled ? 'background: rgba(239,68,68,0.1); color: #dc2626; border: 1px solid rgba(239,68,68,0.3);' : 'background: rgba(16,185,129,0.12); color: #059669; border: 1px solid rgba(16,185,129,0.3);'}"
+                                        style="font-size: 0.75rem; font-weight: 700; padding: 5px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;"
+                                        th:text="${user.enabled ? 'Suspend' : 'Activate'}">
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ====== Pagination Section Start ====== -->
+            <div th:if="${userPage.totalElements > 0}" style="padding: 20px 24px; border-top: 1px solid var(--rx-border); background: var(--rx-surface-alt); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                <div style="font-size: 0.88rem; color: var(--rx-text-muted);">
+                    Showing <strong style="color: var(--rx-text-primary);" th:text="${userPage.numberOfElements}">0</strong> of <strong style="color: var(--rx-text-primary);" th:text="${userPage.totalElements}">0</strong> registered users
+                </div>
+                
+                <nav aria-label="Page navigation">
+                    <ul style="display: inline-flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0;">
+                        <!-- Previous Button -->
+                        <li th:unless="${userPage.first}">
+                            <a th:href="@{/admin/getUsers/search(size=${pageSize}, page=${userPage.number - 1}, field=${userSearchForm.field}, value=${userSearchForm.value})}"
+                                style="padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: var(--rx-surface); border: 1px solid var(--rx-border); color: var(--rx-text-primary); text-decoration: none;">
+                                ← Prev
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        <li th:each="index : ${#numbers.sequence(0, userPage.totalPages - 1)}">
+                            <a th:href="@{/admin/getUsers/search(size=${pageSize}, page=${index}, field=${userSearchForm.field}, value=${userSearchForm.value})}"
+                               th:style="${index == userPage.number ? 'background: var(--rx-accent); color: #fff; border: 1px solid var(--rx-accent);' : 'background: var(--rx-surface); color: var(--rx-text-primary); border: 1px solid var(--rx-border);'}"
+                               style="padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none;">
+                                <span th:text="${index + 1}"></span>
+                            </a>
+                        </li>
+
+                        <!-- Next Button -->
+                        <li th:unless="${userPage.last}">
+                            <a th:href="@{/admin/getUsers/search(size=${pageSize}, page=${userPage.number + 1}, field=${userSearchForm.field}, value=${userSearchForm.value})}"
+                                style="padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: var(--rx-surface); border: 1px solid var(--rx-border); color: var(--rx-text-primary); text-decoration: none;">
+                                Next →
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- ====== Pagination Section End ====== -->
+
+        </div>
+        <!-- ====== Table Section End ====== -->
+
     </div>
-    <!-- ====== Pagination Section End -->
 </div>
+
+<style>
+    .rx-filter-chip {
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: var(--rx-surface);
+        color: var(--rx-text-secondary);
+        border: 1px solid var(--rx-border);
+        transition: all 0.2s ease;
+    }
+    .rx-filter-chip:hover {
+        border-color: var(--rx-accent);
+        color: var(--rx-accent);
+    }
+    .rx-filter-chip.active {
+        background: var(--rx-text-primary);
+        color: #ffffff;
+        border-color: var(--rx-text-primary);
+    }
+</style>
+
 <script>
-    console.log("User Table");
+    function filterUserTable(filterType, btn) {
+        document.querySelectorAll('.rx-filter-chip').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const rows = document.querySelectorAll('.rx-user-row');
+        rows.forEach(row => {
+            const isDriver = row.getAttribute('data-is-driver') === 'true';
+            const isVerified = row.getAttribute('data-is-verified') === 'true';
+            const isEnabled = row.getAttribute('data-is-enabled') === 'true';
+
+            let show = true;
+            if (filterType === 'driver') show = isDriver;
+            else if (filterType === 'commuter') show = !isDriver;
+            else if (filterType === 'verified') show = isVerified;
+            else if (filterType === 'suspended') show = !isEnabled;
+
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    // Client-side quick filter on keyup in the input
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('adminUserSearchInput');
+        if (input) {
+            input.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase().trim();
+                if (!term) {
+                    document.querySelectorAll('.rx-user-row').forEach(r => r.style.display = '');
+                    return;
+                }
+                document.querySelectorAll('.rx-user-row').forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        }
+    });
 </script>
 </body>
 </html>

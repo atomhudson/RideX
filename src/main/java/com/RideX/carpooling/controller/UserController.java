@@ -86,9 +86,14 @@ public class UserController {
 
     @GetMapping("/profile")
     public String profile(Model model, @ModelAttribute("loggedInUser") User navbarUser) {
-        User user = userService.getUserByEmail(navbarUser.getEmail());
+        if (navbarUser == null || navbarUser.getEmail() == null) {
+            navbarUser = getCurrentUser();
+        }
+        User user = (navbarUser != null && navbarUser.getEmail() != null)
+                ? userService.getUserByEmail(navbarUser.getEmail())
+                : getCurrentUser();
         if (user == null) {
-            user = navbarUser;
+            user = navbarUser != null ? navbarUser : new User();
         }
 
         User_Details userDetails = detailServices.getUserDetails(user);
@@ -97,13 +102,14 @@ public class UserController {
         userDetails.setName(user.getfName() + " " + user.getlName());
         userDetails.setProfileUrl(user.getProfilePic());
         userDetails.setGovtIdType(user.getGovtIdType());
+        userDetails.setGovtIdNumber(user.getGovtIdNumber());
         userDetails.setEmail(user.getEmail());
         userDetails.setPhone(user.getPhone());
         userDetails.setEmailVerified(user.isEmailVerified());
         userDetails.setPhoneVerified(user.isPhoneVerified());
         userDetails.setGovtIdVerified(user.isGovtIdVerified());
         userDetails.setVerify_Request(user.getGovtIdVerifyRequest());
-        userDetails.setRole(user.getRoleList().get(0));
+        userDetails.setRole(user.getRoleList() != null && !user.getRoleList().isEmpty() ? user.getRoleList().get(0) : "ROLE_USER");
         userDetails.setCoins(user.getCoins());
         userDetails.setJoined_Date(user.getDateCreate());
 

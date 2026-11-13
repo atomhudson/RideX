@@ -1,24 +1,154 @@
 <div th:fragment="rideJoinedCard">
-    <div th:each="ride : ${profileRidesDetails.ridesJoined}" style="margin-bottom: 12px;">
-        <a th:href="@{'/user/ride/rideJoined/detail/' + ${ride.rideId}}" class="rx-card" style="display: block; text-decoration: none;">
+    <!--
+        Iterates over profileRidesDetails.requestMade — each RideRequest has:
+          - ride            (the associated Rides entity)
+          - requestStatus   (PENDING / APPROVED / REJECTED)
+          - startOtp        (4-digit boarding OTP, generated on approval)
+          - otpVerified     (true once driver scanned OTP at pickup)
+    -->
+    <div th:each="rideReq : ${profileRidesDetails.requestMade}"
+         style="margin-bottom: 12px;">
+
+        <a th:href="@{'/user/ride/rideJoined/detail/' + ${rideReq.ride.rideId}}" class="rx-card rx-card-3d"
+           style="display: block; text-decoration: none;">
+
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 700; color: var(--rx-text-primary);">
-                        <span th:text="${ride.sourceCity}">Source</span>
+                        <span th:text="${rideReq.ride.sourceCity}">Source</span>
                         <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem; color: var(--rx-accent);"></i>
-                        <span th:text="${ride.destinationCity}">Dest</span>
+                        <span th:text="${rideReq.ride.destinationCity}">Dest</span>
                     </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                        <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'HH:mm')}">08:00</span>
-                        <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">01 Jan</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                        <span class="rx-badge" style="font-weight: 600; color: var(--rx-accent);">
+                            <i class="fa-regular fa-clock" style="margin-right: 4px;"></i>
+                            <span th:text="${#dates.format(rideReq.ride.startTime, 'HH:mm')}">08:00</span>
+                            <span th:if="${rideReq.ride.endTime != null}"
+                                  th:text="' → ' + ${#dates.format(rideReq.ride.endTime, 'HH:mm')}"> → 10:30</span>
+                        </span>
+                        <span class="rx-badge" th:text="${#dates.format(rideReq.ride.startTime, 'dd MMM yyyy')}">01 Jan</span>
+                        <span class="rx-badge" th:if="${rideReq.ride.duration > 0}">
+                            <i class="fa-solid fa-hourglass-half" style="margin-right: 4px; font-size: 0.75rem;"></i>
+                            <span th:text="${rideReq.ride.formattedDuration}">2h 30m</span>
+                        </span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <img th:src="${ride.driver.profilePic}" alt="Driver" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" />
-                        <span style="font-size: 0.84rem; color: var(--rx-text-secondary);" th:text="${ride.driver.fName + ' ' + ride.driver.lName}">Driver</span>
+                        <img th:if="${rideReq.ride != null and rideReq.ride.driver != null and rideReq.ride.driver.profilePic != null}"
+                             th:src="${rideReq.ride.driver.profilePic}" alt="Driver"
+                             style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" />
+                        <span style="font-size: 0.84rem; color: var(--rx-text-secondary);"
+                              th:text="${rideReq.ride != null and rideReq.ride.driver != null ? (rideReq.ride.driver.fName + ' ' + (rideReq.ride.driver.lName != null ? rideReq.ride.driver.lName : '')) : 'Driver'}">Driver</span>
                     </div>
                 </div>
-                <div style="text-align: right;">
-                    <span style="font-size: 1.1rem; font-weight: 800; color: var(--rx-accent);" th:text="'₹' + ${ride.price}">₹500</span>
+
+                <!-- Right: price + status + OTP boarding pass -->
+                <div style="text-align: right; display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                    <span style="font-size: 1.1rem; font-weight: 800; color: var(--rx-accent);"
+                          th:text="'₹' + (${rideReq.finalPrice > 0 ? rideReq.finalPrice : rideReq.ride.price})">₹500</span>
+
+                    <!-- Ride Status -->
+                    <span class="rx-badge"
+                          th:text="${rideReq.ride.rideStatus}"
+                          th:style="${rideReq.ride.rideStatus == 'PLANNED'   ? 'background:rgba(34,197,94,0.15);color:#22c55e;'
+                                    : rideReq.ride.rideStatus == 'ONGOING'  ? 'background:rgba(234,179,8,0.15);color:#eab308;'
+                                    : rideReq.ride.rideStatus == 'COMPLETED'? 'background:rgba(59,130,246,0.15);color:#3b82f6;'
+                                    : 'background:rgba(239,68,68,0.15);color:#ef4444;'}">Status</span>
+
+
+                    <!-- Request Status badge -->
+                    <span class="rx-badge"
+                          th:if="${rideReq.requestStatus == 'PENDING'}"
+                          style="background:rgba(234,179,8,0.1);color:#eab308;border:1px solid rgba(234,179,8,0.3);">
+                        ⏳ Pending Approval
+                    </span>
+                    <span class="rx-badge"
+                          th:if="${rideReq.requestStatus == 'APPROVED'}"
+                          style="background:rgba(34,197,94,0.1);color:#22c55e;border:1px solid rgba(34,197,94,0.3);">
+                        ✅ Approved
+                    </span>
+                    <span class="rx-badge"
+                          th:if="${rideReq.requestStatus == 'REJECTED'}"
+                          style="background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">
+                        ❌ Rejected
+                    </span>
+
+                    <!-- Payment Status Badge & Action -->
+                    <span class="rx-badge"
+                          th:if="${rideReq.paymentStatus == 'PAID'}"
+                          style="background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.3);font-size:0.72rem;display:inline-flex;align-items:center;gap:4px;">
+                        <i class="fa-solid fa-circle-check"></i> Paid
+                    </span>
+                    <button type="button"
+                            th:if="${rideReq.paymentStatus != 'PAID' and rideReq.finalPrice > 0 and rideReq.requestStatus != 'REJECTED'}"
+                            th:attr="data-request-id=${rideReq.requestId}, data-amount=${rideReq.finalPrice}, data-route=${rideReq.ride.sourceCity + ' → ' + rideReq.ride.destinationCity}"
+                            onclick="event.preventDefault(); event.stopPropagation(); payExistingRequest(this.getAttribute('data-request-id'), this.getAttribute('data-amount'), this.getAttribute('data-route'));"
+                            style="padding:4px 10px;border-radius:6px;background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.35);font-size:0.75rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(234,179,8,0.25)'"
+                            onmouseout="this.style.background='rgba(234,179,8,0.15)'">
+                        <i class="fa-solid fa-credit-card"></i> Pay · ₹<span th:text="${rideReq.finalPrice}">100</span>
+                    </button>
+
+                    <!-- ── Boarding OTP ── (APPROVED + not yet boarded + ride is PLANNED) -->
+                    <div th:if="${rideReq.requestStatus == 'APPROVED'
+                                 and !rideReq.otpVerified
+                                 and rideReq.ride.rideStatus == 'PLANNED'}"
+                         onclick="event.preventDefault();"
+                         style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.15));
+                                border:1px solid rgba(99,102,241,0.35);border-radius:12px;
+                                padding:12px 16px;cursor:default;min-width:140px;
+                                box-shadow:0 4px 16px rgba(99,102,241,0.12);">
+                        <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--rx-text-muted);margin-bottom:6px;">
+                            🔐 Boarding OTP
+                        </div>
+                        <div style="font-size:1.8rem;font-weight:900;letter-spacing:0.2em;color:var(--rx-accent);font-family:monospace;line-height:1;"
+                             th:text="${rideReq.startOtp}">????</div>
+                        <div style="font-size:0.65rem;color:var(--rx-text-muted);margin-top:5px;line-height:1.4;">
+                            Show this code to your driver at pickup
+                        </div>
+                    </div>
+
+                    <!-- ── Boarded badge ── -->
+                    <div th:if="${rideReq.otpVerified}"
+                         style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);
+                                border-radius:10px;padding:6px 14px;font-size:0.75rem;color:#22c55e;font-weight:700;">
+                        ✅ Boarded
+                    </div>
+
+                    <!-- ── Live Tracking & Family Safety (For ONGOING or APPROVED rides) ── -->
+                    <div th:if="${rideReq.ride.rideStatus == 'ONGOING' or (rideReq.requestStatus == 'APPROVED' and rideReq.ride.rideStatus == 'PLANNED')}"
+                         style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-top:6px;">
+                        <a th:href="@{'/track-trip/' + ${rideReq.ride.rideId}}"
+                           onclick="event.stopPropagation();"
+                           style="padding:6px 12px;border-radius:8px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.35);text-decoration:none;font-size:0.75rem;font-weight:700;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;"
+                           onmouseover="this.style.background='rgba(16,185,129,0.25)'"
+                           onmouseout="this.style.background='rgba(16,185,129,0.15)'">
+                            <i class="fa-solid fa-location-crosshairs"></i> Track Live
+                        </a>
+                        <a th:href="@{'https://api.whatsapp.com/send?text=' + ${#uris.escapePathSegment('Track my live RideX ride: ' + @environment.getProperty('server.baseUrl', 'http://localhost:8080') + '/track-trip/' + rideReq.ride.rideId + '?token=' + rideReq.ride.trackingToken)}}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           onclick="event.stopPropagation();"
+                           style="padding:6px 10px;border-radius:8px;background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);text-decoration:none;font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:all 0.2s;"
+                           title="Share live location with family on WhatsApp"
+                           onmouseover="this.style.background='rgba(37,211,102,0.25)'"
+                           onmouseout="this.style.background='rgba(37,211,102,0.15)'">
+                            <i class="fa-brands fa-whatsapp"></i> Family Link
+                        </a>
+                    </div>
+
+                    <!-- ── Chat with Driver ── -->
+                    <button type="button"
+                            th:if="${rideReq.ride != null and rideReq.ride.driver != null}"
+                            th:attr="data-ride-id=${rideReq.ride.rideId},
+                                     data-driver-id=${rideReq.ride.driver.userId},
+                                     data-driver-name=${rideReq.ride.driver.fName + ' ' + (rideReq.ride.driver.lName != null ? rideReq.ride.driver.lName : '')},
+                                     data-driver-avatar=${rideReq.ride.driver.profilePic != null ? rideReq.ride.driver.profilePic : ''}"
+                            onclick="event.preventDefault(); event.stopPropagation(); openChat(this.getAttribute('data-ride-id'), this.getAttribute('data-driver-id'), this.getAttribute('data-driver-name'), this.getAttribute('data-driver-avatar'));"
+                            style="padding:6px 14px;border-radius:8px;background:rgba(99,102,241,0.12);color:var(--rx-accent);border:1px solid rgba(99,102,241,0.25);cursor:pointer;font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;margin-top:4px;"
+                            onmouseover="this.style.background='rgba(99,102,241,0.22)'"
+                            onmouseout="this.style.background='rgba(99,102,241,0.12)'">
+                        <i class="fa-regular fa-comment-dots"></i> Chat with Driver
+                    </button>
                 </div>
             </div>
         </a>

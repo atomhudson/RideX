@@ -6,60 +6,70 @@
      x-data="app()"
      th:attr="x-init=|initialize('__${phone}__', '__${step}__', '__${errorMessage}__')|"
      x-cloak>
-    <section class="rx-section" style="padding-top: 140px;">
-        <div class="rx-container" style="max-width: 520px;">
-            <template x-if="step !== 'complete'">
-                <div>
-                    <div style="margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--rx-border);">
-                        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rx-text-muted); margin-bottom: 8px;" x-text="`Step ${step} of 2`"></div>
-                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--rx-text-primary);">
-                            <span x-show="step === 1">Enter Your Phone Number</span>
-                            <span x-show="step === 2">Enter OTP Sent to Your Phone</span>
-                        </div>
-                    </div>
-
-                    <form th:action="@{/user/phoneVerify}" method="post" x-ref="form">
-                        <input type="hidden" name="phone" :value="phone">
-
-                        <div x-show="step === 1">
-                            <div class="rx-form-group">
-                                <input type="text" name="phone_display" x-model="phone" placeholder="Enter phone number" class="rx-form-input" required />
-                            </div>
+    <section class="rx-section" style="padding-top: 140px; padding-bottom: 80px;">
+        <div class="rx-container" style="max-width: 540px;">
+            <div class="rx-card-3d" style="padding: 36px 32px;">
+                <template x-if="step !== 'complete'">
+                    <div>
+                        <div style="margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--rx-border);">
+                            <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--rx-accent); margin-bottom: 8px;" x-text="`Step ${step} of 2`"></div>
+                            <h2 style="font-size: 1.45rem; font-weight: 700; color: var(--rx-text-primary); margin: 0;">
+                                <span x-show="step === 1">Enter Your Phone Number</span>
+                                <span x-show="step === 2">Enter Verification Code</span>
+                            </h2>
+                            <p style="font-size: 0.92rem; color: var(--rx-text-secondary); margin: 6px 0 0;">
+                                <span x-show="step === 1">We'll send an OTP to verify your contact information for rides.</span>
+                                <span x-show="step === 2">Please enter the 6-digit code sent via SMS.</span>
+                            </p>
                         </div>
 
-                        <div x-show="step === 2" style="display: flex; flex-direction: column; gap: 12px;">
-                            <div class="rx-form-group">
-                                <input type="text" name="otp" x-model="otp" placeholder="Enter OTP" class="rx-form-input" required />
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 0.8rem; color: var(--rx-text-muted);">Didn't receive the code?</span>
-                                <button @click="resendOtp" class="rx-link" style="font-size: 0.8rem; background: none; border: none; cursor: pointer;" :disabled="resendDisabled">
-                                    <span x-text="resendDisabled ? `Resend in ${resendTimer}s` : 'Resend OTP'"></span>
+                        <form th:action="@{/user/phoneVerify}" method="post" x-ref="form">
+                            <input type="hidden" name="phone" :value="phone">
+
+                            <div x-show="step === 1">
+                                <div class="rx-form-group" style="margin-bottom: 20px;">
+                                    <label class="rx-form-label" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">Mobile Phone Number</label>
+                                    <input type="text" name="phone_display" x-model="phone" placeholder="e.g. 9876543210" class="rx-form-input" style="font-size: 1.05rem; padding: 14px 18px;" required />
+                                </div>
+                                <button type="button" @click="nextStep()" class="rx-btn rx-btn-primary rx-3d-btn" style="width: 100%; padding: 14px 24px; font-size: 1rem;">
+                                    Send Verification Code <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
                                 </button>
                             </div>
-                        </div>
-                    </form>
-                </div>
-            </template>
 
-            <template x-if="step === 'complete'">
-                <div style="background: rgba(16,185,129,0.1); padding: 24px; border-radius: var(--rx-radius-md); text-align: center; color: var(--rx-accent); font-weight: 600;">
-                    ✅ Phone number verified successfully!
-                </div>
-            </template>
+                            <div x-show="step === 2" style="display: flex; flex-direction: column; gap: 16px;">
+                                <div class="rx-form-group">
+                                    <label class="rx-form-label" style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">One-Time Password (OTP)</label>
+                                    <input type="text" name="otp" x-model="otp" placeholder="Enter 6-digit OTP" class="rx-form-input" style="font-size: 1.15rem; letter-spacing: 0.25em; text-align: center; padding: 14px 18px;" required />
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.88rem; color: var(--rx-text-muted);">Didn't receive the code?</span>
+                                    <button type="button" @click="resendOtp" class="rx-link" style="font-size: 0.88rem; font-weight: 600; background: none; border: none; cursor: pointer; color: var(--rx-accent);" :disabled="resendDisabled">
+                                        <span x-text="resendDisabled ? `Resend in ${resendTimer}s` : 'Resend OTP'"></span>
+                                    </button>
+                                </div>
+                                <div style="display: flex; gap: 12px; margin-top: 8px;">
+                                    <button type="button" @click="step = 1" class="rx-btn rx-btn-outline" style="padding: 12px 20px; font-size: 0.95rem;">Back</button>
+                                    <button type="button" @click="verifyOtp()" class="rx-btn rx-btn-primary rx-3d-btn" style="flex: 1; padding: 12px 20px; font-size: 1rem;">
+                                        Verify & Continue <i class="fa-solid fa-check" style="margin-left: 8px;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </template>
 
-            <template x-if="errorMessage">
-                <div style="background: rgba(239,68,68,0.1); padding: 16px; border-radius: var(--rx-radius-sm); text-align: center; color: #ef4444; margin-top: 16px; font-size: 0.84rem;" x-text="errorMessage"></div>
-            </template>
-        </div>
+                <template x-if="step === 'complete'">
+                    <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); padding: 32px 24px; border-radius: var(--rx-radius-md); text-align: center; color: var(--rx-accent); font-weight: 600;">
+                        <i class="fa-solid fa-circle-check" style="font-size: 2.5rem; margin-bottom: 12px; display: block;"></i>
+                        <span style="font-size: 1.15rem; display: block; margin-bottom: 6px;">Phone Verified Successfully!</span>
+                        <p style="font-size: 0.92rem; color: var(--rx-text-secondary); margin: 0 0 16px;">Your account is now fully verified for rides and notifications.</p>
+                        <a th:href="@{/user/profile}" class="rx-btn rx-btn-primary rx-3d-btn" style="display: inline-flex; padding: 10px 24px;">Return to Profile</a>
+                    </div>
+                </template>
 
-        <div style="position: sticky; bottom: 0; left: 0; right: 0; padding: 20px 0; background: var(--rx-bg-primary);" x-show="step !== 'complete'">
-            <div style="display: flex; justify-content: space-between; max-width: 520px; margin: 0 auto; padding: 0 16px;">
-                <button x-show="step > 1" @click="step--" class="rx-btn rx-btn-outline" style="padding: 10px 24px;">Previous</button>
-                <div>
-                    <button x-show="step === 1" @click="nextStep()" class="rx-btn rx-btn-primary" style="padding: 10px 24px;">Send OTP</button>
-                    <button x-show="step === 2" @click="verifyOtp()" class="rx-btn rx-btn-primary" style="padding: 10px 24px;">Verify</button>
-                </div>
+                <template x-if="errorMessage">
+                    <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); padding: 14px 18px; border-radius: var(--rx-radius-sm); text-align: center; color: #dc2626; margin-top: 18px; font-size: 0.92rem;" x-text="errorMessage"></div>
+                </template>
             </div>
         </div>
     </section>

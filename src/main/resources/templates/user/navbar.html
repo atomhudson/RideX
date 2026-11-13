@@ -6,13 +6,15 @@
         <a th:href="@{'/'}" class="rx-logo">
             <img th:src="@{'/images/logo.svg'}" alt="RideX Logo" />
             <span>RideX</span>
+            <span class="rx-edition-tag"><span class="rx-pulse-dot"></span> Spring '26</span>
         </a>
 
         <ul class="rx-nav-links" id="rx-nav-links">
             <li><a th:href="@{'/'}">Home</a></li>
-            <li><a th:href="@{'/company'}">Company</a></li>
-            <li><a th:href="@{'/features'}">Features</a></li>
-            <li><a th:href="@{'/team'}">Team</a></li>
+            <li><a th:href="@{'/searchRide'}">Find a Ride</a></li>
+            <li><a th:href="@{'/user/ride/create'}">Publish a Ride</a></li>
+            <li><a th:href="@{'/user/profile?tab=trips'}">My Trips</a></li>
+            <li><a th:href="@{'/user/profile?tab=driver'}">Driver Hub</a></li>
         </ul>
 
         <div class="rx-nav-actions">

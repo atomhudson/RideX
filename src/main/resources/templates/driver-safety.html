@@ -4,125 +4,134 @@
     <title>Driver Safety - RideX</title>
 </head>
 <body>
-    <div id="content" class="pt-20 bg-gray-900">
+    <div id="content" style="background: var(--rx-bg-primary); min-height: 100vh; padding: 120px 20px 80px;">
         <!-- Main Content -->
-        <main class="container mx-auto px-4 py-8 max-w-4xl">
-            <h1 class="text-4xl font-bold text-white mb-8 text-center">Driver Safety</h1>
+        <main class="rx-container" style="max-width: 960px; margin: 0 auto;">
             
-            <div class="prose dark:prose-invert max-w-none">
-                <section class="mb-12">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Safety Features</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-white">
-                        <div class="p-6 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
-                            <h3 class="text-xl font-medium mb-3">Emergency Button</h3>
-                            <p>One-tap access to emergency services and immediate support from our safety team</p>
-                        </div>
-                        <div class="p-6 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
-                            <h3 class="text-xl font-medium mb-3">Real-time Trip Sharing</h3>
-                            <p>Share your live location and trip details with trusted contacts for added security</p>
-                        </div>
-                        <div class="p-6 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
-                            <h3 class="text-xl font-medium mb-3">24/7 Support</h3>
-                            <p>Round-the-clock assistance from our dedicated safety team for any concerns</p>
-                        </div>
-                        <div class="p-6 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
-                            <h3 class="text-xl font-medium mb-3">Verified Passengers</h3>
-                            <p>All passengers undergo thorough verification for your peace of mind</p>
-                        </div>
-                    </div>
-                </section>
+            <!-- Page Header -->
+            <div class="rx-section-header rx-reveal" style="text-align: center; margin-bottom: 44px;">
+                <span class="rx-badge" style="margin-bottom: 14px;">
+                    <i class="fa-solid fa-shield-heart"></i> Safety First Architecture
+                </span>
+                <h1 style="font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; color: var(--rx-text-primary); letter-spacing: -0.03em; margin: 0 0 12px;">
+                    Driver &amp; Passenger <span class="rx-text-accent">Safety</span>
+                </h1>
+                <p style="font-size: 1.05rem; color: var(--rx-text-muted); max-width: 640px; margin: 0 auto;">
+                    Every ride on RideX is protected by identity verification, automated SOS triggers, live route telemetry, and comprehensive safety protocols.
+                </p>
+            </div>
 
-                <section class="mb-12">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Safety Guidelines</h2>
-                    <div class="space-y-6 text-white">
-                        <div class="p-6 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-3">Before the Ride</h3>
-                            <ul class="list-disc pl-6 space-y-2">
-                                <li>Verify passenger details and ratings</li>
-                                <li>Conduct pre-trip vehicle inspection</li>
-                                <li>Plan and review your route</li>
-                                <li>Share trip details with trusted contacts</li>
-                                <li>Ensure your phone is fully charged</li>
-                            </ul>
+            <!-- 1. Safety Features Grid (3D Cards) -->
+            <section style="margin-bottom: 48px;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 20px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-star" style="color: var(--rx-accent);"></i> Core Safety Features
+                </h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    
+                    <div class="rx-card-3d rx-reveal" style="padding: 28px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-md);">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(239,68,68,0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 16px;">
+                            <i class="fa-solid fa-bell"></i>
                         </div>
-                        <div class="p-6 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-3">During the Ride</h3>
-                            <ul class="list-disc pl-6 space-y-2">
-                                <li>Strictly follow traffic rules and speed limits</li>
-                                <li>Stay alert and avoid distractions</li>
-                                <li>Maintain professional behavior and boundaries</li>
-                                <li>Keep emergency contacts easily accessible</li>
-                                <li>Use in-app navigation for optimal routes</li>
-                            </ul>
-                        </div>
-                        <div class="p-6 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-3">After the Ride</h3>
-                            <ul class="list-disc pl-6 space-y-2">
-                                <li>Report any safety concerns immediately</li>
-                                <li>Provide honest passenger ratings</li>
-                                <li>Document any incidents with details</li>
-                                <li>Check vehicle condition</li>
-                            </ul>
-                        </div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 8px;">1-Tap Emergency SOS</h3>
+                        <p style="font-size: 0.95rem; line-height: 1.6; color: var(--rx-text-secondary); margin: 0;">Instant connection to police dispatch (112) and rapid intervention from our dedicated 24/7 security control room.</p>
                     </div>
-                </section>
 
-                <section class="mb-12">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Vehicle Safety</h2>
-                    <div class="space-y-6 text-white">
-                        <div class="p-6 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-3">Regular Maintenance</h3>
-                            <ul class="list-disc pl-6 space-y-2">
-                                <li>Schedule regular oil changes and fluid checks</li>
-                                <li>Monitor tire pressure and tread depth</li>
-                                <li>Regular brake system inspections</li>
-                                <li>Check all lights and signals</li>
-                                <li>Maintain clean windshield and mirrors</li>
-                            </ul>
+                    <div class="rx-card-3d rx-reveal rx-reveal-delay-1" style="padding: 28px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-md);">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16,185,129,0.1); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 16px;">
+                            <i class="fa-solid fa-map-location-dot"></i>
                         </div>
-                        <div class="p-6 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-3">Required Safety Equipment</h3>
-                            <ul class="list-disc pl-6 space-y-2">
-                                <li>First aid kit (fully stocked)</li>
-                                <li>Fire extinguisher (ABC type)</li>
-                                <li>Emergency warning triangle</li>
-                                <li>Spare tire and jack</li>
-                                <li>Basic tool kit</li>
-                            </ul>
-                        </div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 8px;">Live GPS Tracking</h3>
+                        <p style="font-size: 0.95rem; line-height: 1.6; color: var(--rx-text-secondary); margin: 0;">Share real-time route telemetry and vehicle progress with your family or trusted contacts via secure private web link.</p>
                     </div>
-                </section>
 
-                <section class="mb-12">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Emergency Procedures</h2>
-                    <div class="space-y-6 text-white">
-                        <div class="p-6 bg-gray-800 rounded-lg">
-                            <h3 class="text-xl font-medium mb-3">In Case of Emergency</h3>
-                            <ol class="list-decimal pl-6 space-y-2">
-                                <li>Use the emergency button in the RideX app</li>
-                                <li>Contact local emergency services (911) if needed</li>
-                                <li>Report the incident to RideX support team</li>
-                                <li>Document the situation with photos if safe to do so</li>
-                                <li>Follow instructions from emergency responders</li>
-                            </ol>
+                    <div class="rx-card-3d rx-reveal rx-reveal-delay-2" style="padding: 28px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-md);">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(99,102,241,0.1); color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 16px;">
+                            <i class="fa-solid fa-key"></i>
                         </div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 8px;">Boarding OTP Shield</h3>
+                        <p style="font-size: 0.95rem; line-height: 1.6; color: var(--rx-text-secondary); margin: 0;">Rides can only commence once the driver validates the passenger's secret 4-digit code, preventing wrong pickups.</p>
                     </div>
-                </section>
 
-                <section class="mb-12">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Need Help?</h2>
-                    <div class="p-6 bg-gray-800 rounded-lg">
-                        <p class="text-white mb-4">
-                            Our safety team is available 24/7 to assist you. Contact us through:
-                        </p>
-                        <ul class="list-disc pl-6 text-white space-y-2">
-                            <li>Emergency Support: Available through the app</li>
-                            <li>Email: ridexspringapp@gmail.com</li>
-                            <li>Address: NIET campus, plot no. 19, Knowledge Park, Greater Noida, Uttar Pradesh, India</li>
+                    <div class="rx-card-3d rx-reveal rx-reveal-delay-3" style="padding: 28px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-md);">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(245,158,11,0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 16px;">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 8px;">DigiLocker Verified</h3>
+                        <p style="font-size: 0.95rem; line-height: 1.6; color: var(--rx-text-secondary); margin: 0;">Direct government API verification ensures verified Aadhaar identity, valid driving licenses, and authentic RC records.</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 2. Step-by-Step Safety Guidelines -->
+            <section style="margin-bottom: 48px;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 20px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-list-check" style="color: var(--rx-accent);"></i> Operational Guidelines
+                </h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                    
+                    <div class="rx-card rx-reveal" style="padding: 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg);">
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 10px; display: flex; align-items: center; gap: 10px;">
+                            <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--rx-accent-light); color: var(--rx-accent); display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700;">1</span>
+                            Before the Trip
+                        </h3>
+                        <ul style="margin: 0; padding-left: 36px; display: flex; flex-direction: column; gap: 6px; font-size: 0.96rem; color: var(--rx-text-secondary);">
+                            <li>Inspect passenger profile, verified badges, and mutual peer reviews before accepting requests.</li>
+                            <li>Check tire pressure, fuel levels, brake fluid, and windscreen visibility.</li>
+                            <li>Ensure smartphone is securely mounted and kept on high battery or connected to a charger.</li>
                         </ul>
                     </div>
-                </section>
+
+                    <div class="rx-card rx-reveal rx-reveal-delay-1" style="padding: 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg);">
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 10px; display: flex; align-items: center; gap: 10px;">
+                            <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--rx-accent-light); color: var(--rx-accent); display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700;">2</span>
+                            During the Journey
+                        </h3>
+                        <ul style="margin: 0; padding-left: 36px; display: flex; flex-direction: column; gap: 6px; font-size: 0.96rem; color: var(--rx-text-secondary);">
+                            <li>All occupants must wear seatbelts at all times; obey posted highway speed limits.</li>
+                            <li>Maintain professional courtesy; zero tolerance for alcohol or substance impairment.</li>
+                            <li>Follow the designated GPS corridor and notify through the app if any essential route detours occur.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rx-card rx-reveal rx-reveal-delay-2" style="padding: 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg);">
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 10px; display: flex; align-items: center; gap: 10px;">
+                            <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--rx-accent-light); color: var(--rx-accent); display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700;">3</span>
+                            After Arrival
+                        </h3>
+                        <ul style="margin: 0; padding-left: 36px; display: flex; flex-direction: column; gap: 6px; font-size: 0.96rem; color: var(--rx-text-secondary);">
+                            <li>Confirm passenger drop-off at a well-lit and secure location.</li>
+                            <li>Leave fair and constructive feedback to help keep the community accountable.</li>
+                            <li>Check the rear seats for forgotten passenger belongings before departing.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 3. Safety Desk Support Banner -->
+            <div class="rx-card-3d rx-reveal" style="padding: 32px 36px; background: linear-gradient(135deg, rgba(5,150,105,0.08), rgba(99,102,241,0.08)); border: 1px solid rgba(5,150,105,0.3); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-md);">
+                <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--rx-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 4px 14px var(--rx-accent-glow);">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 280px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--rx-text-primary); margin: 0 0 6px;">
+                            Need Instant Safety Assistance?
+                        </h3>
+                        <p style="font-size: 0.96rem; color: var(--rx-text-secondary); margin: 0;">
+                            Our dedicated RideX Rapid Incident Response unit is on duty 24 hours a day, 7 days a week.
+                        </p>
+                    </div>
+                    <div>
+                        <a href="mailto:ridexspringapp@gmail.com" class="rx-btn rx-btn-primary" style="padding: 12px 24px; font-weight: 700;">
+                            <i class="fa-solid fa-paper-plane"></i> Contact Safety Desk
+                        </a>
+                    </div>
+                </div>
             </div>
+
         </main>
     </div>
     <script>

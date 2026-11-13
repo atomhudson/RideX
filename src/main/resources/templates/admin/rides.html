@@ -1,434 +1,388 @@
 <!doctype html>
 <html lang="en" th:replace="~{index :: parent(~{::#content},~{::title},~{::script})}">
 <head>
-    <title>Ride Tables | RideX</title>
+    <title>Ride Ledger &amp; Corridors — RideX Administration</title>
     <script defer th:src="@{'/js/alpine.min.js'}"></script>
 </head>
 <body>
-<div id="content">
-    <!-- ====== Page Header Start ====== -->
-    <div class="pt-20 font font-Poppins bg-gray-900">
-        <div class="flex flex-col items-center relative pt-20 overflow-hidden">
-            <h1 class="absolute text-6xl md:text-[10rem] font-bold text-white opacity-10">
-                Getting All The Rides
-            </h1>
-            <div class="relative flex flex-col items-center mt-5 md:mt-10 group">
-                <h1 class="text-3xl md:text-5xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-300 mb-2 transition-all duration-500 group-hover:scale-105">
-                    Know Our Rides
-                </h1>
-                <div class="relative">
-                    <div class="w-20 md:w-32 h-1 bg-gray-600 rounded-full overflow-hidden">
-                        <div class="h-full bg-orange-600 animate-progress-bar origin-left"></div>
-                    </div>
-                    <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-orange-400 rounded-full animate-ping"></div>
-                </div>
+<div id="content" style="background: var(--rx-bg-primary); min-height: 100vh; padding: 110px 20px 80px;">
+    
+    <div class="rx-container" style="max-width: 1400px; margin: 0 auto;">
+        
+        <!-- ====== Page Header Start ====== -->
+        <div class="rx-reveal" style="margin-bottom: 28px; text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 20px; background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.25); color: var(--rx-accent); font-size: 0.78rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;">
+                <i class="fa-solid fa-route"></i> Ride Ledger &amp; Operations
             </div>
-            <p class="mt-6 text-gray-400 text-center max-w-md md:max-w-2xl px-4 text-sm md:text-base animate-fade-in">
-                Here are all the rides I have planned, completed, or offered to others.
+            <h1 style="font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 800; color: var(--rx-text-primary); letter-spacing: -0.02em; margin: 0 0 8px;">
+                Scheduled &amp; Active <span class="rx-text-accent">Carpool Corridors</span>
+            </h1>
+            <p style="font-size: 1rem; color: var(--rx-text-muted); max-width: 640px; margin: 0 auto;">
+                Inspect all scheduled journeys across India, review passenger seat occupancies, verify vehicle specs, and track ride statuses.
             </p>
         </div>
-    </div>
+        <!-- ====== Page Header End ====== -->
 
-    <!-- ====== Page Header End ====== -->
+        <!-- ====== Quick Telemetry Strip ====== -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 24px;" class="rx-reveal">
+            
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(59,130,246,0.12); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Total Corridors</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: var(--rx-text-primary);" th:text="${ridePages.totalElements}">0</div>
+                </div>
+            </div>
 
-    <!-- ====== Table Section Start -->
-    <section class="bg-gray-900 py-20 lg:py-[120px]">
-        <div class="container mx-auto">
-            <div class="-mx-4 flex flex-wrap">
-                <div class="w-full px-4">
-                    <!-- Date Filter Section -->
-                    <div class="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center space-x-4">
-                            <label for="dateFilter" class="text-white text-lg font-medium">Filter by Date:</label>
-                            <form th:action="@{/admin/getRides}" method="get" class="flex items-center space-x-4">
-                                <input type="date" 
-                                       id="dateFilter" 
-                                       name="date"
-                                       th:value="${selectedDate != null ? #dates.format(selectedDate, 'yyyy-MM-dd') : ''}"
-                                       class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                    Filter
-                                </button>
-                                <a th:href="@{/admin/getRides}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                                    Clear
-                                </a>
-                            </form>
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            <span class="text-white">Showing:</span>
-                            <span class="text-blue-400 font-medium" th:text="${ridePages.totalElements + ' rides'}">0 rides</span>
-                        </div>
-                    </div>
-                    <div class="max-w-full overflow-x-auto">
-                        <section x-data="{ 
-                            modalOpen: false, 
-                            selectedCar: {}, 
-                            selectedPassengers: [], 
-                            passengerModalOpen: false,
-                            selectedDate: '',
-                            filteredRides: [],
-                            allRides: [],
-                            showModal: false,
-                            selectedRideId: '',
-                            sortField: 'name',
-                            sortDirection: 'asc',
-                            init() {
-                                this.allRides = Array.from(document.querySelectorAll('tr[data-ride-date]')).map(row => ({
-                                    element: row,
-                                    date: row.dataset.rideDate
-                                }));
-                                this.filteredRides = this.allRides;
-                            },
-                            filterRidesByDate() {
-                                if (!this.selectedDate) {
-                                    this.filteredRides = this.allRides;
-                                    this.allRides.forEach(ride => ride.element.style.display = '');
-                                    return;
-                                }
-                                
-                                const selectedDateStr = new Date(this.selectedDate).toISOString().split('T')[0];
-                                this.filteredRides = this.allRides.filter(ride => {
-                                    const rideDate = ride.date.split(' ')[0];
-                                    const matches = rideDate === selectedDateStr;
-                                    ride.element.style.display = matches ? '' : 'none';
-                                    return matches;
-                                });
-                            },
-                            sortPassengers(field) {
-                                if (this.sortField === field) {
-                                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-                                } else {
-                                    this.sortField = field;
-                                    this.sortDirection = 'asc';
-                                }
-                                
-                                this.selectedPassengers.sort((a, b) => {
-                                    let comparison = 0;
-                                    if (field === 'name') {
-                                        comparison = a.name.localeCompare(b.name);
-                                    } else if (field === 'status') {
-                                        comparison = a.status.localeCompare(b.status);
-                                    }
-                                    return this.sortDirection === 'asc' ? comparison : -comparison;
-                                });
-                            },
-                            showPassengers(event) {
-                                const rideId = event.target.dataset.rideId;
-                                this.selectedRideId = rideId;
-                                
-                                // Get the ride requests data from the server
-                                fetch(`/admin/ride/${rideId}/passengers`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        this.selectedPassengers = data;
-                                        this.sortPassengers('name'); // Default sort by name
-                                        this.showModal = true;
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching passengers:', error);
-                                    });
-                            }
-                        }">
-                        <table class="w-full table-auto border border-gray-700">
-                            <thead>
-                            <tr class="bg-gray-800 text-white text-center border-b border-gray-700">
-                                <th class="min-w-[100px] border border-gray-700 px-3 py-4 text-lg font-semibold">S. No.</th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold">Ride ID</th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold">Driver ID</th>
-                                <th class="min-w-[180px] border border-gray-700 px-3 py-4 text-lg font-semibold">Source</th>
-                                <th class="min-w-[180px] border border-gray-700 px-3 py-4 text-lg font-semibold">Destination</th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold">Start Time</th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold">End Time</th>
-                                <th class="min-w-[140px] border border-gray-700 px-3 py-4 text-lg font-semibold">Seats (A/T)</th>
-                                <th class="min-w-[120px] border border-gray-700 px-3 py-4 text-lg font-semibold">Price (₹)</th>
-                                <th class="min-w-[180px] border border-gray-700 px-3 py-4 text-lg font-semibold">Ride Status</th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold">AC / Luggage</th>
-                                <th class="min-w-[160px] border border-gray-700 px-3 py-4 text-lg font-semibold">Pets / Smoking</th>
-                                <th class="min-w-[180px] border border-gray-700 px-3 py-4 text-lg font-semibold">Car Details</th>
-                                <th class="min-w-[180px] border border-gray-700 px-3 py-4 text-lg font-semibold">Passengers</th>
-                                <th class="min-w-[180px] border border-gray-700 px-3 py-4 text-lg font-semibold">Created At</th>
-                            </tr>
-                            </thead>
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16,185,129,0.12); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Planned Rides</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #10b981;" th:text="${statPlanned != null ? statPlanned : 0}">0</div>
+                </div>
+            </div>
 
-                            <tbody>
-                            <tr th:each="ride, stat : ${ridePages.content}"
-                                th:data-ride-date="${#dates.format(ride.startTime, 'yyyy-MM-dd HH:mm')}"
-                                class="text-sm text-white text-center border-b border-gray-700 hover:bg-gradient-to-r hover:from-blue-800 hover:to-gray-800 transition duration-200 ease-in-out">
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(234,179,8,0.12); color: #eab308; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Ongoing Trips</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #eab308;" th:text="${statOngoing != null ? statOngoing : 0}">0</div>
+                </div>
+            </div>
 
-                                <td th:text="${stat.index + 1}" class="px-4 py-3 font-semibold border-r border-gray-700"></td>
+            <div class="rx-card-3d" style="padding: 18px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(99,102,241,0.12); color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-flag-checkered"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--rx-text-muted); text-transform: uppercase;">Completed</div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #6366f1;" th:text="${statCompleted != null ? statCompleted : 0}">0</div>
+                </div>
+            </div>
 
-                                <td th:text="${ride.rideId}" class="px-4 py-3 border-r border-gray-700"></td>
+        </div>
 
-                                <td th:text="${ride.driver.userId}" class="px-4 py-3 border-r border-gray-700"></td>
+        <!-- ====== Filter & Interactive Control Bar Start ====== -->
+        <div class="rx-card-3d rx-reveal" style="padding: 20px 24px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); margin-bottom: 24px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+                
+                <!-- Date Filter Form -->
+                <form th:action="@{/admin/getRides}" method="get" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+                    <label for="dateFilter" style="font-size: 0.92rem; font-weight: 600; color: var(--rx-text-primary); margin: 0;">
+                        <i class="fa-regular fa-calendar" style="color: var(--rx-accent); margin-right: 4px;"></i> Date Filter:
+                    </label>
+                    <input type="date" id="dateFilter" name="date"
+                           th:value="${selectedDate != null ? #dates.format(selectedDate, 'yyyy-MM-dd') : ''}"
+                           class="rx-form-input" style="padding: 8px 14px; font-size: 0.9rem; min-width: 170px;" />
+                    
+                    <button type="submit" class="rx-btn rx-btn-primary" style="padding: 8px 20px; font-weight: 700; font-size: 0.9rem;">
+                        <i class="fa-solid fa-filter"></i> Apply
+                    </button>
+                    <a th:href="@{/admin/getRides}" class="rx-btn rx-btn-outline" style="padding: 8px 16px; font-size: 0.88rem;">
+                        <i class="fa-solid fa-rotate-left"></i> Clear
+                    </a>
+                </form>
 
-                                <td class="px-4 py-3 border-r border-gray-700">
-                                    <span th:text="${ride.sourceCity}" class="font-medium text-blue-400"></span> -
-                                    <span th:text="${ride.sourceAddress}" class="text-gray-300"></span>
-                                </td>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.92rem; color: var(--rx-text-muted);">
+                    <span>Filtered Count:</span>
+                    <span style="font-weight: 700; color: var(--rx-accent); background: var(--rx-accent-light); padding: 4px 12px; border-radius: 12px;" th:text="${ridePages.totalElements}">0</span>
+                </div>
 
-                                <td class="px-4 py-3 border-r border-gray-700">
-                                    <span th:text="${ride.destinationCity}" class="font-medium text-green-400"></span> -
-                                    <span th:text="${ride.destinationAddress}" class="text-gray-300"></span>
-                                </td>
+            </div>
 
-                                <td th:text="${#dates.format(ride.startTime, 'dd-MM-yyyy HH:mm')}"
-                                    class="px-4 py-3 border-r border-gray-700 text-yellow-300 font-medium"></td>
+            <!-- Quick Status Filter Pills & Instant Keystroke Search -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; width: 100%; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rx-border);">
+                <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--rx-text-muted); margin-right: 4px;">Status:</span>
+                <button type="button" class="rx-filter-chip active" onclick="filterAdminRides('all', this)">All</button>
+                <button type="button" class="rx-filter-chip" onclick="filterAdminRides('PLANNED', this)">⚡ Planned</button>
+                <button type="button" class="rx-filter-chip" onclick="filterAdminRides('ONGOING', this)">🚀 Ongoing</button>
+                <button type="button" class="rx-filter-chip" onclick="filterAdminRides('COMPLETED', this)">✓ Completed</button>
+                <button type="button" class="rx-filter-chip" onclick="filterAdminRides('CANCELLED', this)">✕ Cancelled</button>
 
-                                <td th:text="${#dates.format(ride.endTime, 'dd-MM-yyyy HH:mm')}"
-                                    class="px-4 py-3 border-r border-gray-700 text-pink-300 font-medium"></td>
-
-                                <td class="px-4 py-3 border-r border-gray-700">
-                                    <span th:text="${ride.availableSeats}" class="text-lime-300 font-semibold"></span> /
-                                    <span th:text="${ride.totalSeats}" class="text-gray-300"></span>
-                                </td>
-
-                                <td th:text="${ride.price}" class="px-4 py-3 border-r border-gray-700 text-orange-400 font-semibold"></td>
-
-                                <td class="px-4 py-3 border-r border-gray-700 font-semibold uppercase text-center">
-                                    <span th:if="${ride.rideStatus == 'PLANNED'}" th:text="${ride.rideStatus}" class="m-2 inline-block rounded-sm bg-green-600 px-2.5 py-1 text-xs font-medium text-white">
-                                        SUCCESS
-                                    </span>
-                                    <span th:if="${ride.rideStatus == 'COMPLETED'}" th:text="${ride.rideStatus}" class="m-2 inline-block rounded-sm bg-blue-600 px-2.5 py-1 text-xs font-medium text-white">
-                                        PRIMARY
-                                    </span>
-                                    <span th:if="${ride.rideStatus == 'CANCELLED'}" th:text="${ride.rideStatus}" class="m-2 inline-block rounded-sm bg-red-600 px-2.5 py-1 text-xs font-medium text-white">
-                                        DANGER
-                                    </span>
-                                    <span th:if="${ride.rideStatus == 'ONGOING'}" th:text="${ride.rideStatus}" class="m-2 inline-block rounded-sm bg-yellow-500 px-2.5 py-1 text-xs font-medium text-white">
-                                        WARNING
-                                    </span>
-                                </td>
-
-                                <td class="px-4 py-3 border-r border-gray-700">
-                                    <span th:text="${ride.acAvailable ? 'Yes' : 'No'}" class="text-cyan-400 font-medium"></span> /
-                                    <span th:text="${ride.luggageAllowed ? 'Yes' : 'No'}" class="text-violet-300 font-medium"></span>
-                                </td>
-
-                                <td class="px-4 py-3 border-r border-gray-700">
-                                    <span th:text="${ride.allowPets ? 'Yes' : 'No'}" class="text-pink-400 font-medium"></span> /
-                                    <span th:text="${ride.allowSmoking ? 'Yes' : 'No'}" class="text-red-400 font-medium"></span>
-                                </td>
-
-                                <td class="px-4 py-3 border-r border-gray-700">
-                                    <button 
-                                        th:data-car-make="${ride.car.carMake}"
-                                        th:data-car-model="${ride.car.carModel}"
-                                        th:data-car-number="${ride.car.carNumber}"
-                                        th:data-car-year="${ride.car.year}"
-                                        th:data-car-type="${ride.car.carType}"
-                                        th:data-car-color="${ride.car.color}"
-                                        th:data-car-fuel="${ride.car.fuelType}"
-                                        th:data-car-seats="${ride.car.seat_available}"
-                                        th:data-car-ac="${ride.car.ac_available}"
-                                        @click="selectedCar = {
-                                            make: $el.dataset.carMake,
-                                            model: $el.dataset.carModel,
-                                            number: $el.dataset.carNumber,
-                                            year: $el.dataset.carYear,
-                                            type: $el.dataset.carType,
-                                            color: $el.dataset.carColor,
-                                            fuel: $el.dataset.carFuel,
-                                            seats: $el.dataset.carSeats,
-                                            ac: $el.dataset.carAc
-                                        }; modalOpen = true"
-                                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-1 px-3 rounded text-xs">
-                                        View Car
-                                    </button>
-                                </td>
-                                <td class="px-4 py-3 border-r border-gray-700">
-                                    <button 
-                                        th:if="${not #lists.isEmpty(ride.rideRequests)}"
-                                        th:data-passenger-count="${#lists.size(ride.rideRequests)}"
-                                        th:data-ride-id="${ride.rideId}"
-                                        @click="showPassengers($event)"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-                                        View Passengers
-                                    </button>
-                                </td>
-                                <td th:text="${#dates.format(ride.createdAt, 'dd-MM-yyyy HH:mm')}" class="px-4 py-3 text-gray-400"></td>
-                            </tr>
-                            <div x-show="modalOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4 py-5">
-                                <div @click.outside="modalOpen = false"
-                                     class="w-full max-w-lg rounded-2xl bg-white dark:bg-gray-900 p-8 shadow-xl ring-1 ring-gray-200 dark:ring-gray-700 text-center">
-                                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Car Details</h3>
-                                    <span class="block w-24 h-1 bg-blue-600 mx-auto mb-6 rounded"></span>
-
-                                    <div class="text-left text-sm space-y-3 text-gray-700 dark:text-gray-300">
-                                        <p><span class="font-semibold">Make:</span> <span x-text="selectedCar.make"></span></p>
-                                        <p><span class="font-semibold">Model:</span> <span x-text="selectedCar.model"></span></p>
-                                        <p><span class="font-semibold">Car Number:</span> <span x-text="selectedCar.number"></span></p>
-                                        <p><span class="font-semibold">Year:</span> <span x-text="selectedCar.year"></span></p>
-                                        <p><span class="font-semibold">Type:</span> <span x-text="selectedCar.type"></span></p>
-                                        <p><span class="font-semibold">Color:</span> <span x-text="selectedCar.color"></span></p>
-                                        <p><span class="font-semibold">Fuel:</span> <span x-text="selectedCar.fuel"></span></p>
-                                        <p><span class="font-semibold">Seats:</span> <span x-text="selectedCar.seats"></span></p>
-                                        <p><span class="font-semibold">AC Available:</span> <span x-text="selectedCar.ac === 'true' ? 'Yes' : 'No'"></span></p>
-                                    </div>
-                                    <div class="mt-6">
-                                        <button @click="modalOpen = false"
-                                                class="mt-4 inline-block px-6 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-md">
-                                            Close
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Passenger Modal -->
-                            <div x-show="showModal" 
-                                 class="fixed inset-0 z-50 overflow-y-auto" 
-                                 x-transition:enter="transition ease-out duration-300"
-                                 x-transition:enter-start="opacity-0"
-                                 x-transition:enter-end="opacity-100"
-                                 x-transition:leave="transition ease-in duration-200"
-                                 x-transition:leave-start="opacity-100"
-                                 x-transition:leave-end="opacity-0">
-                                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                                    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                                        <div class="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
-                                    </div>
-
-                                    <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full relative">
-                                        <!-- Close button -->
-                                        <button @click="showModal = false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                            </svg>
-                                        </button>
-
-                                        <!-- Modal content -->
-                                        <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 max-h-[80vh] overflow-y-auto">
-                                            <div class="sm:flex sm:items-start">
-                                                <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                                                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
-                                                        Passengers for Ride <span x-text="selectedRideId"></span>
-                                                    </h3>
-                                                    <!-- Sort Controls -->
-                                                    <div class="flex gap-4 mb-4">
-                                                        <button @click="sortPassengers('name')" 
-                                                                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                                                                :class="sortField === 'name' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'">
-                                                            Sort by Name
-                                                            <span x-show="sortField === 'name'" x-text="sortDirection === 'asc' ? ' ↑' : ' ↓'"></span>
-                                                        </button>
-                                                        <button @click="sortPassengers('status')"
-                                                                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                                                                :class="sortField === 'status' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'">
-                                                            Sort by Status
-                                                            <span x-show="sortField === 'status'" x-text="sortDirection === 'asc' ? ' ↑' : ' ↓'"></span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="mt-2 space-y-4">
-                                                        <template x-for="(passenger, index) in selectedPassengers" :key="index">
-                                                            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg hover:shadow-lg transition-shadow duration-200">
-                                                                <div class="flex justify-between items-start">
-                                                                    <div class="text-left text-sm space-y-2 text-gray-700 dark:text-gray-300">
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Name:</span> 
-                                                                            <span x-text="passenger.name" class="ml-2"></span>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Email:</span> 
-                                                                            <a :href="'mailto:' + passenger.email" x-text="passenger.email" class="ml-2 text-blue-500 hover:text-blue-600"></a>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Phone:</span> 
-                                                                            <a :href="'tel:' + passenger.phone" x-text="passenger.phone" class="ml-2 text-blue-500 hover:text-blue-600"></a>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">User ID:</span> 
-                                                                            <span x-text="passenger.userId" class="ml-2"></span>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Seats:</span> 
-                                                                            <span x-text="passenger.seats" class="ml-2"></span>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Request Time:</span> 
-                                                                            <span x-text="passenger.requestTime" class="ml-2"></span>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Coins Used:</span> 
-                                                                            <span x-text="passenger.coins" class="ml-2 text-yellow-500"></span>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Final Price:</span> 
-                                                                            <span x-text="'₹' + passenger.price" class="ml-2 text-green-500"></span>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Co-Driver:</span> 
-                                                                            <span x-text="passenger.isCoDriver ? 'Yes' : 'No'" 
-                                                                                  :class="passenger.isCoDriver ? 'text-green-500' : 'text-gray-500'"
-                                                                                  class="ml-2 font-medium"></span>
-                                                                        </p>
-                                                                        <p class="flex items-center">
-                                                                            <span class="font-semibold w-24">Status:</span> 
-                                                                            <span x-text="passenger.status" 
-                                                                                  :class="{
-                                                                                    'text-green-500': passenger.status === 'ACCEPTED',
-                                                                                    'text-yellow-500': passenger.status === 'PENDING',
-                                                                                    'text-red-500': passenger.status === 'REJECTED'
-                                                                                  }"
-                                                                                  class="ml-2 font-medium px-2 py-1 rounded-full text-xs"
-                                                                                  :style="{
-                                                                                    'background-color': passenger.status === 'ACCEPTED' ? 'rgba(34, 197, 94, 0.1)' : 
-                                                                                                        passenger.status === 'PENDING' ? 'rgba(234, 179, 8, 0.1)' : 
-                                                                                                        'rgba(239, 68, 68, 0.1)'
-                                                                                  }"></span>
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </tbody>
-                        </table>
-                        </section>
-                    </div>
+                <div style="margin-left: auto; position: relative; min-width: 260px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--rx-text-muted); font-size: 0.85rem;"></i>
+                    <input type="text" id="adminRideSearchInput" placeholder="Filter by city, route, or driver ID..."
+                           class="rx-form-input" style="padding: 7px 12px 7px 34px; font-size: 0.88rem; border-radius: 20px;" />
                 </div>
             </div>
         </div>
-    </section>
-    <!-- ====== Table Section End -->
-    <!-- ====== Pagination Section Start -->
-    <div th:if="${ridePages.totalElements > 0}" class="pagination_container bg-white dark:bg-gray-900 p-5 text-center">
-        <nav aria-label="Page navigation">
-            <ul class="inline-flex -space-x-px text-base h-10">
-                <!-- Previous Button -->
-                <li th:unless="${ridePages.first}">
-                    <a th:href="@{/admin/getRides(size=${pageSize}, page=${ridePages.number - 1})}"
-                       class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-s-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                        Previous
-                    </a>
-                </li>
+        <!-- ====== Filter & Action Bar End ====== -->
 
-                <!-- Page Numbers -->
-                <li th:each="index : ${#numbers.sequence(0, ridePages.totalPages - 1)}">
-                    <a th:href="@{/admin/getRides(size=${pageSize}, page=${index})}"
-                       th:classappend="${index == ridePages.number} ? 'text-white bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500' : 'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white'"
-                       class="flex items-center justify-center px-4 h-10 leading-tight border border-gray-300 dark:border-gray-700">
-                        <span th:text="${index + 1}"></span>
-                    </a>
-                </li>
+        <!-- ====== Table Section Start ====== -->
+        <div class="rx-card-3d rx-reveal rx-reveal-delay-1" style="background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-md); overflow: hidden;">
+            <div class="max-w-full overflow-x-auto"
+                 x-data="{ 
+                    selectedPassengers: [], 
+                    passengerModalOpen: false,
+                    selectedRideId: '',
+                    showPassengers(rideId) {
+                        this.selectedRideId = rideId;
+                        fetch(`/admin/ride/${rideId}/passengers`)
+                            .then(r => r.json())
+                            .then(data => {
+                                this.selectedPassengers = data;
+                                this.passengerModalOpen = true;
+                            })
+                            .catch(err => console.error('Passenger fetch error:', err));
+                    }
+                 }">
+                
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+                    <thead style="background: var(--rx-surface-alt); border-bottom: 2px solid var(--rx-border); text-transform: uppercase; font-size: 0.76rem; letter-spacing: 0.05em; color: var(--rx-text-muted);">
+                    <tr>
+                        <th style="padding: 14px 16px; text-align: center;">#</th>
+                        <th style="padding: 14px 16px;">Ride Route</th>
+                        <th style="padding: 14px 16px;">Driver</th>
+                        <th style="padding: 14px 16px;">Schedule</th>
+                        <th style="padding: 14px 16px; text-align: center;">Seats (A/T)</th>
+                        <th style="padding: 14px 16px; text-align: center;">Fare</th>
+                        <th style="padding: 14px 16px; text-align: center;">Status</th>
+                        <th style="padding: 14px 16px; text-align: center;">Vehicle</th>
+                        <th style="padding: 14px 16px; text-align: center;">Passengers</th>
+                    </tr>
+                    </thead>
+                    <tbody id="adminRideTableBody">
+                    <tr th:if="${ridePages.content == null or ridePages.content.isEmpty()}">
+                        <td colspan="9" style="padding: 48px; text-align: center; color: var(--rx-text-muted); font-size: 1rem;">
+                            <i class="fa-solid fa-car-side" style="font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
+                            No rides found matching current criteria.
+                        </td>
+                    </tr>
+                    <tr th:each="ride, iterStat : ${ridePages.content}"
+                        class="rx-ride-row"
+                        th:attr="data-ride-status=${ride.rideStatus}"
+                        style="border-bottom: 1px solid var(--rx-border); transition: background 0.15s ease;"
+                        onmouseover="this.style.background='var(--rx-surface-alt)'" onmouseout="this.style.background='transparent'">
+                        
+                        <!-- Index -->
+                        <td style="padding: 14px 16px; text-align: center; font-weight: 600; color: var(--rx-text-muted);"
+                            th:text="${iterStat.index + 1}">1</td>
 
-                <!-- Next Button -->
-                <li th:unless="${ridePages.last}">
-                    <a th:href="@{/admin/getRides(size=${pageSize}, page=${ridePages.number + 1})}"
-                       class="flex items-center justify-center px-4 h-10 leading-tight text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-e-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                        Next
-                    </a>
-                </li>
-            </ul>
-        </nav>
+                        <!-- Route -->
+                        <td style="padding: 14px 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--rx-text-primary);">
+                                <span th:text="${ride.sourceCity}">Source</span>
+                                <i class="fa-solid fa-arrow-right" style="color: var(--rx-accent); font-size: 0.75rem;"></i>
+                                <span th:text="${ride.destinationCity}">Destination</span>
+                            </div>
+                            <div style="font-family: monospace; font-size: 0.76rem; color: var(--rx-text-muted); margin-top: 3px;"
+                                 th:text="${ride.rideId}">RIDE001</div>
+                        </td>
+
+                        <!-- Driver -->
+                        <td style="padding: 14px 16px;">
+                            <div style="font-weight: 600; color: var(--rx-text-primary);"
+                                 th:text="${ride.driver != null && ride.driver.fName != null ? (ride.driver.fName + ' ' + (ride.driver.lName != null ? ride.driver.lName : '')) : 'Driver'}">
+                                Driver Name
+                            </div>
+                            <div style="font-size: 0.78rem; color: var(--rx-text-muted);"
+                                 th:text="${ride.driver != null ? ride.driver.email : ride.driverUserId}">driver@example.com</div>
+                        </td>
+
+                        <!-- Schedule -->
+                        <td style="padding: 14px 16px;">
+                            <div style="color: var(--rx-text-primary); font-weight: 600; font-size: 0.88rem;"
+                                 th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">01 Jan 2026</div>
+                            <div style="font-size: 0.8rem; color: var(--rx-accent); font-weight: 700; margin-top: 2px;">
+                                <i class="fa-regular fa-clock" style="margin-right: 4px;"></i>
+                                <span th:text="${#dates.format(ride.startTime, 'HH:mm')}">09:00</span>
+                                <span th:if="${ride.endTime != null}" th:text="' → ' + ${#dates.format(ride.endTime, 'HH:mm')}"> → 11:30</span>
+                            </div>
+                        </td>
+
+                        <!-- Seats -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <span class="rx-badge" style="font-weight: 800; font-size: 0.8rem; color: var(--rx-text-primary);"
+                                  th:text="${ride.availableSeats + ' / ' + ride.totalSeats}">2 / 4</span>
+                        </td>
+
+                        <!-- Fare -->
+                        <td style="padding: 14px 16px; text-align: center; font-weight: 800; color: var(--rx-accent); font-size: 1.05rem;"
+                            th:text="'₹' + ${ride.price}">₹150</td>
+
+                        <!-- Status -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <span class="rx-badge"
+                                  th:text="${ride.rideStatus}"
+                                  th:style="${ride.rideStatus == 'PLANNED'   ? 'background:rgba(16,185,129,0.12);color:#059669;'
+                                            : ride.rideStatus == 'ONGOING'  ? 'background:rgba(234,179,8,0.15);color:#b45309;'
+                                            : ride.rideStatus == 'COMPLETED'? 'background:rgba(59,130,246,0.12);color:#2563eb;'
+                                            : 'background:rgba(239,68,68,0.1);color:#dc2626;'}">
+                                PLANNED
+                            </span>
+                        </td>
+
+                        <!-- Vehicle -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <div th:if="${ride.car != null}">
+                                <div style="font-weight: 700; font-size: 0.85rem; color: var(--rx-text-primary);"
+                                     th:text="${ride.car.carMake + ' ' + ride.car.carModel}">Kia Sonet</div>
+                                <div style="font-size: 0.74rem; color: var(--rx-text-muted); font-family: monospace;"
+                                     th:text="${ride.car.carNumber}">UP21 AW 5256</div>
+                            </div>
+                            <div th:unless="${ride.car != null}" style="color: var(--rx-text-muted); font-size: 0.82rem;">—</div>
+                        </td>
+
+                        <!-- Action / Passenger List -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <button type="button"
+                                    th:attr="@click='showPassengers(\'' + ${ride.rideId} + '\')'"
+                                    class="rx-btn rx-btn-outline rx-btn-sm"
+                                    style="padding: 6px 14px; font-size: 0.78rem; font-weight: 700;">
+                                <i class="fa-solid fa-users" style="margin-right: 4px;"></i> Passengers
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Passenger Details Modal (Alpine.js) -->
+                <div x-show="passengerModalOpen" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center;"
+                     @click.self="passengerModalOpen = false"
+                     :style="{ display: passengerModalOpen ? 'flex' : 'none' }">
+                    <div style="background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-xl); box-shadow: var(--rx-shadow-xl); max-width: 620px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 28px;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--rx-border);">
+                            <div>
+                                <h3 style="font-family: var(--rx-heading-font); font-size: 1.3rem; font-weight: 800; color: var(--rx-text-primary); margin: 0;">
+                                    <i class="fa-solid fa-users" style="color: var(--rx-accent);"></i> Passenger Roster
+                                </h3>
+                                <p style="font-size: 0.84rem; color: var(--rx-text-muted); margin: 4px 0 0;" x-text="'Ride Token: ' + selectedRideId"></p>
+                            </div>
+                            <button type="button" @click="passengerModalOpen = false" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--rx-text-muted);">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <template x-if="selectedPassengers.length === 0">
+                            <div style="text-align: center; padding: 36px 0; color: var(--rx-text-muted);">
+                                <i class="fa-solid fa-user-slash" style="font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
+                                No passengers have requested or joined this ride yet.
+                            </div>
+                        </template>
+
+                        <div style="display: flex; flex-direction: column; gap: 12px;" x-show="selectedPassengers.length > 0">
+                            <template x-for="p in selectedPassengers" :key="p.userId">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: var(--rx-radius-md); background: var(--rx-surface-alt); border: 1px solid var(--rx-border);">
+                                    <div>
+                                        <div style="font-weight: 700; color: var(--rx-text-primary);" x-text="p.name"></div>
+                                        <div style="font-size: 0.8rem; color: var(--rx-text-muted);" x-text="p.email + ' · ' + p.phone"></div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <span class="rx-badge" style="background: rgba(16,185,129,0.12); color: #059669; font-weight: 800; font-size: 0.74rem;" x-text="p.status"></span>
+                                        <div style="font-size: 0.8rem; font-weight: 700; color: var(--rx-accent); margin-top: 4px;" x-text="p.seats + ' Seat(s) · ₹' + p.price"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <button type="button" @click="passengerModalOpen = false" class="rx-btn rx-btn-outline" style="width: 100%; margin-top: 24px; padding: 10px;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ====== Pagination Section Start ====== -->
+            <div th:if="${ridePages.totalElements > 0}" style="padding: 20px 24px; border-top: 1px solid var(--rx-border); background: var(--rx-surface-alt); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                <div style="font-size: 0.88rem; color: var(--rx-text-muted);">
+                    Showing <strong style="color: var(--rx-text-primary);" th:text="${ridePages.numberOfElements}">0</strong> of <strong style="color: var(--rx-text-primary);" th:text="${ridePages.totalElements}">0</strong> registered corridors
+                </div>
+                
+                <nav aria-label="Page navigation">
+                    <ul style="display: inline-flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0;">
+                        <!-- Previous Button -->
+                        <li th:unless="${ridePages.first}">
+                            <a th:href="@{/admin/getRides(size=${pageSize}, page=${ridePages.number - 1}, date=${selectedDate != null ? #dates.format(selectedDate, 'yyyy-MM-dd') : ''})}"
+                                style="padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: var(--rx-surface); border: 1px solid var(--rx-border); color: var(--rx-text-primary); text-decoration: none;">
+                                ← Prev
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        <li th:each="index : ${#numbers.sequence(0, ridePages.totalPages - 1)}">
+                            <a th:href="@{/admin/getRides(size=${pageSize}, page=${index}, date=${selectedDate != null ? #dates.format(selectedDate, 'yyyy-MM-dd') : ''})}"
+                               th:style="${index == ridePages.number ? 'background: var(--rx-accent); color: #fff; border: 1px solid var(--rx-accent);' : 'background: var(--rx-surface); color: var(--rx-text-primary); border: 1px solid var(--rx-border);'}"
+                               style="padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none;">
+                                <span th:text="${index + 1}"></span>
+                            </a>
+                        </li>
+
+                        <!-- Next Button -->
+                        <li th:unless="${ridePages.last}">
+                            <a th:href="@{/admin/getRides(size=${pageSize}, page=${ridePages.number + 1}, date=${selectedDate != null ? #dates.format(selectedDate, 'yyyy-MM-dd') : ''})}"
+                                style="padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: var(--rx-surface); border: 1px solid var(--rx-border); color: var(--rx-text-primary); text-decoration: none;">
+                                Next →
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- ====== Pagination Section End ====== -->
+
+        </div>
+        <!-- ====== Table Section End ====== -->
+
     </div>
-    <!-- ====== Pagination Section End -->
 </div>
+
+<style>
+    .rx-filter-chip {
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: var(--rx-surface);
+        color: var(--rx-text-secondary);
+        border: 1px solid var(--rx-border);
+        transition: all 0.2s ease;
+    }
+    .rx-filter-chip:hover {
+        border-color: var(--rx-accent);
+        color: var(--rx-accent);
+    }
+    .rx-filter-chip.active {
+        background: var(--rx-text-primary);
+        color: #ffffff;
+        border-color: var(--rx-text-primary);
+    }
+</style>
+
 <script>
-    console.log("Ride Table");
+    function filterAdminRides(status, btn) {
+        document.querySelectorAll('.rx-filter-chip').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const rows = document.querySelectorAll('.rx-ride-row');
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-ride-status') || '';
+            let show = (status === 'all' || rowStatus.toUpperCase() === status);
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    // Client-side quick filter on keyup in the input
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('adminRideSearchInput');
+        if (input) {
+            input.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('.rx-ride-row');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = (!term || text.includes(term)) ? '' : 'none';
+                });
+            });
+        }
+    });
 </script>
 </body>
 </html>

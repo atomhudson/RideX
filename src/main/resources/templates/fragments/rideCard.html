@@ -112,7 +112,10 @@
     <!-- Main Content: Ride Cards -->
     <main>
         <ul id="rideList" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px;">
-            <li th:each="ride : ${matchedRides}" th:if="${ride.rideStatus == 'PLANNED' or ride.rideStatus == 'ONGOING'}"
+            <li th:each="ride : ${matchedRides}" th:if="${ride.rideStatus != null and (#strings.equalsIgnoreCase(ride.rideStatus, 'PLANNED') or #strings.equalsIgnoreCase(ride.rideStatus, 'ONGOING'))}"
+                th:data-time="${#dates.format(ride.startTime, 'HH:mm')}"
+                th:data-duration="${ride.duration}"
+                th:data-price="${ride.price}"
                 th:data-amenities="${#strings.concat(
                     #strings.concat(
                         #strings.concat(
@@ -125,33 +128,61 @@
                         ride.allowPets ? 'pets' : ''
                     )
                 )}">
-                <div class="rx-card" style="display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;">
+                <div class="rx-card rx-card-3d" style="display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;">
                     <!-- Route Info -->
                     <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
-                        <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--rx-accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-car" style="color: var(--rx-accent); font-size: 1.1rem;"></i>
+                        <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--rx-accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);">
+                            <i class="fa-solid fa-car" style="color: var(--rx-accent); font-size: 1.25rem;"></i>
                         </div>
                         <div>
-                            <div style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 700; color: var(--rx-text-primary);">
+                            <div style="display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 700; color: var(--rx-text-primary);">
                                 <span th:text="${ride.sourceCity}">Delhi</span>
-                                <i class="fa-solid fa-arrow-right" style="font-size: 0.7rem; color: var(--rx-accent);"></i>
+                                <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem; color: var(--rx-accent);"></i>
                                 <span th:text="${ride.destinationCity}">Chandigarh</span>
                             </div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-                                <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">10 May 2025</span>
-                                <span class="rx-badge" th:text="${#dates.format(ride.startTime, 'HH:mm')}">09:00</span>
-                                <span class="rx-badge" th:text="${ride.driver.fName + ' ' + ride.driver.lName}">Driver Name</span>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center;">
+                                <span class="rx-badge" style="font-size: 0.85rem;" th:text="${#dates.format(ride.startTime, 'dd MMM yyyy')}">10 May 2025</span>
+                                
+                                <!-- Departure & Arrival Time -->
+                                <span class="rx-badge" style="font-size: 0.85rem; font-weight: 700; color: var(--rx-accent);">
+                                    <i class="fa-regular fa-clock" style="margin-right: 4px;"></i>
+                                    <span th:text="${#dates.format(ride.startTime, 'HH:mm')}">09:00</span>
+                                    <span th:if="${ride.endTime != null}" th:text="' → ' + ${#dates.format(ride.endTime, 'HH:mm')}"> → 11:30</span>
+                                </span>
+
+                                <!-- Duration of Ride -->
+                                <span class="rx-badge" style="font-size: 0.85rem;" th:if="${ride.duration > 0}">
+                                    <i class="fa-solid fa-hourglass-half" style="margin-right: 4px; font-size: 0.8rem; color: var(--rx-accent);"></i>
+                                    <span th:text="${ride.formattedDuration}">2h 30m</span>
+                                </span>
+
+                                <!-- Distance -->
+                                <span class="rx-badge" style="font-size: 0.85rem;" th:if="${ride.distance > 0}">
+                                    <i class="fa-solid fa-road" style="margin-right: 4px; font-size: 0.8rem;"></i>
+                                    <span th:text="${#numbers.formatDecimal(ride.distance, 1, 1)} + ' km'">120 km</span>
+                                </span>
+
+                                <span class="rx-badge" style="font-size: 0.85rem; font-weight: 700; color: #10b981; background: rgba(16,185,129,0.1);">
+                                    <i class="fa-solid fa-chair" style="margin-right: 4px;"></i>
+                                    <span th:text="${ride.availableSeats} + ' seats left'">2 seats left</span>
+                                </span>
+
+                                <span class="rx-badge" style="font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <img th:if="${ride.driver != null and ride.driver.profilePic != null}" th:src="${ride.driver.profilePic}" style="width: 18px; height: 18px; border-radius: 50%; object-fit: cover;" alt="Driver" />
+                                    <i th:unless="${ride.driver != null and ride.driver.profilePic != null}" class="fa-solid fa-user-check" style="color: var(--rx-accent); font-size: 0.8rem;"></i>
+                                    <span th:text="${ride.driver != null and ride.driver.fName != null ? (ride.driver.fName + ' ' + (ride.driver.lName != null ? ride.driver.lName : '')) : 'Verified Driver'}">Driver Name</span>
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Price & Action -->
                     <div style="text-align: right; flex-shrink: 0;">
-                        <p style="font-size: 1.5rem; font-weight: 800; color: var(--rx-accent); margin: 0;" th:text="'₹' + ${ride.price}">
+                        <p style="font-size: 1.65rem; font-weight: 800; color: var(--rx-accent); margin: 0; font-family: var(--rx-heading-font);" th:text="'₹' + ${ride.price}">
                             ₹150
                         </p>
-                        <a th:href="@{'/user/ride/detail/' + ${ride.rideId}}" class="rx-btn rx-btn-outline" style="margin-top: 8px; font-size: 0.84rem; padding: 8px 20px;">
-                            View Details <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem; margin-left: 4px;"></i>
+                        <a th:href="@{'/user/ride/detail/' + ${ride.rideId}}" class="rx-btn rx-btn-primary rx-3d-btn" style="margin-top: 10px; font-size: 0.95rem; font-weight: 600; padding: 10px 22px;">
+                            View Details <i class="fa-solid fa-chevron-right" style="font-size: 0.72rem; margin-left: 6px;"></i>
                         </a>
                     </div>
                 </div>

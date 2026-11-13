@@ -5,22 +5,60 @@
 <div id="content" style="background: var(--rx-bg-primary);" x-data="app()" x-cloak>
     <section class="rx-section" style="padding-top: 120px;">
         <div class="rx-container" style="max-width: 720px;">
+
+            <!-- ===== FAST TRACK: DigiLocker Instant Verification ===== -->
+            <div class="rx-card-3d" style="background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(59,130,246,0.06) 100%); border: 1.5px solid rgba(16,185,129,0.35); border-radius: 20px; padding: 28px 26px; margin-bottom: 28px; box-shadow: 0 12px 30px rgba(15,23,42,0.06);">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:18px;">
+                    <div style="display:flex;gap:16px;align-items:flex-start;">
+                        <div style="width:52px;height:52px;border-radius:14px;background:rgba(16,185,129,0.15);border:1.5px solid #10b981;color:#059669;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                                <h3 style="margin:0;font-size:1.3rem;font-weight:800;color:var(--rx-text-primary);">Verify Instantly with DigiLocker</h3>
+                                <span style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#d97706;font-size:0.75rem;padding:3px 10px;border-radius:999px;font-weight:700;">+50 Trust Coins</span>
+                            </div>
+                            <p style="margin:0 0 12px;font-size:0.95rem;color:var(--rx-text-secondary);line-height:1.5;">
+                                10-second verification directly via Government of India (Aadhaar or Driving License). Zero manual review wait time.
+                            </p>
+                            <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:0.85rem;color:var(--rx-text-secondary);font-weight:500;">
+                                <span><i class="fa-solid fa-check" style="color:#059669;margin-right:4px;"></i> 100% Paperless</span>
+                                <span><i class="fa-solid fa-check" style="color:#059669;margin-right:4px;"></i> UIDAI & MoRTH Certified</span>
+                                <span><i class="fa-solid fa-check" style="color:#059669;margin-right:4px;"></i> Instant Verified Badge</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/user/digilocker/initiate}"
+                       class="rx-btn rx-btn-primary rx-3d-btn"
+                       style="padding:14px 24px;border-radius:12px;font-weight:700;font-size:0.98rem;display:inline-flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> Verify via DigiLocker →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div style="display:flex;align-items:center;gap:16px;margin:28px 0;opacity:0.7;">
+                <div style="flex:1;height:1px;background:var(--rx-border);"></div>
+                <span style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--rx-text-muted);font-weight:700;">OR Upload Manually for Review</span>
+                <div style="flex:1;height:1px;background:var(--rx-border);"></div>
+            </div>
+
             <template x-if="step !== 'complete'">
-                <div>
+                <div class="rx-card-3d" style="padding: 36px 32px; margin-bottom: 24px;">
                     <!-- Progress -->
                     <div style="margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--rx-border);">
-                        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rx-text-muted); margin-bottom: 8px;" x-text="`Step ${step} of 3`"></div>
+                        <div style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rx-accent); margin-bottom: 8px;" x-text="`Step ${step} of 3`"></div>
                         <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div style="font-size: 1.2rem; font-weight: 700; color: var(--rx-text-primary);">
+                            <div style="font-size: 1.35rem; font-weight: 800; color: var(--rx-text-primary);">
                                 <span x-show="step === 1">Select ID Type</span>
                                 <span x-show="step === 2">Enter Unique ID</span>
                                 <span x-show="step === 3">Upload Your Photo</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px; width: 200px;">
-                                <div style="flex: 1; background: var(--rx-border); border-radius: 4px; height: 6px;">
-                                    <div style="border-radius: 4px; height: 6px; background: var(--rx-accent); transition: width 0.4s;" :style="'width: ' + (step / 3 * 100) + '%'"></div>
+                            <div style="display: flex; align-items: center; gap: 10px; width: 200px;">
+                                <div style="flex: 1; background: var(--rx-border); border-radius: 6px; height: 8px;">
+                                    <div style="border-radius: 6px; height: 8px; background: var(--rx-accent); transition: width 0.4s;" :style="'width: ' + (step / 3 * 100) + '%'"></div>
                                 </div>
-                                <div style="font-size: 0.75rem; color: var(--rx-text-muted);" x-text="parseInt(step / 3 * 100) + '%'"></div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--rx-text-muted);" x-text="parseInt(step / 3 * 100) + '%'"></div>
                             </div>
                         </div>
                     </div>
@@ -33,10 +71,10 @@
                         <!-- Step 1 -->
                         <div x-show.transition.in="step === 1">
                             <div class="rx-form-group">
-                                <label for="idType" style="color: var(--rx-text-primary); font-weight: 600;">Choose ID Type</label>
-                                <select id="idType" x-model="idType" class="rx-form-input">
-                                    <option value="">-- Select --</option>
-                                    <option value="Aadhar">Aadhar Card</option>
+                                <label for="idType" style="color: var(--rx-text-primary); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">Choose ID Type</label>
+                                <select id="idType" x-model="idType" class="rx-form-input" style="font-size: 1rem; padding: 14px 18px;">
+                                    <option value="">-- Select Document --</option>
+                                    <option value="Aadhar">Aadhaar Card</option>
                                     <option value="PAN">PAN Card</option>
                                     <option value="DrivingLicense">Driving License</option>
                                     <option value="Passport">Passport</option>
@@ -47,22 +85,22 @@
                         <!-- Step 2 -->
                         <div x-show.transition.in="step === 2">
                             <div class="rx-form-group">
-                                <label for="uniqueId" style="color: var(--rx-text-primary); font-weight: 600;">Enter Unique ID</label>
-                                <input id="uniqueId" x-model="uniqueId" type="text" placeholder="Enter unique identification number..." class="rx-form-input" />
+                                <label for="uniqueId" style="color: var(--rx-text-primary); font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">Enter Unique ID</label>
+                                <input id="uniqueId" x-model="uniqueId" type="text" placeholder="Enter unique identification number..." class="rx-form-input" style="font-size: 1.05rem; padding: 14px 18px;" />
                             </div>
                         </div>
 
                         <!-- Step 3 -->
                         <div x-show.transition.in="step === 3" style="text-align: center;">
-                            <div style="width: 100%; max-width: 380px; height: 220px; margin: 0 auto 20px; border: 2px dashed var(--rx-border); border-radius: var(--rx-radius-md); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--rx-bg-tertiary);">
+                            <div style="width: 100%; max-width: 420px; height: 230px; margin: 0 auto 20px; border: 2px dashed var(--rx-border); border-radius: var(--rx-radius-md); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--rx-bg-tertiary);">
                                 <template x-if="image">
                                     <img :src="image" alt="Uploaded ID" style="object-fit: contain; width: 100%; height: 100%; border-radius: var(--rx-radius-sm);" />
                                 </template>
                                 <template x-if="!image">
-                                    <span style="color: var(--rx-text-muted); font-size: 0.9rem;">No image selected</span>
+                                    <span style="color: var(--rx-text-muted); font-size: 0.95rem;">No image selected</span>
                                 </template>
                             </div>
-                            <label for="fileInput" class="rx-btn rx-btn-outline" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                            <label for="fileInput" class="rx-btn rx-btn-outline" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; padding: 12px 24px; font-weight: 700; background: #ffffff; color: var(--rx-accent); border: 1.5px solid var(--rx-accent);">
                                 <i class="fa-solid fa-camera"></i> Browse Photo
                             </label>
                             <input name="govtIdPhotoFile" id="fileInput" type="file" style="display: none;" accept="image/*"
@@ -80,22 +118,20 @@
                                         reader.readAsDataURL(file);
                                     }
                             ">
-                            <p style="font-size: 0.8rem; color: var(--rx-text-muted); margin-top: 8px;">Upload the image of your selected ID type.</p>
+                            <p style="font-size: 0.88rem; color: var(--rx-text-muted); margin-top: 10px;">Upload a clear scan or photograph of your government ID.</p>
                         </div>
                     </form>
+
+                    <!-- Card Navigation Buttons -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--rx-border);">
+                        <button x-show="step > 1" @click="step--" class="rx-btn rx-btn-outline" style="padding: 12px 24px; font-size: 0.95rem;">Back</button>
+                        <div style="margin-left: auto;">
+                            <button x-show="step < 3" @click="nextStep()" class="rx-btn rx-btn-primary rx-3d-btn" style="padding: 12px 28px; font-size: 1rem;">Continue <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i></button>
+                            <button x-show="step === 3" @click="complete()" class="rx-btn rx-btn-primary rx-3d-btn" style="padding: 12px 28px; font-size: 1rem;">Submit ID <i class="fa-solid fa-check" style="margin-left: 6px;"></i></button>
+                        </div>
+                    </div>
                 </div>
             </template>
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div style="position: sticky; bottom: 0; left: 0; right: 0; padding: 20px 0; background: var(--rx-bg-primary);" x-show="step !== 'complete'">
-            <div style="display: flex; justify-content: space-between; max-width: 720px; margin: 0 auto; padding: 0 16px;">
-                <button x-show="step > 1" @click="step--" class="rx-btn rx-btn-outline" style="padding: 10px 24px;">Previous</button>
-                <div>
-                    <button x-show="step < 3" @click="nextStep()" class="rx-btn rx-btn-primary" style="padding: 10px 24px;">Next</button>
-                    <button x-show="step === 3" @click="complete()" class="rx-btn rx-btn-primary" style="padding: 10px 24px;">Complete</button>
-                </div>
-            </div>
         </div>
     </section>
 </div>

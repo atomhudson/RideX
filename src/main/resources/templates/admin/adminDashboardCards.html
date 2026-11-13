@@ -1,53 +1,78 @@
-<div th:fragment="cardSection" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full min-w-0">
-    <!-- Card Template -->
-    <div class="flex flex-col px-6 py-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden relative">
-        <i class="fa-solid fa-people-group absolute top-2 right-2 text-2xl text-gray-500 dark:text-gray-300" style="color: blue;"></i>
-        <div class="flex flex-col items-center space-y-4">
-            <div class="text-6xl font-bold tracking-tight leading-none text-blue-500 dark:text-blue-400">
-                <span th:text="${usersCount}"></span>
-            </div>
-            <div class="text-lg font-medium text-gray-700 dark:text-gray-300">Total Users</div>
-        </div>
-    </div>
-    <!-- Repeat for other cards -->
-    <div class="flex flex-col px-6 py-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden relative">
-        <i class="fa-solid fa-circle-check absolute top-2 right-2 text-2xl text-gray-500 dark:text-gray-300"style="color: green;"></i>
-        <div class="flex flex-col items-center space-y-4">
-            <div class="text-6xl font-bold tracking-tight leading-none text-green-500 dark:text-green-400">
-                <span th:text="${verifiedUser}"></span>
-            </div>
-            <div class="text-lg font-medium text-gray-700 dark:text-gray-300">Verified Users</div>
-        </div>
-    </div>
-    <div class="flex flex-col px-6 py-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden relative">
-        <i class="fa-solid fa-circle-xmark absolute top-2 right-2 text-2xl text-gray-500 dark:text-gray-300"style="color: red;"></i>
-        <div class="flex flex-col items-center space-y-4">
-            <div class="text-6xl font-bold tracking-tight leading-none text-red-500 dark:text-red-400">
-                <span th:text="${nonVerifiedUser}"></span>
-            </div>
-            <div class="text-lg font-medium text-gray-700 dark:text-gray-300">Non-Verified Users
+<div th:fragment="cardSection" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; width: 100%; margin-bottom: 8px;">
+    
+    <!-- 1. Total Users -->
+    <a th:href="@{'/admin/getUsers'}" class="rx-card-3d rx-reveal" style="padding: 22px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); position: relative; overflow: hidden; text-decoration: none; display: block; transition: all 0.25s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--rx-text-secondary);">Total Commuters</span>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(59,130,246,0.12); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="fa-solid fa-users"></i>
             </div>
         </div>
-    </div>
-    <div class="flex flex-col px-6 py-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden relative">
-        <i class="fa-solid fa-person-circle-check absolute top-2 right-2 text-2xl text-gray-500 dark:text-gray-300"style="color: purple;"></i>
-        <div class="flex flex-col items-center space-y-4">
-            <div class="text-6xl font-bold tracking-tight leading-none text-purple-500 dark:text-purple-400">
-                <span th:text="${enabledUsers}"></span>
-            </div>
-            <div class="text-lg font-medium text-gray-700 dark:text-gray-300">Total Enabled Users
+        <div style="font-size: 2.2rem; font-weight: 900; line-height: 1; color: var(--rx-text-primary); font-family: var(--rx-heading-font);" th:text="${usersCount}">0</div>
+        <div style="font-size: 0.78rem; color: var(--rx-text-muted); margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span>All registered users</span>
+            <span style="color: #3b82f6; font-weight: 600;">View →</span>
+        </div>
+    </a>
+
+    <!-- 2. Registered Drivers -->
+    <a th:href="@{'/admin/getUsers'}" class="rx-card-3d rx-reveal rx-reveal-delay-1" style="padding: 22px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); position: relative; overflow: hidden; text-decoration: none; display: block; transition: all 0.25s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--rx-text-secondary);">Verified Drivers</span>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(16,185,129,0.12); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="fa-solid fa-steering-wheel"></i>
             </div>
         </div>
-    </div>
-    <div class="flex flex-col px-6 py-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden relative">
-        <i class="fa-solid fa-person-circle-xmark absolute top-2 right-2 text-2xl text-gray-500 dark:text-gray-300"style="color: yellow;"></i>
-        <div class="flex flex-col items-center space-y-4">
-            <div class="text-6xl font-bold tracking-tight leading-none text-yellow-500 dark:text-yellow-400">
-                <span th:text="${nonEnabledUsers}"></span>
-            </div>
-            <div class="text-lg font-medium text-gray-700 dark:text-gray-300">Total Non-Enabled
-                Users
+        <div style="font-size: 2.2rem; font-weight: 900; line-height: 1; color: #10b981; font-family: var(--rx-heading-font);" th:text="${driversCount}">0</div>
+        <div style="font-size: 0.78rem; color: var(--rx-text-muted); margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span>Vehicle verified</span>
+            <span style="color: #10b981; font-weight: 600;">Audit →</span>
+        </div>
+    </a>
+
+    <!-- 3. Active Carpools -->
+    <a th:href="@{'/admin/getRides'}" class="rx-card-3d rx-reveal rx-reveal-delay-2" style="padding: 22px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); position: relative; overflow: hidden; text-decoration: none; display: block; transition: all 0.25s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--rx-text-secondary);">Active Rides</span>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(99,102,241,0.12); color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="fa-solid fa-car-side"></i>
             </div>
         </div>
+        <div style="font-size: 2.2rem; font-weight: 900; line-height: 1; color: #6366f1; font-family: var(--rx-heading-font);" th:text="${activeRides}">0</div>
+        <div style="font-size: 0.78rem; color: var(--rx-text-muted); margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span>Planned &amp; Ongoing</span>
+            <span style="color: #6366f1; font-weight: 600;">Corridors →</span>
+        </div>
+    </a>
+
+    <!-- 4. Total Corridors -->
+    <a th:href="@{'/admin/getRides'}" class="rx-card-3d rx-reveal rx-reveal-delay-3" style="padding: 22px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); position: relative; overflow: hidden; text-decoration: none; display: block; transition: all 0.25s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--rx-text-secondary);">Total Rides</span>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(6,182,212,0.12); color: #06b6d4; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="fa-solid fa-route"></i>
+            </div>
+        </div>
+        <div style="font-size: 2.2rem; font-weight: 900; line-height: 1; color: #06b6d4; font-family: var(--rx-heading-font);" th:text="${totalRides}">0</div>
+        <div style="font-size: 0.78rem; color: var(--rx-text-muted); margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span th:text="${completedRides} + ' completed'">0 completed</span>
+            <span style="color: #06b6d4; font-weight: 600;">Ledger →</span>
+        </div>
+    </a>
+
+    <!-- 5. Pending KYC Requests -->
+    <div class="rx-card-3d rx-reveal" style="padding: 22px 20px; background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: var(--rx-radius-lg); box-shadow: var(--rx-shadow-sm); position: relative; overflow: hidden;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--rx-text-secondary);">Pending KYC</span>
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(245,158,11,0.12); color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="fa-solid fa-id-card-clip"></i>
+            </div>
+        </div>
+        <div style="font-size: 2.2rem; font-weight: 900; line-height: 1; color: #d97706; font-family: var(--rx-heading-font);" th:text="${govtIdRequests != null ? govtIdRequests.size() : 0}">0</div>
+        <div style="font-size: 0.78rem; color: var(--rx-text-muted); margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span>Awaiting review below</span>
+            <span style="color: #d97706; font-weight: 600;">Queue ↓</span>
+        </div>
     </div>
+
 </div>

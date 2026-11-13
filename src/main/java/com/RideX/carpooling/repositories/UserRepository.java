@@ -53,4 +53,12 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u FROM com.RideX.carpooling.model.User u WHERE LOWER(u.phone) LIKE LOWER(CONCAT('%', :phone, '%'))")
     Page<User> findAllByPhoneIgnoreCase(@Param("phone") String phone, Pageable pageable);
+
+    @Query("SELECT u FROM com.RideX.carpooling.model.User u " +
+           "WHERE LOWER(u.userId) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+           "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+           "OR LOWER(u.phone) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+           "OR LOWER(u.fName) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+           "OR LOWER(u.lName) LIKE LOWER(CONCAT('%', :kw, '%'))")
+    Page<User> searchUsersUniversal(@Param("kw") String keyword, Pageable pageable);
 }

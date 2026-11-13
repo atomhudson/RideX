@@ -1,41 +1,56 @@
-// Initialize Leaflet map
-const map = L.map('map').setView([rideCoordinates.sourceLat, rideCoordinates.sourceLon], 8); // Set center based on ride coordinates
+// Initialize Leaflet map safely for ride route display
+(function() {
+    function initMap() {
+        const mapContainer = document.getElementById('map');
+        if (!mapContainer || typeof L === 'undefined') {
+            return;
+        }
 
-// Add OpenStreetMap tile layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data © OpenStreetMap contributors'
-}).addTo(map);
+        try {
+            let sLat = 28.6139;
+            let sLon = 77.2090;
 
-// Update map with coordinates from rideCoordinates object
-function updateMapWithCoords(sourceLat, sourceLon, destinationLat, destinationLon) {
-    const source = L.latLng(sourceLat, sourceLon);
-    const destination = L.latLng(destinationLat, destinationLon);
+            if (typeof rideCoordinates !== 'undefined' && rideCoordinates.sourceLat && !isNaN(parseFloat(rideCoordinates.sourceLat))) {
+                sLat = parseFloat(rideCoordinates.sourceLat);
+                sLon = parseFloat(rideCoordinates.sourceLon);
+            }
 
-    // Display the route using Leaflet Routing Machine
-    L.Routing.control({
-        waypoints: [source, destination],
-        routeWhileDragging: false,
-        addWaypoints: false,
-        draggableWaypoints: false,
-        fitSelectedRoutes: true,
-        createMarker: function () { return null; } // optional: no markers
-    }).addTo(map);
+            const map = L.map('map').setView([sLat, sLon], 8);
 
-    // Fit map to bounds
-    const bounds = L.latLngBounds([source, destination]);
-    map.fitBounds(bounds, { padding: [50, 50] });
-}
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data © OpenStreetMap contributors'
+            }).addTo(map);
 
-// Safely load map only if coordinates are available
-if (typeof rideCoordinates !== 'undefined' &&
-    rideCoordinates.sourceLat && rideCoordinates.sourceLon &&
-    rideCoordinates.destinationLat && rideCoordinates.destinationLon) {
-    updateMapWithCoords(
-        rideCoordinates.sourceLat,
-        rideCoordinates.sourceLon,
-        rideCoordinates.destinationLat,
-        rideCoordinates.destinationLon
-    );
-} else {
-    console.warn("Coordinates not found in rideCoordinates object.");
-}
+            if (typeof rideCoordinates !== 'undefined' &&
+                rideCoordinates.sourceLat && rideCoordinates.sourceLon &&
+                rideCoordinates.destinationLat && rideCoordinates.destinationLon &&
+                !isNaN(parseFloat(rideCoordinates.destinationLat))) {
+
+                const source = L.latLng(sLat, sLon);
+                const destination = L.latLng(parseFloat(rideCoordinates.destinationLat), parseFloat(rideCoordinates.destinationLon));
+
+                if (typeof L.Routing !== 'undefined') {
+                    L.Routing.control({
+                        waypoints: [source, destination],
+                        routeWhileDragging: false,
+                        addWaypoints: false,
+                        draggableWaypoints: false,
+                        fitSelectedRoutes: true,
+                        createMarker: function () { return null; }
+                    }).addTo(map);
+                }
+
+                const bounds = L.latLngBounds([source, destination]);
+                map.fitBounds(bounds, { padding: [50, 50] });
+            }
+        } catch (e) {
+            console.warn("Leaflet map initialization skipped or caught error:", e);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMap);
+    } else {
+        initMap();
+    }
+})();

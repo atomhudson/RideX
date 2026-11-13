@@ -11,20 +11,20 @@
         <div class="rx-footer-col">
             <h4>About</h4>
             <ul>
-                <li><a href="#">How it Works</a></li>
-                <li><a href="#">Safety</a></li>
-                <li><a href="#">Our Mission</a></li>
-                <li><a href="#">Careers</a></li>
+                <li><a th:href="@{'/features'}">How it Works</a></li>
+                <li><a th:href="@{'/driver-safety'}">Safety Standards</a></li>
+                <li><a th:href="@{'/company'}">Our Mission</a></li>
+                <li><a th:href="@{'/team'}">Leadership Team</a></li>
             </ul>
         </div>
 
         <div class="rx-footer-col">
             <h4>Support</h4>
             <ul>
-                <li><a href="#">Help Center</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">FAQs</a></li>
-                <li><a href="#">Community Guidelines</a></li>
+                <li><a th:href="@{'/user/contact'}">Help Center</a></li>
+                <li><a th:href="@{'/user/contact'}">Contact Us</a></li>
+                <li><a th:href="@{'/features'}">Platform Features</a></li>
+                <li><a th:href="@{'/terms-of-service'}">Community Rules</a></li>
             </ul>
         </div>
 
@@ -49,7 +49,13 @@
     </div>
 
     <div class="rx-footer-bottom">
-        <span>&copy; 2025 RideX. All Rights Reserved.</span>
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <span>&copy; 2026 RideX. All Rights Reserved.</span>
+            <span class="rx-status-pill">
+                <span class="rx-pulse-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                <span>All Systems Operational · Spring '26 Edition</span>
+            </span>
+        </div>
         <div class="rx-footer-social">
             <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
             <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
